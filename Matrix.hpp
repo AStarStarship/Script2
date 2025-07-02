@@ -1,10 +1,13 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef INCLUDED_SCRIPT2_MATRIX
-#define INCLUDED_SCRIPT2_MATRIX
+#define INCLUDED_SCRIPT2_MATRIX 1
 #include <_Config.h>
-#if SEAM >= SCRIPT2_MATRIX
+#if SEAM >= 1 //SCRIPT2_MATRIX
 #include "Stack.hpp"
+#define MTX_A typename T = ISW, typename ISZ = ISN
+#define MTX_P T, ISZ
+#define MTX TMatrix<T, ISZ>
 namespace _ {
 
 /* @ingroup AsciiMatrix
@@ -28,11 +31,11 @@ Please see the ASCII Data Specificaiton for DRY documentation.
 0xN +-----------------+
 @endcode
 */
-template<typename ISZ = ISN>
+template<MTX_A>
 struct TMatrix {
-  ISZ size;                //< Number of elements in the Matrix.
-  ISZ neo_from_the_Matrix; //< Agent Smith bruh.
-  TStack<SCK_P> dimensions;  //< The stack of dimensions.
+  ISZ bytes,      //< Size in bytes.
+      elems;      //< Total number of matrix elements.
+  TStack<SCK_P> dimensions; //< Stack of dimensions.
 };
 
 /* Max number of elements that can fit in the given ISZ. */
@@ -57,13 +60,13 @@ inline ISZ TMatrixArraySizeMax(ISZ dimensions_total) {
 template<typename Printer, typename T = ISW, typename ISZ = ISN>
 Printer& TMatrixPrint(Printer& o, TMatrix<ISZ>* matrix) {
   A_ASSERT(matrix);
-  ISZ size = matrix->size, 
+  ISZ size = matrix->bytes, 
       dimension_size  = matrix->dimensions.total,
       dimension_count = matrix->dimensions.count;
 
   o << "\n\nArray: size:" << size << " dimensions:{" << dimension_count;
 
-  ISZ *dimensions = TStackStart<ISZ, ISZ>(&matrix->dimensions),
+  ISZ *dimensions = TStackBegin<ISZ, ISZ>(&matrix->dimensions),
       *dimensions_end = dimensions + dimension_count - 1;
   ISZ element_count = *dimensions++;
 
@@ -136,7 +139,7 @@ ISZ TMatrixSize(const ISZ* dimensions, const ISZ* delta) {
 template<typename T = ISW, typename ISZ = ISN>
 ISZ TMatrixSize(const TMatrix<ISZ>* matrix) {
   D_ASSERT(matrix);
-  return ISZ(sizeof(TMatrix<ISZ>)) + matrix->size * sizeof(T) + 
+  return ISZ(sizeof(TMatrix<ISZ>)) + matrix->bytes * sizeof(T) + 
          matrix->dimensions->total * sizeof(ISZ);
 }
 
@@ -159,7 +162,7 @@ template<typename T = ISW, typename ISZ = ISN>
 TMatrix<ISZ>* TMatrixInit(const ISZ* dimensions) {
   A_ASSERT(dimensions);
   ISZ dimension_count = *dimensions;
-  if (dimension_count < 0) return nullptr;
+  if (dimension_count < 0) return NILP;
   ISZ size = (ISZ)sizeof(TStack<SCK_P>) + dimension_count * sizeof(T);
   IUW* socket = new IUW[size >> ALUSizeLog2];
   TStack<SCK_P>* stack = TPtr<TStack<SCK_P>>(socket);
@@ -175,7 +178,7 @@ TMatrix<ISZ>* TMatrixInit(const ISZ* dimensions) {
 @return Pointer to the first element in the array. */
 template<typename T, typename ISZ = ISN>
 inline T* TMatrixStart(TMatrix<ISZ>* obj) {
-  return TPtr<T>(TStackStart<ISZ, ISZ>(&obj->dimensions) + obj->size);
+  return TPtr<T>(TStackBegin<ISZ, ISZ>(&obj->dimensions) + obj->bytes);
 }
 
 /* Creates a immutable array of dimensions. */
@@ -239,23 +242,23 @@ inline TMatrix<ISZ>* TMatrixCloneDelta(Autoject& ajt,
   ISZ dimension_count = *a_dimensions;
   if (!dimensions_delta || dimension_count == 0) {
     ISZ bytes = TMatrixSize<T, ISZ>(matrix);
-    if (bytes < 0) return nullptr;
-    IUW* origin_new = ajt.ram(nullptr, bytes);
-    if (!origin_new) return nullptr;
+    if (bytes < 0) return NILP;
+    IUW* origin_new = ajt.ram(NILP, bytes);
+    if (!origin_new) return NILP;
     IUW* origin = ajt.origin;
     ISZ bytes = TMatrixSize<T, ISZ>(&matrix->dimensions.count);
-    RAMCopy(origin_new, TPtr<CHA>(origin_new) + bytes, 
+    ArrayCopy(origin_new, TPtr<CHA>(origin_new) + bytes, 
               origin, TPtr<CHA>(origin) + bytes);
     return TPtr<TMatrix<ISZ>>(origin_new);
   }
   ISZ dimensions_delta_count = *dimensions_delta++;
   if (dimension_count != dimensions_delta_count) return -1;
   if (dimension_count == 1) {
-    return nullptr;
+    return NILP;
   }
   ISZ bytes = TMatrixSize<T, ISZ>(dimensions_delta);
-  if (bytes < 0) return nullptr;
-  IUW* origin_new = ajt.ram(nullptr, bytes);
+  if (bytes < 0) return NILP;
+  IUW* origin_new = ajt.ram(NILP, bytes);
   const ISZ* b_dimensions = 0,
            * a_cursor = a_dimensions,
            * b_cursor = dimensions_delta_count;
@@ -286,23 +289,23 @@ template<typename T = ISW, typename ISZ = ISN>
 inline IUW* TMatrixCopy(TMatrix<ISZ>* destination, TMatrix<ISZ>* source) {
   ISZ size_destination = TMatrixSize<T, ISZ>(destination),
       size_source      = TMatrixSize<T, ISZ>(source);
-  if (size_destination < size_source) return nullptr;
+  if (size_destination < size_source) return NILP;
   /* I'm not sure if I even want to try to copy the dimensions and array blocks
   seprataly because in practice the dimensions stack size will never be very 
   much.
-  RAMCopy(destination, TStackTop<T, ISZ>(destination->dimensions), 
+  ArrayCopy(destination, TStackTop<T, ISZ>(destination->dimensions), 
             source     , TStackTop<T, ISZ>(source->dimensions));
-  RAMCopy(TMatrixStart<T, ISZ>(destination), 
+  ArrayCopy(TMatrixStart<T, ISZ>(destination), 
             TPtr<CHA>(destination) + SizeDestination, 
             TMatrixStart<T, ISZ>(source), 
             TPtr<CHA>(source) + SizeSource); */
-  RAMCopy(destination, TPtr<CHA>(destination) + size_destination, 
+  ArrayCopy(destination, TPtr<CHA>(destination) + size_destination, 
             source, TPtr<CHA>(source) + size_source);
   return destination;
 }
 
 /* A multi-dimensional array Ascii Object. */
-template<typename T = ISW, typename ISZ = ISN, typename BUF = Nil>
+template<typename T = ISW, typename ISZ = ISN, typename BOF = Nil>
 class AMatrix {
   AArray<ISZ> obj_;  //< The Auto-array.
 
@@ -312,27 +315,27 @@ class AMatrix {
 
   /* Initializes an array of n elements of the given type.
   @param max_elements The max number_ of elements in the array socket.
-  AMatrix(ISZ x, const T* elements = nullptr) : obj_(TMatrixNew<T, ISZ>(x)) {
+  AMatrix(ISZ x, const T* elements = NILP) : obj_(TMatrixNew<T, ISZ>(x)) {
     D_ASSERT(x >= 0);
   } */
 
   /* Initializes an array of n elements of the given type.
   @param max_elements The max number_ of elements in the array socket. */
-  AMatrix(ISZ x, ISZ y, const T* elements = nullptr)
+  AMatrix(ISZ x, ISZ y, const T* elements = NILP)
       : obj_(TMatrixSize<T, ISZ>(2, x * y)) {
     D_ASSERT(x >= 0 && y >= 0);
   }
 
   /* Initializes an array of n elements of the given type.
   @param max_elements The max number_ of elements in the array socket. */
-  AMatrix(ISZ x, ISZ y, ISZ z, const T* elements = nullptr)
+  AMatrix(ISZ x, ISZ y, ISZ z, const T* elements = NILP)
       : obj_(TMatrixSize<T, ISZ>(3, x * y * z)) {
     D_ASSERT(x >= 0 && y >= 0 && z >= 0);
   }
 
   /* Initializes an array of n elements of the given type.
   @param max_elements The max number_ of elements in the array socket. */
-  AMatrix(ISZ w, ISZ x, ISZ y, ISZ z, const T* elements = nullptr)
+  AMatrix(ISZ w, ISZ x, ISZ y, ISZ z, const T* elements = NILP)
       : obj_(TMatrixSize<T, ISZ>(4, w * x * y * z)) {}
 
   /* Initializes an array of n elements of the given type.
@@ -360,7 +363,7 @@ class AMatrix {
   inline ISZ DimensionCount() { return This().dimensions->count; }
 
   /* Gets the dimensions array. */
-  inline T* Dimension() { return TStackStart<T, ISZ>(This()->dimensions); }
+  inline T* Dimension() { return TStackBegin<T, ISZ>(This()->dimensions); }
 
   /* Gets the underlying array. */
   inline T* Start() { return TMatrixStart<T, ISZ>(This()); }
@@ -376,7 +379,7 @@ class AMatrix {
   }
 
   /* Returns the Auto-Array. */
-  inline AArray<T, ISZ, BUF>& Array() { return obj_; }
+  inline AArray<T, ISZ, BOF>& Array() { return obj_; }
 
   template<typename Printer = COut>
   inline Printer& PrintTo(Printer& o) {

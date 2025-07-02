@@ -1,138 +1,84 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
-#ifndef SCRIPT2_AUTOJECT_HEADER
-#define SCRIPT2_AUTOJECT_HEADER
+#ifndef SCRIPT2_AUTOJECT_DECL
+#define SCRIPT2_AUTOJECT_DECL 1
 #include <_Config.h>
-#if SEAM >= SCRIPT2_STACK
-namespace _ {
-
-struct Autoject;
-}
+#if SEAM >= SCRIPT2_UNIPRINTER
 
 /* RAMFactory manages memory for ASCII Objects.
 @return A word-aligned boofer, rounding up if unaligned.
-@param obj  A block of word-aligned heap memory.
-@param size The size of the boofer to create in bytes. */
-typedef IUW* (*RAMFactory)(IUW* obj, ISW size);
+@param origin Origin of a contiguous auto-object.
+@param bytes  Autoject size in bytes. */
+typedef IUW* (*RAMFactory)(IUW* origin, ISW bytes);
 
 namespace _ {
 
-/* ASCII OBJ and RAMFactory. */
+/* Automatic object contains the ASCII Object and RAMFactory that auto-grows 
+from Stack-to-heap.
+Both the RAMFactory Stack or Heap can create dynamic memory, but the 
+RAMFactory Stack doesn't delete the memory, as it's on the program stack,creates
+and the RAMFactory Heap deletes the dynamic memory. This allows a DLL to produce 
+the memory and the EXE to consume it, and vice versa.
+*/
 struct Autoject {
-  RAMFactory ram_factory;  //< Autoject Factory function pointer.
-  IUW* begin;              //< Pointer to the Autoject.
+  IUW* origin;    //< Pointer to the Autoject.
+  RAMFactory ram; //< Autoject RAM Factory for managing memory.
 };
 
 enum RAMFactoryFunction {
-  RAMFactoryDelete = 0,  //< Factory function deletes an OBJ.
-  RAMFactoryNew = 1,     //< Factory function checks if the size can double.
-  RAMFactoryGrow = 2,    //< Factory function double OBJ size.
-  RAMFactoryClone = 3,   //< Factory function clones the OBJ.
-  RAMFactoryName = 4,    //< Factory function gets the info AString.
-  RAMFactoryFunctionCount = 5,  //< Factory function count.
+  RAMFactoryDelete = 0, //< Factory function deletes an OBJ.
+  RAMFactoryNew    = 1, //< Factory function checks if the size can double.
+  RAMFactoryFunctionCount = 2,  //< Factory function count.
 };
 
 enum RAMFactoryError {
-  RAMFactorySuccess = 0,      //< Factory operation completed successfully error.
-  RAMFactoryNil = 1,          //< Factory missing error.
-  RAMFactoryNilOBJ = 2,       //< Factory found nil obj.begin pointer error.
-  RAMFactoryNilArg = 3,       //< Factory arg nil error.
-  FactoryCantGrow = 4,     //< Factory can't grow.
-  RAMFactorySizeInvalid = 5,  //< Factory size invalid.
-  RAMFactoryErrorCount = 6,   //< Factory function count.
+  RAMFactorySuccess = 0,     //< Factory operation completed successfully error.
+  RAMFactoryNil = 1,         //< Factory missing error.
+  RAMFactoryNilOBJ = 2,      //< Factory found nil obj.origin pointer error.
+  RAMFactoryNilArg = 3,      //< Factory arg nil error.
+  FactoryCantGrow = 4,       //< Factory can't grow.
+  RAMFactorySizeInvalid = 5, //< Factory size invalid.
+  RAMFactoryErrorCount = 6,  //< Factory function count.
 };
 
-/* Creates or destroys a block of heap memory.
-@pre bytes > 0 */
-LIB_MEMBER IUW* RAMFactoryHeap(IUW* obj, ISW bytes);
+/* RAMFactory for Autojects on the program stack that doesn't delete the
+boofer. */
+LIB_MEMBER IUW* ObjectFactoryStack(IUW* boofer, ISW bytes);
 
-/* Creates a block of heap memory. */
-LIB_MEMBER IUW* RAMFactoryStack(IUW* ptr, ISW bytes);
+/* RAMFactory for Autojects on the heap that deletes a the boofer. */
+LIB_MEMBER IUW* ObjectFactoryHeap(IUW* boofer, ISW bytes);
 
-LIB_INLINE IUW* AutojectBeginSet(Autoject& obj, void* boofer);
+/* RAMFactory for Auto-array of total elements on the program stack that 
+doesn't delete the boofer. */
+LIB_MEMBER IUW* ArrayFactoryStackA(IUW* boofer, ISW total);
 
-/* Deletes the given obj using the obj.factory. */
-LIB_MEMBER void Delete(Autoject& obj);
+/* RAMFactory for Auto-array of total elements on the heap that deletes a the 
+boofer. */
+LIB_MEMBER IUW* ArrayFactoryHeapA(IUW* boofer, ISW total);
 
-/* Overwrites the memory with fill_char; functionally identical to memset. */
-LIB_MEMBER CHA* RAMFill(void* begin, void* end, CHA fill_char = 0);
+/* RAMFactory for Auto-array of total elements on the program stack that
+doesn't delete the boofer. */
+LIB_MEMBER IUW* ArrayFactoryStackB(IUW* boofer, ISW total);
 
-/* Overwrites the memory with fill_char; functionally identical to memset. */
-LIB_MEMBER CHA* RAMFill(void* begin, ISW size, CHA fill_char = 0);
+/* RAMFactory for Auto-array of total elements on the heap that deletes a the
+boofer. */
+LIB_MEMBER IUW* ArrayFactoryHeapB(IUW* boofer, ISW total);
 
-/* Overwrites the memory with fill_char; functionally identical to memset. */
-LIB_MEMBER CHA* ArrayWipe(void* begin, void* end);
+/* RAMFactory for Auto-array of total elements on the program stack that
+doesn't delete the boofer. */
+LIB_MEMBER IUW* ArrayFactoryStackC(IUW* boofer, ISW total);
 
-/* Overwrites the memory with fill_char; functionally identical to memset. */
-LIB_MEMBER CHA* ArrayWipe(void* begin, ISW size);
+/* RAMFactory for Auto-array of total elements on the heap that deletes a the
+boofer. */
+LIB_MEMBER IUW* ArrayFactoryHeapC(IUW* boofer, ISW total);
 
-/* Copies the source to the target functionally identical to memcpy.
-@param  begin     The start of the write socket.
-@param  size      The stop of the write socket.
-@param  begin     The begin of the read socket.
-@param  read_size Number of bytes to copy.
-@return Pointer to the last IUA written or nil upon failure. */
-LIB_MEMBER CHA* RAMCopy(void* begin, ISW size, const void* read,
-                          ISW read_size);
+/* RAMFactory for Auto-array of total elements on the program stack that
+doesn't delete the boofer. */
+LIB_MEMBER IUW* ArrayFactoryStackD(IUW* boofer, ISW total);
 
-/* Copies the source to the target functionally identical to memcpy.
-@param  begin The start of the write socket.
-@param  stop  The stop of the write socket.
-@param  begin The begin of the read socket.
-@param  size  Number of bytes to copy.
-@return Pointer to the last IUA written or nil upon failure. */
-LIB_MEMBER CHA* RAMCopy(void* start, void* stop, const void* begin,
-                          ISW read_size);
-
-/* Copies the source to the target functionally identical to memcpy.
-@param  start The start of the write socket.
-@param  stop  The stop of the write socket.
-@param  begin The begin of the read socket.
-@param  end   The end of the read socket.
-@return Pointer to the last IUA written or nil upon failure. */
-LIB_INLINE CHA* RAMCopy(void* start, void* stop, const void* begin,
-                          const void* end);
-
-/* Compares the two memory sockets.
-@param  start  The start of Socket A.
-@param  stop   The stop of Socket A.
-@param  begin  The begin of Socket B.
-@param  end    The end of Socket B.
-@return True if they are the same and false if they are not. */
-LIB_MEMBER const void* RAMCompare(const void* start, const void* stop,
-                                    const void* begin, const void* end);
-
-/* Compares the two memory sockets.
-@param  start The start of Socket A.
-@param  stop  The stop of Socket A.
-@param  begin The begin of Socket B.
-@param  size  The size of Socket B.
-@return True if they are the same and false if they are not. */
-LIB_MEMBER const void* RAMCompare(const void* start, void* stop, 
-                                    const void* begin, ISW size);
-
-/* Compares the two memory sockets.
-@param  start The start of socket a.
-@param  size_a The size of Socket A .
-@param  start  The begin of socket b.
-@param  size_b The size of Socket B.
-@return True if they are the same and false if they are not. */
-LIB_MEMBER const void* RAMCompare(const void* start, ISW size_a,
-                                    const void* begin, ISW size_b);
-
-/* Shifts the memory up by the given count in bytes.
-@return 0 upon failure and count upon success.
-@param  begin       The begin IUA.
-@param  end         The end IUA.
-@param  count_bytes The IUA count to shift up. */
-LIB_MEMBER ISW RAMShiftUp(void* begin, void* end, ISW count_bytes);
-
-/* Shifts the memory down by the given bytes_count.
-@return 0 upon failure and count upon success.
-@param  begin       The start IUA.
-@param  end         The end IUA.
-@param  count_bytes The IUA count to shift up. */
-LIB_MEMBER ISW RAMShiftDown(void* begin, void* end, ISW bytes_count);
+/* RAMFactory for Auto-array of total elements on the heap that deletes a the
+boofer. */
+LIB_MEMBER IUW* ArrayFactoryHeapD(IUW* boofer, ISW total);
 
 }  //< namespace _
 #endif

@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef INCLUDED_SCRIPT2_BOUT_DECL
-#define INCLUDED_SCRIPT2_BOUT_DECL
+#define INCLUDED_SCRIPT2_BOUT_DECL 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {

@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship™ <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #include <_Config.h>
 //
 #include "../_Package.hxx"
@@ -9,22 +9,25 @@
 #include "04.FtoS.hxx"
 #include "05.Uniprinter.hxx"
 #include "06.Clock.hxx"
-#include "07.Stack.hxx"
-#include "08.String.hxx"
-#include "09.Loom.hxx"
-#include "10.List.hxx"
-#include "11.Book.hxx"
-#include "12.Map.hxx"
-#include "13.Table.hxx"
-#include "14.Dic.hxx"
-#include "15.Crabs.hxx"
-#include "16.Room.hxx"
-#include "17.Matrix.hxx"
-#include "18.File.hxx"
-#include "19.Autojects.hxx"
-#include "20.Script2.hxx"
-#include "21.Release.hxx"
-using namespace _;
+#include "07.Array.hxx"
+#include "08.Stack.hxx"
+#include "09.String.hxx"
+#include "10.Loom.hxx"
+#include "11.List.hxx"
+#include "12.Book.hxx"
+#include "13.Map.hxx"
+#include "14.Table.hxx"
+#include "15.Dic.hxx"
+#include "16.Crabs.hxx"
+#include "17.Room.hxx"
+#include "18.Matrix.hxx"
+#include "19.File.hxx"
+#include "20.Autojects.hxx"
+#include "21.Script2.hxx"
+#include "22.Release.hxx"
+//
+#include "../Test.hpp"
+using namespace ::_;
 
 inline const CHA* Script2Tests(const CHA* args) {
   return TTestTree<Script2::COut, Script2::RNG, Script2::ItoS, Script2::FtoS, 

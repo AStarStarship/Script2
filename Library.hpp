@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
-#ifndef SCRIPT2_LIBRARY_CODE_TEMPLATES
-#define SCRIPT2_LIBRARY_CODE_TEMPLATES
+#ifndef SCRIPT2_LIBRARY_INLINE_CODE
+#define SCRIPT2_LIBRARY_INLINE_CODE 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_ROOM
 namespace _ {
@@ -146,7 +146,7 @@ class Library : public Operand {
         return ExprEnquiry(crabs, This);
       case 'A': {
         static const Op This = {"Foo", Params<0>(), Params<0>(), "Foo.",
-                                '(',   ')',         nullptr};
+                                '(',   ')',         NILP};
         return 0;
       }
       default:
@@ -177,7 +177,7 @@ class Library : public Operand {
 /* Destructs the given bag. */
 template<typename TIndex, typename TKey, typename TData, IUN MaxStaccSize>
 LIB_MEMBER void Delete(Library<TIndex, TKey, TData, TData, MaxStaccSize>* r) {
-  if (r == nullptr) return;
+  if (r == NILP) return;
   delete TPtr<CHA>(r);
 }
 #endif  //< SCRIPT2_MEMORY_PROFILE > 2

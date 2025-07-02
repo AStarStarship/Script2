@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_DOOR_DECL
-#define SCRIPT2_DOOR_DECL
+#define SCRIPT2_DOOR_DECL 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_ROOM
 #include "Crabs.h"
@@ -46,7 +46,7 @@ class TDoor : public Operand {
   };
 
   /* A door in a Chinese room. */
-  TDoor(const CHA* roomName = nullptr, IUW* socket = nullptr,
+  TDoor(const CHA* roomName = NILP, IUW* socket = NILP,
         IUW bytes = DoorBytesMin) {
     if (!socket) {
       if (bytes < DoorBytesMin) {
@@ -86,7 +86,7 @@ class TDoor : public Operand {
   ISC FindSlot(void* address) {
     ISC count = slots_->count;
     for (ISC i = 0; i < count; ++i) {
-      // Slot* slot = nullptr; //< @todo fix me!
+      // Slot* slot = NILP; //< @todo fix me!
 
       if (TStackContains<ISC, ISC, ISC>(slots_, address)) return i;
     }
@@ -94,7 +94,7 @@ class TDoor : public Operand {
   }
 
   BIn* Slot(ISC index) {
-    if (!slots_.InBounds(index)) return nullptr;
+    if (!slots_.InBounds(index)) return NILP;
     return slots[i];
   }
 
@@ -111,7 +111,7 @@ class TDoor : public Operand {
         const Op* result = crabs->SScan(value);
       }
     }
-    return nullptr;
+    return NILP;
   }
 
   /* Script2 operations. */
@@ -126,8 +126,8 @@ class TDoor : public Operand {
       ';',
       ' ',
       false,
-      nullptr,
-      nullptr
+      NILP,
+      NILP
     };
     if (index == '?') {
       return CrabsQuery(crabs, This);
@@ -136,14 +136,14 @@ class TDoor : public Operand {
     if (((ISC)index) >= slots_->count) {
       return DoorResult(this, Door::c_ErrorInvalidOp);
     }
-    return nullptr;
+    return NILP;
   }
 
  private:
   ISN  bytes_,          //< Door size in bytes.
        scan_total_;     //< Max bytes to pull throught the slot at once.
   IUW* begin_;          //< Pointer to dynamic socket.
-  TStack<ISZ>* slots_;  //< Slots in the door.
+  SCK* slots_;  //< Slots in the door.
 
   TBIn<ISZ>* OffsetToBIn(ISC offset) {
     return TPtr<CBIn>(IUW(this) + offset);
@@ -152,13 +152,13 @@ class TDoor : public Operand {
 
 /* Initializes a Door at the beginning of the given socket.
 static Door* DoorInit (ISC* socket, ISC slot_size) {
-  if (socket == nullptr) return nullptr;
-  if (slot_size < kMinSlotSize) return nullptr;
+  if (socket == NILP) return NILP;
+  if (slot_size < kMinSlotSize) return NILP;
   Wall* wall = TPtr<Door>(socket);
   w->is_dynamic = 0;
   w->num_doors = 0;
   w->max_num_doors;
-  w->door_one = nullptr;
+  w->door_one = NILP;
 }*/
 
 }  //< namespace _

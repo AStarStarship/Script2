@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
-#ifndef SCRIPT2_BIN_TEMPLATES
-#define SCRIPT2_BIN_TEMPLATES
+#ifndef SCRIPT2_BIN_INLINE_CODE
+#define SCRIPT2_BIN_INLINE_CODE 1
 #include "BIn.h"
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {

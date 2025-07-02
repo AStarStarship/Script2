@@ -1,11 +1,8 @@
-// Copyright Kabuki Starship™ <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
+#ifndef SCRIPT2_TEST_INLINE_CODE
+#define SCRIPT2_TEST_INLINE_CODE 1
 #include "Test.h"
-#ifndef SCRIPT2_TTEST
-#define SCRIPT2_TTEST 1
-//
-#include "CIn.h"
-
 namespace _ {
 
 template<TestCase... N>
@@ -21,5 +18,4 @@ ISN TTestTree(ISN arg_count, CHA** args) {
 }
 
 }  //< namespace _
-
 #endif

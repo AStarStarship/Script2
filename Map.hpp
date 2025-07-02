@@ -1,14 +1,14 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
-#ifndef SCRIPT2_MAP_TEMPLATES
-#define SCRIPT2_MAP_TEMPLATES
+#ifndef SCRIPT2_MAP_INLINE_CODE
+#define SCRIPT2_MAP_INLINE_CODE 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_MAP
 #include "Stack.hpp"
 #if SEAM == SCRIPT2_MAP
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 namespace _ {
 
@@ -16,6 +16,7 @@ namespace _ {
 #define MAP_P D, ISZ
 #undef  MAP_A
 #define MAP_A typename D = ISR, typename ISZ = ISQ
+#define MAP TMap<D, ISZ>
 
 /* A sparse array map of Sorted Domain Values to Codomain Mappings (i.e. pointer
 offsets).
@@ -43,7 +44,6 @@ struct TMap {
       count;  //< Element count.
 };
 
-/* Utility class for creating an object with the TBUF. */
 template<MAP_A>
 struct TMapBuf {
   D   domain_value;   //< 
@@ -52,22 +52,22 @@ struct TMapBuf {
 
 /* Returns the start of the domain. */
 template<MAP_A>
-inline D* TMapDomain(TMap<MAP_P>* map) {
-  return TPtr<D>(map, sizeof(TMap<MAP_P>));
+inline D* TMapDomain(MAP* map) {
+  return TPtr<D>(map, sizeof(MAP));
 }
 template<MAP_A>
-inline const D* TMapDomain(const TMap<MAP_P>* map) {
-  return CPtr<D>(TMapDomain<MAP_P>(CPtr<TMap<MAP_P>>(map)));
+inline const D* TMapDomain(const MAP* map) {
+  return CPtr<D>(TMapDomain<MAP_P>(CPtr<MAP>(map)));
 }
 
 /* Returns the start of the domain. */
 template<MAP_A>
-inline D TMapDomain_NC(TMap<MAP_P>* map, ISZ index) {
-  return TPtr<D>(map, sizeof(TMap<MAP_P>))[index];
+inline D TMapDomain_NC(MAP* map, ISZ index) {
+  return TPtr<D>(map, sizeof(MAP))[index];
 }
 template<MAP_A>
-inline const D TMapDomain_NC(const TMap<MAP_P>* map, ISZ index) {
-  return CPtr<D>(TMapDomain_NC<MAP_P>(CPtr<TMap<MAP_P>>(map), index));
+inline const D TMapDomain_NC(const MAP* map, ISZ index) {
+  return CPtr<D>(TMapDomain_NC<MAP_P>(CPtr<MAP>(map), index));
 }
 
 /* Returns the start of the codomain. */
@@ -83,46 +83,46 @@ inline ISZ* TMapCodomain(D* domain, ISZ size) {
 
 /* Returns the start of the codomain. */
 template<MAP_A>
-inline const ISZ* TMapCodomain(const TMap<MAP_P>* map, ISZ size) {
+inline const ISZ* TMapCodomain(const MAP* map, ISZ size) {
   return TMapCodomain<MAP_P>(TMapDomain<MAP_P>(map), size);
 }
 template<MAP_A>
-inline ISZ* TMapCodomain(TMap<MAP_P>* map, ISZ size) {
+inline ISZ* TMapCodomain(MAP* map, ISZ size) {
   return const_cast<ISZ*>(
-      TMapCodomain<MAP_P>(const_cast<const TMap<MAP_P>*>(map), size));
+      TMapCodomain<MAP_P>(const_cast<const MAP*>(map), size));
 }
 
 /* Returns the start of the codomain. */
 template<MAP_A>
-inline const ISZ* TMapCodomain(const TMap<MAP_P>* map) {
+inline const ISZ* TMapCodomain(const MAP* map) {
   return TMapCodomain<MAP_P>(map, map->total);
 }
 template<MAP_A>
-inline ISZ* TMapCodomain(TMap<MAP_P>* map) {
+inline ISZ* TMapCodomain(MAP* map) {
   return const_cast<ISZ*>(
-      TMapCodomain<MAP_P>(const_cast<const TMap<MAP_P>*>(map)));
+      TMapCodomain<MAP_P>(const_cast<const MAP*>(map)));
 }
 
 template<MAP_A>
-inline ISZ TMapMapping(const TMap<MAP_P>* map, ISZ index) {
-  if (index < 0 || index >= map->count) return nullptr;
+inline ISZ TMapMapping(const MAP* map, ISZ index) {
+  if (index < 0 || index >= map->count) return NILP;
   return *(TMapCodomain<MAP_P>(map) + index);
 }
 template<MAP_A>
-inline ISZ TMapMapping(TMap<MAP_P>* map, ISZ size) {
+inline ISZ TMapMapping(MAP* map, ISZ size) {
   return const_cast<ISZ*>(
-      TMapCodomain<MAP_P>(const_cast<const TMap<MAP_P>*>(map), size));
+      TMapCodomain<MAP_P>(const_cast<const MAP*>(map), size));
 }
 
 /* Clears the map by setting the count to zero. */
 template<MAP_A>
-inline void TMapClear(TMap<MAP_P>* map) {
+inline void TMapClear(MAP* map) {
   map->count = 0;
 }
 
 /* Prints the map to the Printer. */
 template<typename Printer, MAP_A>
-Printer& TMapPrint(Printer& o, const TMap<MAP_P>* map) {
+Printer& TMapPrint(Printer& o, const MAP* map) {
   enum {
     ColumnWidth = 10,
     DomainColumns = 26,
@@ -160,16 +160,16 @@ constexpr ISZ CMapOverheadPerIndex() {
 
 template<MAP_A>
 inline ISZ TMapSizeRequired(ISZ count) {
-  return count * CMapOverheadPerIndex + sizeof(TMap<MAP_P>);
+  return count * CMapOverheadPerIndex + sizeof(MAP);
 };
 
 template<MAP_A>
 constexpr ISZ CMapSizeRequired(ISZ count) {
-  return count * CMapOverheadPerIndex + sizeof(TMap<MAP_P>);
+  return count * CMapOverheadPerIndex + sizeof(MAP);
 };
 
 template<MAP_A>
-inline TMap<MAP_P>* TMapInit(TMap<MAP_P>* map, ISZ count) {
+inline MAP* TMapInit(MAP* map, ISZ count) {
   D_ASSERT(map);
   D_ASSERT(count >= 0);
   map->count = 0;
@@ -179,7 +179,7 @@ inline TMap<MAP_P>* TMapInit(TMap<MAP_P>* map, ISZ count) {
 /* Adds the key to the map.
 @return An invalid index upon failure or valid index upon success. */
 template<MAP_A>
-ISZ TMapAdd(TMap<MAP_P>* map, D domain_value, ISZ codomain_mapping) {
+ISZ TMapAdd(MAP* map, D domain_value, ISZ codomain_mapping) {
   D_ASSERT(map);
   D_COUT("\n\nAdding:" << domain_value << "->" << codomain_mapping);
   ISZ count = map->count, size = map->total;
@@ -238,17 +238,17 @@ ISZ TMapAdd(TMap<MAP_P>* map, D domain_value, ISZ codomain_mapping) {
 /* Returns the size of th map in bytes. */
 template<MAP_A>
 constexpr ISZ CMapSizeBytes(ISZ size) {
-  return size * (sizeof(D) + sizeof(ISZ)) + sizeof(TMap<MAP_P>);
+  return size * (sizeof(D) + sizeof(ISZ)) + sizeof(MAP);
 }
 template<MAP_A>
 inline ISZ TMapSizeBytes(ISZ size) {
-  return size * (sizeof(D) + sizeof(ISZ)) + sizeof(TMap<MAP_P>);
+  return size * (sizeof(D) + sizeof(ISZ)) + sizeof(MAP);
 }
 
 /* Attempts to find the domain_member index.
 @return An invalid index upon failure or a valid index upon success. */
 template<MAP_A>
-ISZ TMapFind(const TMap<MAP_P>* map, const D& domain_member) {
+ISZ TMapFind(const MAP* map, const D& domain_member) {
   D_ASSERT(map);
   D_COUT("\nSearching for domain_member:" << domain_member);
 
@@ -277,14 +277,14 @@ ISZ TMapFind(const TMap<MAP_P>* map, const D& domain_member) {
 /* Attempts to find the codomain_mapping index.
 @return An invalid index upon failure or a valid index upon success. */
 template<MAP_A>
-inline ISZ TMapFindCodomain(const TMap<MAP_P>* map, const ISZ& codomain_mapping) {
+inline ISZ TMapFindCodomain(const MAP* map, const ISZ& codomain_mapping) {
   const ISZ* codomain = TMapCodomain<MAP_P>(map);
   return TArrayFind<ISZ, ISZ>(codomain, map->count, codomain_mapping);
 }
 
 /* Remaps the */
 template<MAP_A>
-inline void TMapRemapCodomain(TMap<MAP_P>* map, ISZ index, ISZ codomain_mapping) {
+inline void TMapRemapCodomain(MAP* map, ISZ index, ISZ codomain_mapping) {
   D_ASSERT(map);
   TMapCodomain<MAP_P>(map)[index] = codomain_mapping;
 }
@@ -293,7 +293,7 @@ inline void TMapRemapCodomain(TMap<MAP_P>* map, ISZ index, ISZ codomain_mapping)
 @return An invalid index upon failure or the new size of the map upon success.
 */
 template<MAP_A>
-ISZ TMapRemove(TMap<MAP_P>* map, ISZ index) {
+ISZ TMapRemove(MAP* map, ISZ index) {
   if (index < 0 || index >= map->count) D_RETURNT(ISZ, -ErrorInvalidIndex);
   ISZ size = map->total, count = map->count, zero = 0;
   if (count == zero)
@@ -312,9 +312,9 @@ ISZ TMapRemove(TMap<MAP_P>* map, ISZ index) {
 CMapSizeBytes<MAP_P>(Size_)
 */
 template<MAP_A, ISZ Size_ = 16,
-          typename BUF = TBUF<Size_, TMapBuf<MAP_P>, ISZ, TMap<MAP_P>>>
+          typename BOF = TBOF<Size_, TMapBuf<MAP_P>, ISZ, MAP>>
 class AMap {
-  AArray<TMapBuf<MAP_P>, ISZ, BUF> array_;
+  AArray<TMapBuf<MAP_P>, ISZ, BOF> array_;
 
  public:
   /* Constructs a Map with the given size.
@@ -373,10 +373,10 @@ class AMap {
   inline void Clear() { TMapClear<MAP_P>(This()); }
 
   /* Gets the size of the array in bytes*/
-  inline ISZ SizeBytes() { return AJT().SizeBytes<TMap<MAP_P>>(); }
+  inline ISZ Bytes() { return AJT().Bytes<MAP>(); }
 
   /* Gets the size of the array in CPU words*/
-  inline ISZ SizeWords() { return AJT().SizeWords<TMap<MAP_P>>(); }
+  inline ISZ SizeWords() { return AJT().SizeWords<MAP>(); }
 
   /* Gets the size of the array in elements*/
   inline ISZ Size() { return This()->total; }
@@ -394,10 +394,10 @@ class AMap {
   inline COut& CPrint() { return PrintTo<COut>(StdOut()); }
 
   /* Gets the aarray_. */
-  inline AArray<TMapBuf<MAP_P>, ISZ, BUF>& AJT() { return array_; }
+  inline AArray<TMapBuf<MAP_P>, ISZ, BOF>& AJT() { return array_; }
 
   /* Gets a pointer to the object at the origin of the aarray_. */
-  inline TMap<MAP_P>* This() { return TPtr<TMap<MAP_P>>(AJT().Origin());
+  inline MAP* This() { return TPtr<MAP>(AJT().Origin());
   }
 };
 }  //< namespace _

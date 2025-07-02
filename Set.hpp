@@ -1,10 +1,10 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #include <_Config.h>
 #if SEAM >= SCRIPT2_BOOK
-#ifndef SCRIPT2_BOOK_TEMPLATES
-#define SCRIPT2_BOOK_TEMPLATES 1
-#include "Types.h"
+#ifndef SCRIPT2_BOOK_INLINE_CODE
+#define SCRIPT2_BOOK_INLINE_CODE 1
+#include "AType.h"
 namespace _ {
 
 typedef IUW PODType;

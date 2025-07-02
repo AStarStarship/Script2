@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_CLOCK_DECL
-#define SCRIPT2_CLOCK_DECL
+#define SCRIPT2_CLOCK_DECL 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_CLOCK
 namespace _ {
@@ -34,6 +34,27 @@ OS scheduler. */
 struct LIB_MEMBER TMD {
   ISC seconds;  //< Seconds since epoch.
   IUC ticks;    //< Ticks since epoch.
+
+  TMD(IUB v1, IUB v2, IUB v3, IUB v4);
+
+  TMD(ISC seconds, IUC ticks = 0);
+
+  TMD(IUD value);
+};
+
+struct LIB_MEMBER TME {
+  ISD lsb;    //< Seconds since epoch.
+  IUD msb;    //< Ticks since epoch.
+
+  TME(IUB v1, IUB v2, IUB v3, IUB v4, IUB v5, IUB v6, IUB v7, IUB v8);
+
+  TME(IUC v1, IUC v2, IUC v3, IUC v4);
+
+  TME(ISD v1, IUD v2 = 0);
+
+  TME(IUE value);
+
+  TME(ISE value);
 };
 
 enum ClockConstants {
@@ -143,7 +164,7 @@ LIB_MEMBER ISC ClockTimeTMS(ISN year, ISN month, ISN day, ISN hour = 0,
 LIB_MEMBER ISD ClockTimeTME(ISN year, ISN month, ISN day, ISN hour = 0,
                             ISN minute = 0, ISN second = 0);
 
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
 /* Writes the given time to the text socket.
 @return Null upon failure or a pointer to the IUA after the last
 IUA written.
@@ -213,9 +234,9 @@ LIB_MEMBER const CHA* ScanTime(const CHA*, ISC& result);
 /* Converts a keyboard input to a ISD. */
 LIB_MEMBER const CHA* ScanTime(const CHA*, ISD& result);
 
-#endif  //< #if USING_UTF8 == YES_0
+#endif  //< #if USING_STA == YES_0
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 
 /* Writes the given time to the text socket.
 @return Null upon failure or a pointer to the IUA after the last
@@ -287,8 +308,8 @@ LIB_MEMBER const CHB* ScanTime(const CHB*, ISC& result);
 /* Converts a keyboard input to a TMD. */
 LIB_MEMBER const CHB* ScanTime(const CHB*, ISD& result);
 
-#endif  //< #if USING_UTF16 == YES_0
-#if USING_UTF32 == YES_0
+#endif  //< #if USING_STB == YES_0
+#if USING_STC == YES_0
 /* Writes the given time to the text socket.
 @return Null upon failure or a pointer to the IUA after the last
 IUA written.
@@ -356,7 +377,7 @@ LIB_MEMBER const CHC* ScanTime(const CHC* input, ISC& result);
 /* Converts a keyboard input to a TMD. */
 LIB_MEMBER const CHC* ScanTime(const CHC* input, ISD& result);
 
-#endif  //< #if USING_UTF32 == YES_0
+#endif  //< #if USING_STC == YES_0
 }  //< namespace _
 
 #endif

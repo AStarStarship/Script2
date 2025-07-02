@@ -1,7 +1,62 @@
-// Copyright Kabuki Starship™ <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #include "Stringf.hpp"
 #include "Binary.hpp"
 namespace _ {
+
+BOL CHIsPrintable(CHA item) {
+  if (item < ' ') {
+    if (item == 9) return true; // TAB
+    return false;
+  }
+  if (item == 127) return false;
+  return true;
+}
+
+BOL CHIsPrintable(CHB item) {
+  if (item < ' ') {
+    if (item == 9) return true; // TAB
+    return false;
+  }
+  if (item == 127) return false;
+  return true;
+}
+
+BOL CHIsPrintable(CHC item) {
+  if (item < ' ') {
+    if (item == 9) return true; // TAB
+    return false;
+  }
+  if (item == 127) return false;
+  return true;
+}
+
+BOL CHIsBlank(CHA item) {
+  if (item <= ' ') {
+    if (item == 9) return false; // TAB
+    return true;
+  }
+  if (item == 127) return true;
+  return false;
+}
+
+BOL CHIsBlank(CHB item) {
+  if (item <= ' ') {
+    if (item == 9) return false; // TAB
+    return true;
+  }
+  if (item == 127) return true;
+  return false;
+}
+
+BOL CHIsBlank(CHC item) {
+  if (item <= ' ') {
+    if (item == 9) return false; // TAB
+    return true;
+  }
+  if (item == 127) return true;
+  return false;
+}
+
 const CHA* STAPrintCharsHeader() {
   return "\n|0       8       16      24      32      40      48      56      |"
          " Begin address:";
@@ -22,258 +77,13 @@ const CHA* STAPrintHexBorder() {
          " ";
 }
 
-const CHA* STAATypesPOD() {
-  static const CHA Strings[64][4] = {
-      {'N', 'I', 'L', NIL},  //< 00
-      {'I', 'U', 'A', NIL},  //< 01
-      {'I', 'S', 'A', NIL},  //< 02
-      {'C', 'H', 'A', NIL},  //< 03
-      {'F', 'P', 'B', NIL},  //< 04
-      {'I', 'U', 'B', NIL},  //< 05
-      {'I', 'S', 'B', NIL},  //< 06
-      {'C', 'H', 'B', NIL},  //< 07
-      {'F', 'P', 'C', NIL},  //< 08
-      {'I', 'U', 'C', NIL},  //< 09
-      {'I', 'S', 'C', NIL},  //< 10
-      {'C', 'H', 'C', NIL},  //< 11
-      {'F', 'P', 'D', NIL},  //< 12
-      {'I', 'U', 'D', NIL},  //< 13
-      {'I', 'S', 'D', NIL},  //< 14
-      {'T', 'M', 'E', NIL},  //< 15
-      {'F', 'P', 'E', NIL},  //< 16
-      {'I', 'U', 'E', NIL},  //< 17
-      {'I', 'S', 'E', NIL},  //< 18
-      {'B', 'O', 'L', NIL},  //< 19
-      {'D', 'T', 'A', NIL},  //< 20
-      {'D', 'T', 'B', NIL},  //< 21
-      {'D', 'T', 'C', NIL},  //< 22
-      {'D', 'T', 'D', NIL},  //< 23
-      {'D', 'T', 'E', NIL},  //< 24
-      {'D', 'T', 'F', NIL},  //< 25
-      {'D', 'T', 'G', NIL},  //< 26
-      {'D', 'T', 'H', NIL},  //< 27
-      {'D', 'T', 'I', NIL},  //< 28
-      {'D', 'T', 'J', NIL},  //< 29
-      {'D', 'T', 'K', NIL},  //< 30
-      {'D', 'T', 'L', NIL},  //< 31
-      {'I', 'N', 'V', NIL},  //< 32
-  };
-  return &Strings[0][0];
-}
-
-const CHA* STAATypesPOD(ISA type) {
-  return TSTAATypesPOD<ISA>(type);
-}
-
-const CHA* STAATypesPOD(ISB type) {
-  return TSTAATypesPOD<ISB>(type);
-}
-
-const CHA* STAATypesPOD(ISC type) {
-  return TSTAATypesPOD<ISC>(type);
-}
-
-const CHA* STAATypesPOD(ISD type) {
-  return TSTAATypesPOD<ISD>(type);
-}
-
-const CHA* STRATypesVector() {
-  static const CHA Strings[17][4] = {
-      {'V', 'H', 'A', NIL},  //< 0
-      {'A', 'R', 'A', NIL},  //< 0
-      {'S', 'C', 'A', NIL},  //< 0
-      {'M', 'A', 'A', NIL},  //< 0
-      {'V', 'H', 'B', NIL},  //< 0
-      {'A', 'R', 'B', NIL},  //< 0
-      {'S', 'C', 'B', NIL},  //< 0
-      {'M', 'A', 'B', NIL},  //< 0
-      {'V', 'H', 'C', NIL},  //< 0
-      {'A', 'R', 'C', NIL},  //< 0
-      {'S', 'C', 'C', NIL},  //< 0
-      {'M', 'A', 'C', NIL},  //< 0
-      {'V', 'H', 'D', NIL},  //< 0
-      {'A', 'R', 'D', NIL},  //< 0
-      {'S', 'C', 'D', NIL},  //< 0
-      {'M', 'A', 'D', NIL},  //< 0
-  };
-  return &Strings[0][0];
-}
-
-const CHA* STRATypesVector(ISA type) {
-  return TSTRATypesVector<ISA>(type);
-}
-
-const CHA* STRATypesVector(ISB type) {
-  return TSTRATypesVector<ISB>(type);
-}
-
-const CHA* STRATypesVector(ISC type) {
-  return TSTRATypesVector<ISC>(type);
-}
-
-const CHA* STRATypesVector(ISD type) {
-  return TSTRATypesVector<ISD>(type);
-}
-
-const CHA* STRATypesVectorClass() {
-  static const CHA Strings[5][4] = {
-      {'V', 'H', 'T', NIL},  //< 00
-      {'A', 'R', 'Y', NIL},  //< 01
-      {'S', 'C', 'K', NIL},  //< 02
-      {'M', 'T', 'X', NIL},  //< 03
-      {'I', 'N', 'V', NIL},  //< 04
-  };
-  return &Strings[0][0];
-}
-
-const CHA* STRATypesVectorClass(ISA type) {
-  return TSTRATypesVectorClass<ISA>(type);
-}
-
-const CHA* STRATypesVectorClass(ISB type) {
-  return TSTRATypesVectorClass<ISB>(type);
-}
-
-const CHA* STRATypesVectorClass(ISC type) {
-  return TSTRATypesVectorClass<ISC>(type);
-}
-
-const CHA* STRATypesVectorClass(ISD type) {
-  return TSTRATypesVectorClass<ISD>(type);
-}
-
-const CHA* STRATypesModifier() {
-  static const CHA Strings[5][4] = {
-      {'P', 'O', 'D', NIL},  //< 00
-      {'P', 'T', 'R', NIL},  //< 01
-      {'C', 'N', 'S', NIL},  //< 02
-      {'P', 'T', 'C', NIL},  //< 03
-      {'I', 'N', 'V', NIL},  //< 04
-  };
-  return &Strings[0][0];
-}
-
-const CHA* STRATypesModifier(ISA type) {
-  return TSTRATypesModifier<ISA>(type);
-}
-
-const CHA* STRATypesModifier(ISB type) {
-  return TSTRATypesModifier<ISB>(type);
-}
-
-const CHA* STRATypesModifier(ISC type) {
-  return TSTRATypesModifier<ISC>(type);
-}
-
-const CHA* STRATypesModifier(ISD type) {
-  return TSTRATypesModifier<ISD>(type);
-}
-
-const CHA* STRAATypesMap() {
-  static const CHA Strings[5][4] = {
-      {'M', 'A', 'A', NIL},  //< 00
-      {'M', 'A', 'B', NIL},  //< 01
-      {'M', 'A', 'C', NIL},  //< 02
-      {'M', 'A', 'D', NIL},  //< 03
-      {'I', 'N', 'V', NIL},  //< 04
-  };
-  return &Strings[0][0];
-}
-
-const CHA* STRAATypesMap(ISA type) {
-  return STAATypeMap(type);
-}
-
-const CHA* STRAATypesMap(ISB type) {
-  return STAATypeMap(type);
-}
-
-const CHA* STRAATypesMap(ISC type) {
-  return STAATypeMap(type);
-}
-
-const CHA* STRAATypesMap(ISD type) {
-  return STAATypeMap(type);
-}
-
-const CHA* STRATypesString() {
-  static const CHA Strings[5][4] = {
-      {'P', 'O', 'D', NIL},  //< 00
-      {'P', 'T', 'R', NIL},  //< 01
-      {'C', 'N', 'S', NIL},  //< 02
-      {'P', 'T', 'C', NIL},  //< 03
-      {'I', 'N', 'V', NIL},  //< 04
-  };
-  return &Strings[0][0];
-}
-
-const CHA* STRATypesString(ISA type) {
-  return TSTRATypesString<ISA>(type);
-}
-
-const CHA* STRATypesString(ISB type) {
-  return TSTRATypesString<ISB>(type);
-}
-
-const CHA* STRATypesString(ISC type) {
-  return TSTRATypesString<ISC>(type);
-}
-
-const CHA* STRATypesString(ISD type) {
-  return TSTRATypesString<ISD>(type);
-}
-
-#if USING_UTF8 == YES_0
-const CHA* STATrue() { return "true"; }
-#endif
-#if USING_UTF16 == YES_0
-const CHB* STBTrue() {
-  static const CHB dez_nutz[] = { 't', 'r', 'u', 'e', '\0' };
-  return dez_nutz;
-}
-#endif
-#if USING_UTF32 == YES_0
-const CHC* STCTrue() {
-  static const CHC dez_nutz[] = {'t', 'r', 'u', 'e', '\0'};
-  return dez_nutz;
-}
-#endif
-
-// String that reads "false".
-#if USING_UTF8 == YES_0
-const CHA* STAFalse() { return "false"; }
-#endif
-#if USING_UTF16 == YES_0
-const CHB* STBFalse() {
-  static const CHB dez_nutz[] = { 'f', 'a', 'l', 's', 'e', '\0' };
-  return dez_nutz;
-}
-#endif
-#if USING_UTF32 == YES_0
-const CHC* STCFalse() {
-  static const CHC dez_nutz[] = { 'f', 'a', 'l', 's', 'e', '\0' };
-  return dez_nutz;
-}
-#endif
-
-// Returns the string "true" or "false".
-#if USING_UTF8 == YES_0
-const CHA* STATF(BOL value) { return value ? STATrue() : STAFalse(); }
-#endif
-#if USING_UTF16 == YES_0
-const CHB* STBTF(BOL value) { return value ? STBTrue() : STBFalse(); }
-#endif
-#if USING_UTF32 == YES_0
-const CHC* STCTF(BOL value) { return value ? STCTrue() : STCFalse(); }
-#endif
-
 }  //< namespace _
 
 #if SEAM >= SCRIPT2_COUT
 #if SEAM == SCRIPT2_COUT
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 
 namespace _ {
@@ -286,22 +96,22 @@ CHA* SPrint(CHA* string, CHA* stop, CHC item) {
   // | 1110aaaa | 10bbbbbb | 10cccccc |          | 00000aaaabbbbbbcccccc |
   // | 11110aaa | 10bbbbbb | 10cccccc | 10dddddd | aaabbbbbbccccccdddddd |
 
-  if (!string) return nullptr;
+  if (!string) return NILP;
 
   D_COUT("\n\n" << IUC(item) << ".) Printed:0x");
   if (!(item >> 7)) { // 1 ASCII CHA.
-    if (string + 1 > stop) return nullptr;
+    if (string + 1 > stop) return NILP;
     *string++ = CHA(item);
     D_COUT(Hexf(*(string - 1)) << "   ");
   } else {
     CHB lsb_mask = 0x3f, msb_mask = 0x80;
     if ((item >> 11) == 0) {
-      if (string + 2 >= stop) return nullptr;
+      if (string + 2 >= stop) return NILP;
       *string++ = CHA(0xC0 | (item >> 6));
       *string++ = CHA(msb_mask | (item & lsb_mask));
       D_COUT(Hexf(*(string - 2)) << '_' << Hexf(*(string - 1)) << "   ");
     } else if ((item >> 16) == 0) {
-      if (string + 3 >= stop) return nullptr;
+      if (string + 3 >= stop) return NILP;
 
       *string++ = CHA(0xE0 | (item >> 12));
       *string++ = CHA(msb_mask | ((item >> 6) & lsb_mask));
@@ -309,7 +119,7 @@ CHA* SPrint(CHA* string, CHA* stop, CHC item) {
       D_COUT(Hexf(*(string - 3)) << '_' << Hexf(*(string - 2)) << '_'
                                  << Hexf(*(string - 1)) << "   ");
     } else if ((item >> 21) == 0) {
-      if (string + 4 >= stop) return nullptr;
+      if (string + 4 >= stop) return NILP;
       *string++ = CHA(0xF0 | (item >> 18));
       *string++ = CHA(msb_mask | ((item >> 12) & lsb_mask));
       *string++ = CHA(msb_mask | ((item >> 6) & lsb_mask));
@@ -319,7 +129,7 @@ CHA* SPrint(CHA* string, CHA* stop, CHC item) {
              << Hexf(*(string - 1)) << "   ");
     } else {
       D_COUT("\n\nUTF8 print Error: CHC is out of range!");
-      return nullptr;
+      return NILP;
     }
   }
   *string = 0;
@@ -327,7 +137,7 @@ CHA* SPrint(CHA* string, CHA* stop, CHC item) {
 }
 
 const CHA* SScan(const CHA* string, CHC& item) {
-  if (!string) return nullptr;
+  if (!string) return NILP;
   CHA c = CHC(*string++);
   CHC lsb_mask = 0x3f, msb = 0x80, result = 0;
   D_COUT("SScan:" << Hexf(c));
@@ -337,35 +147,35 @@ const CHA* SScan(const CHA* string, CHC& item) {
     result = (c & 31) << 6;
     c = CHC(*string++);
     D_COUT(Hexf(c));
-    if (!(c & msb)) return nullptr;
+    if (!(c & msb)) return NILP;
     result |= c & CHC(63);
     D_COUT(Hexf(*(string - 1)));
   } else if ((IUA(c) >> 4) == 0xE) {
     result = CHC(c & 15) << 12;
     c = CHC(*string++);
-    if (!(c & msb)) return nullptr;
+    if (!(c & msb)) return NILP;
     result |= (c & 63) << 6;
     c = CHC(*string++);
-    if (!(c & msb)) return nullptr;
+    if (!(c & msb)) return NILP;
     result |= c & lsb_mask;
     D_COUT('_' << Hexf(*(string - 2)) << '_' << Hexf(*(string - 1)));
   } else if ((IUA(c) >> 3) == 0x1E) {
     result = CHC(c & 7) << 18;
     c = CHC(*string++);
-    if (!(c & msb)) return nullptr;
+    if (!(c & msb)) return NILP;
     result |= (c & lsb_mask) << 12;
     c = CHC(*string++);
-    if (!(c & msb)) return nullptr;
+    if (!(c & msb)) return NILP;
     result |= (c & lsb_mask) << 6;
     c = CHC(*string++);
-    if (!(c & msb)) return nullptr;
+    if (!(c & msb)) return NILP;
     result |= c & lsb_mask;
     D_COUT('_' << Hexf(*(string - 3)) << '_' << Hexf(*(string - 2)) << '_'
                << Hexf(*(string - 1)));
   } else {
     D_COUT(" error:0x" << Hexf(c) << '_' << Hexf(*string++) << '_'
                        << Hexf(*string++) << '_' << Hexf(*string++) << '\n');
-    return nullptr;
+    return NILP;
   }
   item = result;
   return string;
@@ -377,26 +187,26 @@ CHA* SPrint(CHA* start, CHA* stop, CHB item) {
   // | 0aaaaaaa |          |          | 000000000aaaaaaa |
   // | 110aaaaa | 10bbbbbb |          | 00000aaaaabbbbbb |
   // | 1110aaaa | 10bbbbbb | 10cccccc | aaaabbbbbbcccccc |
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   return SPrint(start, stop, CHC(item));
 #else
   enum { c2ByteMSbMask = 0xC0, c3ByteMSbMask = 0xE0, c4ByteMSbMask = 0xF0 };
-  if (!start || start >= stop) return nullptr;
+  if (!start || start >= stop) return NILP;
   if (!(item >> 7)) {  // 1 byte.
-    if (start + 1 > stop) return nullptr;
+    if (start + 1 > stop) return NILP;
     *start++ = CHA(item);
     *start = 0;
     return start;
   }
   CHB lsb_mask = 0x3f, msb_mask = 0x80;
   if (!(item >> 12)) {  // 2 bytes.
-    if (start + 2 >= stop) return nullptr;
+    if (start + 2 >= stop) return NILP;
     *start++ = (CHA)(0xC0 | item >> 6);
     *start++ = (CHA)(msb_mask | ((item >> 6) & lsb_mask));
     *start = 0;
     return start;
   }  // else 3 bytes.
-  if (start + 3 >= stop) return nullptr;
+  if (start + 3 >= stop) return NILP;
   *start++ = (CHA)(0xE0 | item >> 12);
   *start++ = (CHA)(msb_mask | ((item >> 6) & lsb_mask));
   *start++ = (CHA)(msb_mask | ((item >> 12) & lsb_mask));
@@ -404,25 +214,25 @@ CHA* SPrint(CHA* start, CHA* stop, CHB item) {
   return start;
 #endif
 }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 CHB* SPrint(CHB* start, CHB* stop, CHC item) {
   // | Bytes {4N, 4N+ 1} | Bytes {4N + 2, 4N+ 3} |    UTF-32 Result     |
   // |:-----------------:|:---------------------:|:--------------------:|
   // | 000000aaaaaaaaaa  |                       | 0000000000aaaaaaaaaa |
   // | 110110yyyyyyyyyy  |   110111xxxxxxxxxx    | yyyyyyyyyyxxxxxxxxxx |
   // |      0xD800       |         0xDC00        |                      |
-  if (!start || start + 1 >= stop) return nullptr;
+  if (!start || start + 1 >= stop) return NILP;
   CHC lsb_mask = 0x3f, lsb = item & lsb_mask, msb = item >> 10;
   if (!msb) {
-    if (start + 1 > stop) return nullptr;
+    if (start + 1 > stop) return NILP;
     *start++ = CHB(item);
     D_COUT("\nPrinting 1:" << (Hexf(CHB(item))));
     *start = 0;
     return start;
   } else {
     CHC msb_mask = 0xDC00;
-    if (msb >> 10) return nullptr;  // Non-Unicode value.
-    if (start + 2 >= stop) return nullptr;
+    if (msb >> 10) return NILP;  // Non-Unicode value.
+    if (start + 2 >= stop) return NILP;
     CHB nibble = (CHB)(lsb & msb_mask);
     D_COUT("\nPrinting 2:" << Hexf(CHB(nibble)));
     *start++ = nibble;
@@ -448,11 +258,11 @@ const CHB* SScan(const CHB* string, CHC& item) {
     D_COUT(" Scanning 1:" << Hexf(c));
     CHC r = (CHC(c)) & lsb_mask;
     c = *string++;
-    if (c >> 10 != 55) return nullptr;
+    if (c >> 10 != 55) return NILP;
     r |= ((CHC)(c & lsb_mask)) << 10;
   } else {
     D_COUT(" SScan error:" << Hexf(c));
-    return nullptr;
+    return NILP;
   }
   return string;
 }
@@ -495,19 +305,23 @@ Rightf ATypef::Right(ISW count) {
   return result;
 }
 
+AErrorf::AErrorf(ISW error, const STR* message) :
+  error(error),
+  message(message) {}
+
 Valuef::Valuef() : count(0), value() {}
 
 Valuef::Valuef(void* item, ISW count) : count(count), value(item) {}
 Valuef::Valuef(const void* item, ISW count) : count(count), value(item) {}
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
 Valuef::Valuef(CHA item, ISW count) : count(count), value(item) {}
 Valuef::Valuef(const CHA* item, ISW count) : count(count), value(item) {}
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 Valuef::Valuef(CHB item, ISW count) : count(count), value(item) {}
 Valuef::Valuef(const CHB* item, ISW count) : count(count), value(item) {}
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 Valuef::Valuef(CHC item, ISW count) : count(count), value(item) {}
 Valuef::Valuef(const CHC* item, ISW count) : count(count), value(item) {}
 #endif
@@ -538,7 +352,7 @@ CHA* Valuef::ToSTA() { return value.ToSTA(); }
 CHB* Valuef::ToSTB() { return value.ToSTB(); }
 CHC* Valuef::ToSTC() { return value.ToSTC(); }
 
-IUW Valuef::ToWord() { return value.Word(); }
+IUW Valuef::ToWord() { return value.Value(); }
 
 Hexf::Hexf(const void* origin, ISW size) : element(origin, size) {}
 #if CPU_ENDIAN == CPU_ENDIAN_LITTLE
@@ -621,10 +435,10 @@ Stringf::Stringf() : type_(_NIL), count_(0), boofer_() {
 //< Visual C++ is complaining about unitialized members. I think it's a bug.
 
 Stringf::Stringf(const CHA* item) : string_(item), count_(0) { Print(item); }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 Stringf::Stringf(const CHB* item) : string_(item), count_(0) { Print(item); }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 Stringf::Stringf(const CHC* item) : string_(item), count_(0) { Print(item); }
 #endif
 Stringf::Stringf(CHA item) : string_(boofer_), count_(0) { Print(item); }
@@ -643,12 +457,12 @@ Stringf::Stringf(FPD item) : string_(boofer_), count_(0) { Print(item); }
 Stringf::Stringf(const CHA* item, ISW count) : string_(item), count_(count) {
   Print(item);
 }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 Stringf::Stringf(const CHB* item, ISW count) : string_(item), count_(count) {
   Print(item);
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 Stringf::Stringf(const CHC* item, ISW count) : string_(item), count_(count) {
   Print(item);
 }
@@ -703,13 +517,13 @@ void Stringf::Print(const CHA* item) {
   type_ = _STA;
   string_ = item;
 }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 void Stringf::Print(const CHB* item) {
   type_ = _STB;
   string_ = item;
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 void Stringf::Print(const CHC* item) {
   type_ = _STC;
   string_ = item;
@@ -723,7 +537,7 @@ void Stringf::Print(CHA item) {
   string_ = boofer_;
 }
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 void Stringf::Print(CHB item) {
   CHA* boofer = TPtr<CHA>(boofer_);
   ::_::SPrint(boofer, boofer + LengthMax, item);
@@ -731,7 +545,7 @@ void Stringf::Print(CHB item) {
   string_ = boofer_;
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 void Stringf::Print(CHC item) {
   CHA* boofer = TPtr<CHA>(boofer_);
   ::_::SPrint(boofer, boofer + LengthMax, item);
@@ -883,14 +697,14 @@ void Stringf::Hex(CHA item, ISW count) {
   type_ = _CHA;
   count_ = -count;
 }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 void Stringf::Hex(CHB item, ISW count) {
   *TPtr<CHB>(boofer_) = item;
   type_ = _CHB;
   count_ = -count;
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 void Stringf::Hex(CHC item, ISW count) {
   *TPtr<CHC>(boofer_) = item;
   type_ = _CHC;
@@ -962,15 +776,15 @@ void Stringf::Hex(FPD item, ISW count) {
 
 Centerf::Centerf() {}
 
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
 Centerf::Centerf(CHA item, ISW count) : element(item, count) {}
 Centerf::Centerf(const CHA* item, ISW count) : element(item, count) {}
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 Centerf::Centerf(CHB item, ISW count) : element(item, count) {}
 Centerf::Centerf(const CHB* item, ISW count) : element(item, count) {}
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 Centerf::Centerf(CHC item, ISW count) : element(item, count) {}
 Centerf::Centerf(const CHC* item, ISW count) : element(item, count) {}
 #endif
@@ -990,13 +804,13 @@ Centerf& Centerf::Hex(CHA item, ISW count) {
   element.Hex(item, count);
   return *this;
 }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 Centerf& Centerf::Hex(CHB item, ISW count) {
   element.Hex(item, count);
   return *this;
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 Centerf& Centerf::Hex(CHC item, ISW count) {
   element.Hex(item, count);
   return *this;
@@ -1050,11 +864,11 @@ Centerf& Centerf::Hex(FPD item, ISW count) {
 Rightf::Rightf() {}
 Rightf::Rightf(CHA item, ISW count) : element(item, count) {}
 Rightf::Rightf(const CHA* item, ISW count) : element(item, count) {}
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 Rightf::Rightf(CHB item, ISW count) : element(item, count) {}
 Rightf::Rightf(const CHB* item, ISW count) : element(item, count) {}
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 Rightf::Rightf(CHC item, ISW count) : element(item, count) {}
 Rightf::Rightf(const CHC* item, ISW count) : element(item, count) {}
 #endif
@@ -1073,13 +887,13 @@ Rightf& Rightf::Hex(CHA item, ISW count) {
   element.Hex(item, count);
   return *this;
 }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 Rightf& Rightf::Hex(CHB item, ISW count) {
   element.Hex(item, count);
   return *this;
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 Rightf& Rightf::Hex(CHC item, ISW count) {
   element.Hex(item, count);
   return *this;
@@ -1142,15 +956,15 @@ Linef::Linef(const CHA* item, ISW count) : element(item, count), string("") {}
 
 Headingf::Headingf(const CHA* caption1)
     : element(caption1, AConsoleWidth),
-      style(nullptr),
-      caption2(nullptr),
-      caption3(nullptr) {}
+      style(NILP),
+      caption2(NILP),
+      caption3(NILP) {}
 
 Headingf::Headingf(const CHA* caption1, const CHA* caption2)
     : element(caption1, AConsoleWidth),
-      style(nullptr),
+      style(NILP),
       caption2(caption2),
-      caption3(nullptr) {}
+      caption3(NILP) {}
 
 Headingf::Headingf(const CHA* caption1, const CHA* caption2,
                    const CHA* caption3, const CHA* style, ISW count)
@@ -1165,12 +979,12 @@ Charsf::Charsf(const void* start, const void* stop)
 Charsf::Charsf(const void* start, ISW count)
     : element(TPtr<const CHA>(start), count) {}
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 Charsf::Charsf(const CHB* start, const CHB* stop)
     : element(start, stop - start) {}
 Charsf::Charsf(const CHB* start, ISW count) : element(start, count) {}
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 Charsf::Charsf(const CHC* start, const CHC* stop)
     : element(start, stop - start) {}
 Charsf::Charsf(const CHC* start, ISW count) : element(start, count) {}
@@ -1187,9 +1001,9 @@ Sizef::Sizef(ISD size) : size(size) {}
 
 #if SEAM >= SCRIPT2_FTOS
 #if SEAM == SCRIPT2_FTOS
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 
 #include <cstdio>  // For sprintf_s
@@ -1197,33 +1011,33 @@ Sizef::Sizef(ISD size) : size(size) {}
 namespace _ {
 
 CHA* SPrint(CHA* string, CHA* stop, FPC value) {
-  if (!string || string >= stop) return nullptr;
+  if (!string || string >= stop) return NILP;
   ISW size = stop - string;
   D_COUT("\nString:" << Hexf(string) << " end:" << Hexf(stop) << 
          " size:" << size << "\nExpecting:" << value);
   ISC count = sprintf_s(string, stop - string, "%f", value);
-  if (count <= 0) return nullptr;
+  if (count <= 0) return NILP;
   return string + count;
 }
 
 #if USING_FPD == YES_0
 CHA* SPrint(CHA* start, CHA* stop, FPD value) {
-  if (!start || start >= stop) return nullptr;
+  if (!start || start >= stop) return NILP;
   ISW size = stop - start;
   ISC count = sprintf_s(start, size, "%lf", value);
-  if (count <= 0) return nullptr;
+  if (count <= 0) return NILP;
   return start + count;
 }
 #endif
 #if USING_FPC == YES_0
 const CHA* SScan(const CHA* start, FPC& value) {
   ISC count = sscanf_s(start, "%f", &value);
-  return TSTRFloatStop<CHA>(start);
+  return TStringFloatStop<CHA>(start);
 }
 #endif
 const CHA* SScan(const CHA* start, FPD& value) {
   ISC count = sscanf_s(start, "%lf", &value);
-  return TSTRFloatStop<CHA>(start);
+  return TStringFloatStop<CHA>(start);
 }
 }  //< namespace _
 #endif

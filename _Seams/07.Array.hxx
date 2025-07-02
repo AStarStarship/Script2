@@ -1,73 +1,40 @@
-// Copyright Kabuki Starship™ <kabukistarship.com>.
-#if SEAM >= SCRIPT2_STACK
-#include "../Stack.hpp"
+// Copyright Kabuki Starship <kabukistarship.com>.
+#if SEAM >= SCRIPT2_ARRAY
+#include "../Array.hpp"
 using namespace ::_;
-#if SEAM == SCRIPT2_STACK
-#include "../_Debug.hxx"
+#if SEAM == SCRIPT2_ARRAY
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
 namespace Script2 {
 
-#if SEAM >= SCRIPT2_STACK
-template<typename T, typename IS>
-void TestStack(const CHA* args) {
-  D_COUT("Testing AStack<IS" << CHA('@' + sizeof(T)) << ",IS" << 
-         CHA('@' + sizeof(IS)) << ">...\n");
+#if SEAM >= SCRIPT2_ARRAY
+template<typename T, typename ISZ>
+void TestArray(const CHA* args) {
+  D_COUT("Testing AArray<ISZ" << CHA('@' + sizeof(T)) << ",ISZ" << 
+         CHA('@' + sizeof(ISZ)) << ">...\n");
 
-  AStack<T, IS, 8> stack;
+  AArray<T, ISZ, 8> array;
 
-  D_COUT(Linef("\n+---\n| TBUF: size:")
-         << stack.AJT().Boofer().Size() << " expected_bytes:"
-         << stack.AJT().Boofer().Size() * sizeof(T) + sizeof(TStack<IS>)
-         << " bytes:" << stack.AJT().Boofer().SizeBytes()
-         << " size_words:" << stack.AJT().Boofer().SizeWords());
-  D_COUT_OBJ(stack);
-
-  enum { TestCount = 32 };
-  D_COUT("\n\nPushing " << TestCount << " items on to the Stack...\n");
-  T i;
-  auto count_start = stack.Count();
-  for (i = 0; i < TestCount; ++i) {
-    D_COUT("\n| " << i << ".) count:" << stack.Count());
-    D_COUT("\n| Before calling push:" << 
-           Charsf(stack.AJT().Origin(), stack.AJT().SizeBytes()) << 
-           Linef("\n\n+---\n| ") << i << ".) ");
-    auto result = stack.Push('0' + i);
-    D_COUT("\n| Result:" << result);
-    D_COUT_OBJ(stack);
-    D_AVOW(IS(count_start + i), result);
-  }
-
-  D_COUT(Headingf("\n\nPopping items off the Stack... ") << "i:" << i << 'n');
-  #if SEAM == SCRIPT2_STACK
-  TStackPrint<_::COut, T, IS>(StdOut(), stack.This());
-  #endif
-  for (i=i-1; i >= 0; --i) {
-    //D_COUT_OBJ(stack);
-    auto value = stack.Pop();
-    A_AVOW_INDEX(i, value - '0', i);
-    D_COUT("\n| " << i << ".) Popping " << value << " count:" << stack.Count());
-  }
-  D_COUT("\n\nEnding stack.Count(): " << stack.Count() << " i: " << 
-         i << '\n');
-  D_COUT_OBJ(stack);
-  A_ASSERT(stack.Count() == 0);
+  D_COUT(Linef("\n+---\n| AArray: total:") << array.Total() << 
+         " bytes:" << array.Bytes() << " size_words:" << array.SizeWords());
+  D_COUT_OBJ(array);
 }
 #endif
 
-static const CHA* Stack(const CHA* args) {
-#if SEAM >= SCRIPT2_STACK
+static const CHA* Array(const CHA* args) {
+#if SEAM >= SCRIPT2_ARRAY
   A_TEST_BEGIN;
 
   D_COUT(Headingf("Testing RAMCompare with offset sequential arrays..."));
 
   enum {
-    OffsetMax = 2 * ALUSize,
+    OffsetMax = 2 * ACPUBytes,
     TestByteCount = 256,
     BooferSizeBytes = TestByteCount + 2 * OffsetMax,
-    BooferSizeWords = BooferSizeBytes >> WordSizeLog2,
+    BooferSizeWords = BooferSizeBytes >> ACPUBytesLog2,
   };
   IUW source[BooferSizeWords],
       destination[BooferSizeWords + OffsetMax];
@@ -131,12 +98,12 @@ static const CHA* Stack(const CHA* args) {
     }
   }
 
-  D_COUT(Headingf("Test RAMCopy"));
+  D_COUT(Headingf("Test ArrayCopy"));
 
   for (IUW s_offset = 0; s_offset < OffsetMax; ++s_offset) {
     for (IUW d_offset = 0; d_offset < OffsetMax; ++d_offset) {
       //D_COUT("\n\ns_offset: " << s_offset << "  d_offset: " << d_offset);
-      RAMFill(destination, BooferSizeBytes, 0);
+      ArrayFill(destination, BooferSizeBytes, 0);
       IUA* cursor = TPtr<IUA>(source);
 
       for (IUW i = 0; i < s_offset; ++i) *cursor++ = 0;
@@ -182,13 +149,13 @@ static const CHA* Stack(const CHA* args) {
       }
     }
   }
-  D_COUT(Headingf("TestStack"));
+  D_COUT(Headingf("TestArray"));
 
-  // TestStack<ISC, ISD>(args); is illegal
-  TestStack<ISC, ISC>(args);
-  TestStack<ISD, ISD>(args);
-  TestStack<ISD, ISC>(args);
+  // TestArray<ISC, ISD>(args); is illegal
+  TestArray<ISC, ISC>(args);
+  TestArray<ISD, ISD>(args);
+  TestArray<ISD, ISC>(args);
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

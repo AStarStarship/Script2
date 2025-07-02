@@ -1,16 +1,18 @@
-// Copyright Kabuki Starship� <kabukistarship.com>; all rights reserved.
+// Copyright Kabuki Starship <kabukistarship.com>; all rights reserved.
 #pragma once
-#ifndef SCRIPT2_WALL_CODE
-#define SCRIPT2_WALL_CODE
+#ifndef SCRIPT2_WALL_INLINE_CODE
+#define SCRIPT2_WALL_INLINE_CODE 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_DIC
 #include "Door.hpp"
 #include "Op.hpp"
 #include "Array.hpp"
-
+#define WAL_A typename T = ISW, typename ISZ = ISN
+#define WAL_P T, ISZ
+#define WAL TWall<T, ISZ>
 namespace _ {
   
-/* A group of slots that all go to the same Room.
+/* A group of Doors that share the same Extended Types.
 Only one single wall is required for a Chinese Room, but when more memory is
 needed a new Wall may be created and destroyed dynamically.
 
@@ -29,7 +31,7 @@ needed a new Wall may be created and destroyed dynamically.
 |    Header    |
 +--------------+
 @endcode */
-template<typename ISZ, typename ISY>
+template<typename ISZ = ISM, typename ISY = ISN>
 class TWall : public Operand {
  public:
   enum {
@@ -37,7 +39,8 @@ class TWall : public Operand {
   };
 
 private:
-  TStack<ISZ> doors_;  //< The doors in the room.
+  IUD         et_map_; //< Extended Type remap word from EPa-EPl to types 0-19.
+  SCK doors_;  //< The doors in the room.
 
   virtual ~TWall() {
     if (is_dynamic_) {
@@ -57,7 +60,7 @@ private:
     //< on 16 and 32-bit systems.
     bytes -= sizeof(IUW) * (aligned_boofer - socket);
     origin = socket;
-    doors_ = TPtr<TStack<ISZ>>(aligned_boofer);
+    doors_ = TPtr<SCK>(aligned_boofer);
     TStackInit(socket, bytes >> sizeof(IUW));
   }
 
@@ -68,7 +71,7 @@ private:
     //< on 16 and 32-bit systems.
     bytes -= sizeof(IUW) * (aligned_boofer - socket);
     origin = socket;
-    doors_ = TPtr<TStack<ISZ>>(aligned_boofer);
+    doors_ = TPtr<SCK>(aligned_boofer);
     TStackInit(socket, bytes >> sizeof(IUW));
   }
 
@@ -77,7 +80,7 @@ private:
     return bytes_;
   }
   /* Gets a pointer to the array of pointers to Door(). */
-  TStack<ISZ>* Doors() {
+  SCK* Doors() {
     return &doors_;
   }
 

@@ -1,13 +1,13 @@
-// Copyright Kabuki Starship™ <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #if SEAM >= SCRIPT2_COUT
 #include "../Uniprinter.hpp"
 #if SEAM == SCRIPT2_COUT
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
 inline const CHA* COut(const CHA* args) {
@@ -68,7 +68,7 @@ inline const CHA* COut(const CHA* args) {
     A_AVOW_INDEX(ch4_expected, ch4_found, ISC(ch4_expected));
   }
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   D_COUT(Headingf("Testing Testing CHB* SPrint (CHB*,CHB*,CHC)..."));
   enum {
     STRBCount = 4,

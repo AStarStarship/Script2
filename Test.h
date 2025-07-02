@@ -1,8 +1,8 @@
-// Copyright Kabuki Starship™ <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #include <_Config.h>
 #ifndef SCRIPT2_TEST_DECL
-#define SCRIPT2_TEST_DECL
+#define SCRIPT2_TEST_DECL 1
 
 /* Function pointer prototype for a test case with command line argument
 .

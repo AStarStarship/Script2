@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #include "BOut.hpp"
 #if SEAM >= SCRIPT2_CRABS
 #include "Args.h"
@@ -9,9 +9,9 @@
 #include "Slot.hpp"
 #include "Varint.hpp"
 #if SEAM == SCRIPT2_CRABS
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 namespace _ {
 
@@ -65,8 +65,8 @@ IUA* BOutBoofer(BOut* bout) {
 }
 
 BOut* BOutInit(IUW* socket, ISN size) {
-  if (size < SlotBytesMin) return nullptr;
-  if (socket == nullptr) return nullptr;
+  if (size < SlotBytesMin) return NILP;
+  if (socket == NILP) return NILP;
 
   BOut* bout = TPtr<BOut>(socket);
   // bout->size  = size - sizeof (BIn); //< Not sure why I did that?
@@ -263,7 +263,7 @@ const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
       case _VUB:  //< _W_r_i_t_e__2_-_b_y_t_e__U_n_s_i_g_n_e_d__V_a_r_i_n_t_
         // Load next pointer value to write.
         iub_ptr = TPtr<const IUB>(args[arg_index]);
-        if (iub_ptr == nullptr)
+        if (iub_ptr == NILP)
           return BOutError(bout, ErrorImplementation, params, index, start);
         iub = *iub_ptr;
 
@@ -491,14 +491,14 @@ const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
         switch (value) {
           case 0: {
             iua_ptr = TPtr<const IUA>(args[arg_index]);
-            if (iua_ptr == nullptr)
+            if (iua_ptr == NILP)
               return BOutError(bout, ErrorImplementation, params, index,
                                begin);
           }
 #if USING_SCRIPT2_2_BYTE_TYPES
           case 1: {
             iub_ptr = TPtr<const IUB>(args[arg_index]);
-            if (iub_ptr == nullptr)
+            if (iub_ptr == NILP)
               return BOutError(bout, ErrorImplementation, params, index,
                                origin);
             iub = *iub_ptr;
@@ -509,7 +509,7 @@ const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
 #if USING_SCRIPT2_4_BYTE_TYPES
           case 2: {
             iuc_ptr = TPtr<const IUC>(args[arg_index]);
-            if (iuc_ptr == nullptr)
+            if (iuc_ptr == NILP)
               return BOutError(bout, ErrorImplementation, params, index,
                                origin);
             iuc = *iuc_ptr;
@@ -520,7 +520,7 @@ const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
 #if USING_SCRIPT2_8_BYTE_TYPES
           case 3: {
             iud_ptr = TPtr<const IUD>(args[arg_index]);
-            if (iud_ptr == nullptr)
+            if (iud_ptr == NILP)
               return BOutError(bout, ErrorImplementation, params, index,
                                origin);
             iud = *iud_ptr;
@@ -583,7 +583,7 @@ void BOutRingBell(BOut* bout, const CHA* address) {
   if (!bout) {
     return;
   }
-  if (address == nullptr) {
+  if (address == NILP) {
     address = "";
   }
   D_COUT("\nRinging BEL to address:0x" << Hexf(address));
@@ -623,7 +623,7 @@ void BOutAckBack(BOut* bout, const CHA* address) {
   if (!bout) {
     return;
   }
-  if (address == nullptr) {
+  if (address == NILP) {
     address = "";
   }
   D_COUT("\n\nRinging BEL to address:0x" << Hexf(address));
@@ -673,11 +673,11 @@ IUA* Print (BOut* bout, IUA* socket, IUA* boofer_end) {
         return socket;
     }
     if (socket >= boofer_end) {
-        return nullptr;
+        return NILP;
     }
     socket = TPrintLinef('_', 80, socket, boofer_end);
     if (!bout) {
-        return nullptr;
+        return NILP;
     }
     ISN size = bout->size;
     UTF& utf (socket, boofer_end);

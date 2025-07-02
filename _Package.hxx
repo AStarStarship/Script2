@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 
 #include "Array.hxx"
 #include "BIn.hxx"
@@ -19,4 +19,4 @@
 #include "Slot.hxx"
 #include "Stringf.hxx"
 #include "Test.hxx"
-#include "Types.hxx"
+#include "AType.hxx"

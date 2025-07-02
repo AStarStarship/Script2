@@ -1,14 +1,14 @@
-// Copyright Kabuki Starship™ <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #if SEAM >= SCRIPT2_MAP
 #include "../Map.hpp"
 //
 #include "../RNG.h"
 #if SEAM == SCRIPT2_MAP
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
 template<typename D, D DomainMin_, D DomainMax_, typename ISZ,
@@ -21,7 +21,7 @@ void TestMap() {
   AMap<MAP_P, Size_> map;
   D_COUT_OBJ(map);
 
-  D_COUT("map_size:" << map.Size() << " map_bytes:" << map.SizeBytes()
+  D_COUT("map_size:" << map.Size() << " map_bytes:" << map.Bytes()
                      << " map_size_words:" << map.SizeWords()
                      << " sizeof(TMapBuf<D,ISZ>):" << sizeof(TMapBuf<D, ISZ>)
                      << "\n domain:" << TDelta<>(map.This(), map.Domain())
@@ -90,6 +90,6 @@ const CHA* Map(const CHA* args) {
           CSignedMax<ISB>(), 8>();
 
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

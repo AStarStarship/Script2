@@ -1,16 +1,11 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_COUT_DECL
-#define SCRIPT2_COUT_DECL
+#define SCRIPT2_COUT_DECL 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
 #include "Stringf.h"
 namespace _ {
-
-/* Returns true if the item is printable*/
-BOL CIsPrintable(CHA item);
-BOL CIsPrintable(CHB item);
-BOL CIsPrintable(CHC item);
 
 /* Utility class for printing to the stdout. */
 class LIB_MEMBER COut {
@@ -22,11 +17,11 @@ class LIB_MEMBER COut {
   COut(CHA item);
   COut(const CHA* item);
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   COut(CHB item);
   COut(const CHB* item);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   COut(CHC item);
   COut(const CHC* item);
 #endif
@@ -69,11 +64,11 @@ class LIB_MEMBER COut {
   /* Prints the given item to the stdout. */
   COut& Print(CHA item);
   COut& Print(const CHA* item);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   COut& Print(CHB item);
   COut& Print(const CHB* item);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   COut& Print(CHC item);
   COut& Print(const CHC* item);
 #endif
@@ -103,11 +98,11 @@ class LIB_MEMBER COut {
   /* Prints a new line followed by the given item to the stdout. */
   COut& NL(CHA item);
   COut& NL(const CHA* item);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   COut& NL(CHB item);
   COut& NL(const CHB* item);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   COut& NL(CHC item);
   COut& NL(const CHC* item);
 #endif
@@ -161,10 +156,10 @@ class LIB_MEMBER COut {
 #endif
 
   ISN PrintAndCount(const CHA* string);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   ISN PrintAndCount(const CHB* string);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   ISN PrintAndCount(const CHC* string);
 #endif
 };
@@ -179,11 +174,11 @@ inline COut CPrint() { return COut(); } */
 /* Prints the given item to the COut. */
 COut CPrint(CHA item);
 COut CPrint(const CHA* item);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 COut CPrint(CHB item);
 COut CPrint(const CHB* item);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 COut CPrint(CHC item);
 COut CPrint(const CHC* item);
 #endif
@@ -209,41 +204,45 @@ COut CPrint(Indentf& item);
 }  //< namespace _
 
 /* Prints the given item to the COut. */
-inline _::COut& operator<<(_::COut& o, CHA item);
-inline _::COut& operator<<(_::COut& o, const CHA* item);
+inline ::_::COut& operator<<(::_::COut& o, CHA item);
+inline ::_::COut& operator<<(::_::COut& o, const CHA* item);
 
-#if USING_UTF16 == YES_0
-inline _::COut& operator<<(_::COut& o, CHB item);
-inline _::COut& operator<<(_::COut& o, const CHB* item);
+#if USING_STB == YES_0
+inline ::_::COut& operator<<(::_::COut& o, CHB item);
+inline ::_::COut& operator<<(::_::COut& o, const CHB* item);
 #endif
-#if USING_UTF32 == YES_0
-inline _::COut& operator<<(_::COut& o, CHC item);
-inline _::COut& operator<<(_::COut& o, const CHC* item);
+#if USING_STC == YES_0
+inline ::_::COut& operator<<(::_::COut& o, CHC item);
+inline ::_::COut& operator<<(::_::COut& o, const CHC* item);
 #endif
-inline _::COut& operator<<(_::COut& o, ISC item);
-inline _::COut& operator<<(_::COut& o, IUC item);
-inline _::COut& operator<<(_::COut& o, ISD item);
-inline _::COut& operator<<(_::COut& o, IUD item);
+inline ::_::COut& operator<<(::_::COut& o, ISC item);
+inline ::_::COut& operator<<(::_::COut& o, IUC item);
+inline ::_::COut& operator<<(::_::COut& o, ISD item);
+inline ::_::COut& operator<<(::_::COut& o, IUD item);
 #if USING_FPC == YES_0
-inline _::COut& operator<<(_::COut& o, FPC item);
+inline ::_::COut& operator<<(::_::COut& o, FPC item);
 #endif
 #if USING_FPD == YES_0
-inline _::COut& operator<<(_::COut& o, FPD item);
+inline ::_::COut& operator<<(::_::COut& o, FPD item);
 #endif
-inline _::COut& operator<<(_::COut& o, _::Hexf item);
-inline _::COut& operator<<(_::COut& o, _::Binaryf item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Hexf item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Binaryf item);
 
-inline _::COut& operator<<(_::COut& o, _::Headingf item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Headingf item);
 #if SEAM >= SCRIPT2_UNIPRINTER
-inline _::COut& operator<<(_::COut& o, _::Centerf item);
-inline _::COut& operator<<(_::COut& o, _::Rightf item);
-inline _::COut& operator<<(_::COut& o, _::Linef item);
-inline _::COut& operator<<(_::COut& o, _::Indentf item);
-inline _::COut& operator<<(_::COut& o, _::Charsf item);
-inline _::COut& operator<<(_::COut& o, _::Sizef item);
-inline _::COut& operator<<(_::COut& o, _::ATypef item);
-//inline _::COut& operator<<(_::COut& o, _::TypeWordValue item);
-inline _::COut& operator<<(_::COut& o, _::COut& item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Centerf item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Rightf item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Linef item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Indentf item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Charsf item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Sizef item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::AErrorf item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::ATypef item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::ATypeValue item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::ATypePtr item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::COut& item);
+template<typename T, typename CH>
+inline ::_::COut& operator<<(::_::COut& o, ::_::TSizeCodef<T, CH> item);
 #endif
 #endif
 #endif

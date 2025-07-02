@@ -1,30 +1,31 @@
-// Copyright Kabuki Starship™ <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #if SEAM >= SCRIPT2_UNIPRINTER
 #include "../Uniprinter.hpp"
+#include "../Array.hpp"
 #if SEAM == SCRIPT2_UNIPRINTER
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
 
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 #if SEAM >= SCRIPT2_UNIPRINTER
 template<typename CHT = CHR, typename IS = ISR>
-static const CHA* TestSPrinter() {
-  D_COUT(Linef('-') << "\n\n\nTesting UTF<CH" << sizeof(CHT) << ",IS"
+static const CHA* TestSPrinterCH() {
+  D_COUT(Linef('-') << "\n\n\nTesting UTF<CH" << CSizeCodef<CHT>() << ",IS"
                     << sizeof(IS) << ">\n\n"
                     << Linef('-'));
   enum {
-    Count = 512,
+    Count = ATypeCodomainTotal,
   };
   CHT str_a[Count];
   static const CHT Testing123[] = { 'T', 'e', 's', 't', 'i', 'n',
                                      'g', ' ', '1', ',', ' ', '2',
                                      ',', ' ', '3', '.', NIL };
 
-  D_ARRAY_WIPE(str_a, Count * sizeof(CHT));
+  D_RAM_WIPE(str_a, Count * sizeof(CHT));
   TSPrint<CHT>(str_a, Count, Testing123);
   D_COUT(Charsf(str_a, 64));
 
@@ -44,23 +45,23 @@ static const CHA* TestSPrinter() {
                                      {'A', 'p', 'p', 'l', 'e', 's', NIL}}};
   const CHT* cursor;
   for (ISC i = 0; i < TestStringsCount; ++i) {
-    D_ARRAY_WIPE(str_a, Count * sizeof(CHT));
+    D_RAM_WIPE(str_a, Count * sizeof(CHT));
     cursor = TSPrintString<CHT>(str_a, str_a + Count, TestStrings[i][0]);
     D_COUT(Charsf(str_a, 64));
     Test(cursor);
-    cursor = TSTREquals<CHT>(str_a, TestStrings[i][0]);
+    cursor = TStringEquals<CHT>(str_a, TestStrings[i][0]);
     Test(cursor);
   }
 
-  D_COUT(Headingf("Testing TSPrinter<CHT, ISZ>")
-         << "\n\nExpecting \"" << Testing123 << '\"');
+  D_COUT(Headingf("Testing TSPrinter<CHT, ISZ>") <<
+         "\n\nExpecting \"" << Testing123 << '\"');
   static const CHT CommaSpace[] = {',', ' ', NIL};
 
-  const CHT kTestingSpace[] = {'T', 'e', 's', 't', 'i', 'n', 'g', ' ', NIL};
+  const CHT TestingSpace[] = {'T', 'e', 's', 't', 'i', 'n', 'g', ' ', NIL};
 
-  D_ARRAY_WIPE(str_a, Count * sizeof(CHT));
+  D_RAM_WIPE(str_a, Count * sizeof(CHT));
 
-  utf.Set(str_a).Print(kTestingSpace);
+  utf.Set(str_a).Print(TestingSpace);
   utf.Print(1);
   utf.Print(CommaSpace);
   utf.Print(2);
@@ -68,11 +69,11 @@ static const CHA* TestSPrinter() {
   utf.Print(3);
   utf.Print('.');
 
-  utf.Set(str_a) << kTestingSpace << 1 << CommaSpace << 2 << ", " << 3 << '.';
+  utf.Set(str_a) << TestingSpace << 1 << CommaSpace << 2 << ", " << 3 << '.';
   D_COUT(Charsf(str_a, 64));
   A_AVOW(Testing123, str_a);
 
-  D_COUT("\n\nTesting TSTREquals<CHT>");
+  D_COUT("\n\nTesting TStringEquals<CHT>");
 
   const CHT CompareStrings[4][9] = {
       {'T', 'e', 's', 't', 'i', 'n', 'g', NIL, NIL},
@@ -81,21 +82,21 @@ static const CHA* TestSPrinter() {
       {'T', 'e', 'x', 't', 'i', 'n', 'g', '@', NIL},
   };
 
-  A_ASSERT(!TSTREquals<CHT>(CompareStrings[0], CompareStrings[1]));
-  A_ASSERT(!TSTREquals<CHT>(CompareStrings[0], CompareStrings[3]));
-  A_ASSERT(TSTREquals<CHT>(CompareStrings[0], CompareStrings[0]));
-  A_ASSERT(!TSTREquals<CHT>(CompareStrings[2], CompareStrings[3]));
-  A_ASSERT(TSTREquals<CHT>(CompareStrings[2], CompareStrings[2]));
+  A_ASSERT(!TStringEquals<CHT>(CompareStrings[0], CompareStrings[1]));
+  A_ASSERT(!TStringEquals<CHT>(CompareStrings[0], CompareStrings[3]));
+  A_ASSERT( TStringEquals<CHT>(CompareStrings[0], CompareStrings[0]));
+  A_ASSERT(!TStringEquals<CHT>(CompareStrings[2], CompareStrings[3]));
+  A_ASSERT( TStringEquals<CHT>(CompareStrings[2], CompareStrings[2]));
 
   const CHT Chars1to9[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', NIL};
-  A_AVOW(9, TSTRLength<CHT>(Chars1to9));
+  A_AVOW(9, TStringLength<CHT>(Chars1to9));
 
-  D_COUT("\n\nTesting TSTRFind<CHT>");
+  D_COUT("\n\nTesting TStringFind<CHT>");
 
   const CHT One[] = {'1', ',', NIL};
   const CHT ThreePeriod[] = {'3', '.', NIL};
-  A_ASSERT(TSTRFind<CHT>(Testing123, One));
-  A_ASSERT(TSTRFind<CHT>(Testing123, ThreePeriod));
+  A_ASSERT(TStringFind<CHT>(Testing123, One));
+  A_ASSERT(TStringFind<CHT>(Testing123, ThreePeriod));
 
   D_COUT(Headingf("Testing TPrintRight<CHT>"));
 
@@ -115,11 +116,11 @@ static const CHA* TestSPrinter() {
 
   ISC shift_right = 6;
   for (ISC i = 0; i < 12; ++i) {
-    D_ARRAY_WIPE(str_a, (ISW)(Count * sizeof(CHT)));
-    cursor = TPrintRight<CHT>(str_a, str_a + Count - 1, kTestingSpace, i + 1);
+    D_RAM_WIPE(str_a, (ISW)(Count * sizeof(CHT)));
+    cursor = TPrintRight<CHT>(str_a, str_a + Count - 1, TestingSpace, i + 1);
     D_ASSERT_INDEX(cursor, i);
     D_COUT(Charsf(str_a, 64)
-           << "\n    Wrote:\"" << str_a << "\":" << TSTRLength<CHT>(str_a));
+           << "\n    Wrote:\"" << str_a << "\":" << TStringLength<CHT>(str_a));
     A_AVOW_INDEX(&RightAligned[i][0], str_a, i);
   }
   D_COUT(Headingf("Testing TPrintCenter<CHT>"));
@@ -143,162 +144,276 @@ static const CHA* TestSPrinter() {
                                     '6', '7', '8', '9', NIL};
 
   for (ISC i = 12; i >= 0; --i) {
-    D_ARRAY_WIPE(str_a, Count * sizeof(CHT));
+    D_RAM_WIPE(str_a, Count * sizeof(CHT));
     cursor = TPrintCenter<CHT>(str_a, str_a + Count - 1, Numbers1To9, i + 1);
     D_ASSERT_INDEX(cursor, i);
     D_COUT(Charsf(str_a, 64)
-           << "\n    Wrote:\"" << str_a << "\":" << TSTRLength<CHT>(str_a));
+           << "\n    Wrote:\"" << str_a << "\":" << TStringLength<CHT>(str_a));
     A_AVOW_INDEX(&CenterAligned[i][0], str_a, i);
   }
 
-  return nullptr;
+  return NILP;
 }
 
 static const CHA* TestSPrinter() {
-  A_TEST_BEGIN;
-  if (TestSPrinter<CHA, ISC>()) return "Error testing SPrinter UTF-8.";
-#if USING_UTF16 == YES_0
-  if (TestSPrinter<CHB, ISC>()) return "Error testing SPrinter UTF-16.";
+#if USING_STA == YES_0
+  { const CHA* result = TestSPrinterCH<CHA, ISC>(); if (result) return result; }
 #endif
-#if USING_UTF32 == YES_0
-  if (TestSPrinter<CHC, ISC>()) return "Error testing SPrinter UTF-32.";
+#if USING_STB == YES_0
+  { const CHA* result = TestSPrinterCH<CHB, ISC>(); if (result) return result; }
 #endif
-  return nullptr;
+#if USING_STC == YES_0
+  { const CHA* result = TestSPrinterCH<CHC, ISC>(); if (result) return result; }
+#endif
+  return NILP;
 }
 
-static const char* TestATypefPOD() {
-  D_COUT("Testing ATypef...");
-  // ATypef was the first class that implemented the new Center and Right 
-  // functions that return Centerf and Right respectivly. I'm not very conserned
-  // about the types being printed right so much as I am in testing said
-  // funcationality.
-  CHA boofer[256] = {};
-  TSPrinter<CHA, ISW> p(boofer, 1024);
+static const CHA* TestATypefARY() {
+  D_COUT("\nPrinting ARY types...");
+  const ISW CTotal = 1024;
+  CHA boofer[CTotal] = {};
+  TSPrinter<CHA, ISW> p(boofer, CTotal);
 
-  D_COUT("\n\nPOD types...\n");
-  for (DTB i = 1 << 0; i < 32; ++i) {
-    D_COUT('\n' << i << ':');
-    D_COUT(TPrintAType<_::COut>(StdOut(), i));
-  }
-  return nullptr;
-}
-
-static const char* TestATypefARY() {
-  CHA boofer[256] = {};
-  TSPrinter<CHA, ISW> p(boofer, 1024);
-
-  D_COUT("\n\nARY types...\n");
-  for (DTB i = 0; i < 32; ++i) {
+  for (DTB i = 1; i < 32; ++i) {
     DTB vt_bits = 1 << ATypeVTBit0;
     D_COUT('\n' << i << ':');
-    DTB t_1 = i | vt_bits | (1 << ATypeSWBit0),
-        t_2 = i | vt_bits | (2 << ATypeSWBit0),
-        t_3 = i | vt_bits | (3 << ATypeSWBit0);
-    D_COUT("\n    0x" << Hexf(t_1) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_1));
-    D_COUT("\n    0x" << Hexf(t_2) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_2));
-    D_COUT("\n    0x" << Hexf(t_3) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_3));
+    DTB t_0 = i | vt_bits,
+        t_1 = (1 << ATypeSWBit0) | t_0,
+        t_2 = (2 << ATypeSWBit0) | t_0,
+        t_3 = (3 << ATypeSWBit0) | t_0;
+    D_COUT('\n' << i << ':' <<
+           "\n    0x" << Hexf(t_0) << ' ' <<
+           ATypef(t_0) <<
+           "\n    0x" << Hexf(t_1) << ' ' <<
+           ATypef(t_1) << 
+           "\n    0x" << Hexf(t_2) << ' ' <<
+           ATypef(t_2) << 
+           "\n    0x" << Hexf(t_3) << ' ' <<
+           ATypef(t_3));
   }
-  return nullptr;
+  return NILP;
 }
 
-static const char* TestATypefVHT() {
-  CHA boofer[256] = {};
-  TSPrinter<CHA, ISW> p(boofer, 1024);
+static const CHA* TestATypefVHT() {
+  D_COUT("\n\nPrinting VHT types...");
+  const ISW CTotal = 1024;
+  CHA boofer[CTotal] = {};
+  TSPrinter<CHA, ISW> p(boofer, CTotal);
 
-  D_COUT("\n\nVHT types...\n");
-  for (DTB i = 0; i < 32; ++i) {
-    D_COUT('\n' << i << ':');
-    DTB vt_bits = 1 << ATypeVTBit0;
-    DTB t_1 = i | vt_bits | (1 << ATypeSWBit0),
-        t_2 = i | vt_bits | (2 << ATypeSWBit0),
-        t_3 = i | vt_bits | (3 << ATypeSWBit0);
-    D_COUT("\n    0x" << Hexf(t_1) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_1));
-    D_COUT("\n    0x" << Hexf(t_2) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_2));
-    D_COUT("\n    0x" << Hexf(t_3) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_3));
+  for (DTB i = 1; i < 32; ++i) {
+    DTB t_1 = (1 << ATypeSWBit0) | i,
+        t_2 = (2 << ATypeSWBit0) | i,
+        t_3 = (3 << ATypeSWBit0) | i;
+    D_COUT('\n' << i << ':' <<
+           "\n    0x" << Hexf(i) << ' ' <<
+           ATypef(i) <<
+           "\n    0x" << Hexf(t_1) << ' ' <<
+           ATypef(t_1) << 
+           "\n    0x" << Hexf(t_2) << ' ' <<
+           ATypef(t_2) << 
+           "\n    0x" << Hexf(t_3) << ' ' <<
+           ATypef(t_3));
   }
-  return nullptr;
+  return NILP;
 }
 
-static const char* TestATypefSCK() {
-  CHA boofer[256] = {};
-  TSPrinter<CHA, ISW> p(boofer, 1024);
+static const CHA* TestATypefSCK() {
+  D_COUT("\n\nPrinting SCK types...");
+  const ISW CTotal = 1024;
+  CHA boofer[CTotal] = {};
+  TSPrinter<CHA, ISW> p(boofer, CTotal);
 
-  D_COUT("\n\nSCK types...\n");
-  for (DTB i = 0; i < 32; ++i) {
-    DTB vt_bits = 2 << ATypeVTBit0,
-        t_1 = i | vt_bits | (1 << ATypeSWBit0),
-        t_2 = i | vt_bits | (2 << ATypeSWBit0),
-        t_3 = i | vt_bits | (3 << ATypeSWBit0);;
-    D_COUT('\n' << i << ':');
-    D_COUT("\n    0x" << Hexf(t_1) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_1));
-    D_COUT("\n    0x" << Hexf(t_2) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_2));
-    D_COUT("\n    0x" << Hexf(t_3) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_3));
+  for (DTB i = 1; i < ATypePODTotal; ++i) {
+    DTB vt_bits = _SCK << ATypeVTBit0,
+        t_0 = vt_bits | i,
+        t_1 = (1 << ATypeSWBit0) | t_0,
+        t_2 = (2 << ATypeSWBit0) | t_0,
+        t_3 = (3 << ATypeSWBit0) | t_0;
+    D_COUT('\n' << i << ':' <<
+           "\n    0x" << Hexf(t_0) << ' ' <<
+           ATypef(t_0) <<
+           "\n    0x" << Hexf(t_1) << ' ' <<
+           ATypef(t_1) << 
+           "\n    0x" << Hexf(t_2) << ' ' <<
+           ATypef(t_2) << 
+           "\n    0x" << Hexf(t_3) << ' ' <<
+           ATypef(t_3));
   }
-  return nullptr;
+  return NILP;
 }
 
-static const char* TestATypefMTX() {
-  CHA boofer[256] = {};
-  TSPrinter<CHA, ISW> p(boofer, 1024);
+static const CHA* TestATypefMTX() {
+  D_COUT("\n\nPrinting MTX types...");
+  const ISW CTotal = 1024;
+  CHA boofer[CTotal] = {};
+  TSPrinter<CHA, ISW> p(boofer, CTotal);
 
-  D_COUT("\n\nMTX types...\n");
-  for (DTB i = 0; i < ATypePODCount; ++i) {
-    DTB vt_bits = 3 << ATypeVTBit0;
-    D_COUT('\n' << i << ':');
-    //
-    DTB t_1 = i | vt_bits | (1 << ATypeSWBit0),
-        t_2 = i | vt_bits | (2 << ATypeSWBit0),
-        t_3 = i | vt_bits | (3 << ATypeSWBit0);
-    D_COUT("\n    0x" << Hexf(t_1) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_1));
-    D_COUT("\n    0x" << Hexf(t_2) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_2));
-    D_COUT("\n    0x" << Hexf(t_3) << ' ');
-    D_COUT(TPrintAType<_::COut>(StdOut(), t_3));
+  for (DTB i = 1; i < ATypePODTotal; ++i) {
+    DTB t_0 = (_MTX << ATypeVTBit0) | i,
+        t_1 = (1 << ATypeSWBit0) | t_0,
+        t_2 = (2 << ATypeSWBit0) | t_0,
+        t_3 = (3 << ATypeSWBit0) | t_0;
+    D_COUT('\n' << i << ':' <<
+           "\n    0x" << Hexf(t_0) << ' ' <<
+           ATypef(t_0) <<
+           "\n    0x" << Hexf(t_1) << ' ' <<
+           ATypef(t_1) << 
+           "\n    0x" << Hexf(t_2) << ' ' <<
+           ATypef(t_2) << 
+           "\n    0x" << Hexf(t_3) << ' ' <<
+           ATypef(t_3));
   }
-  return nullptr;
+  return NILP;
 }
 
-static const char* TestATypeMaps() {
-  CHA boofer[256] = {};
-  TSPrinter<CHA, ISW> p(boofer, 1024);
-
-  D_COUT("\n\nMap types...\n");
+static const CHA* TestATypeMaps() {
+  D_COUT("\n\nTesting MAP types...");
+  const ISW CTotal = 1024;
+  CHA boofer[CTotal] = {};
+  TSPrinter<CHA, ISW> p(boofer, CTotal);
   const DTB Step = 8;
+  for (DTB map_type = 1; map_type < ATypePODTotal; map_type += Step) {
+    D_COUT("\nMap of " << TATypePODs<>(map_type) << " to:");
+    for (DTB pod_type = 1; pod_type < ATypePODTotal; ++pod_type) {
+      DTB type = (pod_type << ATypeMTBit0) | _IUA;
+      D_COUT("\n  " << ATypef(type));
+    }
+  }
+  return NILP;
+}
 
-  for (DTB MT = 1; MT < ATypePODCount; MT += Step) { //[j][i]
-    for (DTB PT = 1; PT < ATypePODCount; PT += Step) {
-      D_COUT("\n[" << STAATypesPOD(MT) << "->" << STAATypesPOD(PT) <<
-        ']');
-      for (DTB SW = 0; SW <= 3; ++SW) {
-        DTB type = MT << ATypeMTBit0 | SW << ATypeSWBit0 | PT;
-        D_COUT("\n    0x" << Hexf(type) << 
-               " 0b" << Binaryf(type) << ' ');
-        D_COUT(TPrintAType<_::COut>(StdOut(), type));
+static const DTB TestATypeEXTContains(DTB* ext_start, DTB* ext_stop, DTB type) {
+  while (ext_start < ext_stop) {
+    DTB t = *ext_start++;
+    if (type == t) return t;
+  }
+  return 0;
+}
+
+static const CHA* TestATypeEXT() {
+  D_COUT("\n\nTesting Extended Types...");
+  const ISW CTotal = 1024;
+  DTB t = 0;
+  D_COUT("\n\nTesting Plain Context types...");
+
+  D_COUT("\nTesting Block A.Bottom...");
+  for (DTB sw_vt = 1; sw_vt <= 3; ++sw_vt) {
+    for (DTB pod = _PCe; pod <= _PCl; ++pod) {
+      A_AVOW(t++, ATypeToEXT(sw_vt, pod));
+    }
+  }
+  D_COUT("\nTesting Block C...");
+  for (DTB sw_vt = 10; sw_vt <= 11; ++sw_vt) {
+    for (DTB pod = _PCa; pod <= _PCd; ++pod)
+      A_AVOW(t++, ATypeToEXT(sw_vt, pod));
+  }
+  D_COUT("\nTesting Block A.Middle...");
+  for (DTB sw_vt = 5; sw_vt <= 7; ++sw_vt) {
+    for (DTB pod = _PCe; pod <= _PCl; ++pod)
+      A_AVOW(t++, ATypeToEXT(sw_vt, pod));
+  }
+  D_COUT("\nTesting Block D...");
+  for (DTB sw_vt = 6; sw_vt <= 7; ++sw_vt) {
+    for (DTB pod = _PCa; pod <= _PCd; ++pod)
+      A_AVOW(t++, ATypeToEXT(sw_vt, pod));
+  }
+  D_COUT("\nTesting Block A.Top...");
+  for (DTB sw_vt = 9; sw_vt <= 1; ++sw_vt) {
+    for (DTB pod = _PCe; pod <= _PCl; ++pod)
+      A_AVOW(t++, ATypeToEXT(sw_vt, pod));
+  }
+  D_COUT("\nTesting Block B.Bottom...");
+  for (DTB sw_vt = 1; sw_vt <= 3; ++sw_vt) {
+    for (DTB pod = _PCa; pod <= _PCd; ++pod)
+      A_AVOW(t++, ATypeToEXT(sw_vt, pod));
+  }
+  D_COUT("\nTesting Block E...");
+  for (DTB pod = _PCa; pod <= _PCd; ++pod) {
+    A_AVOW(t++, ATypeToEXT(9, pod));
+  }
+  D_COUT("\nTesting Block B.Top...");
+  for (DTB pod = _PCa; pod <= _PCd; ++pod) {
+    A_AVOW(t++, ATypeToEXT(5, pod));
+  }
+
+  D_COUT("\n\nTesting Extended Standard types...");
+  t = 0;
+
+  D_COUT("\nTesting Block F.Bottom...");
+  for (DTB sw_vt = 1; sw_vt <= 3; ++sw_vt) {
+    for (DTB pod = _FPD; pod <= _TME; ++pod)
+      A_AVOW(t--, ATypeToEXT(sw_vt, pod));
+  }
+  D_COUT("\nTesting Block H...");
+  for (DTB pod = _FPB; pod <= _CHB; ++pod)
+    A_AVOW(t--, ATypeToEXT(1, pod));
+  for (DTB pod = _FPC; pod <= _CHC; ++pod)
+    A_AVOW(t--, ATypeToEXT(5, pod));
+
+  D_COUT("\nTesting Block F.Top...");
+  for (DTB pod = _FPD; pod <= _TME; ++pod)
+    A_AVOW(t--, ATypeToEXT(5, pod));
+
+  D_COUT("\nTesting Block G...");
+  for (DTB sw_vt = 1; sw_vt <= 3; ++sw_vt) {
+    for (DTB pod = _FPC; pod <= _CHC; ++pod) {
+      A_AVOW(t--, ATypeToEXT(sw_vt, pod));
+    }
+  }
+
+  D_COUT("\n\nTesting Standard Types...");
+  DTB nonextended_bounds[16] = {
+    _PCl,
+    _CHA,
+    _CHB,
+    _CHB,
+    _PCl,
+    _CHB,
+    _TME,
+    _TME,
+    _PCl,
+    _TME,
+    _TME,
+    _TME,
+    _PCl,
+    _PCl,
+    _PCl,
+    _PCl
+  };
+  for (DTB sw_vt = 0; sw_vt <= 15; ++sw_vt) {
+    DTB last_nonextended = nonextended_bounds[sw_vt];
+    DTB pod = 0;
+    for (; pod <= last_nonextended; ++pod) {
+      A_AVOW(DTB(0), ATypeToEXT(sw_vt, pod));
+    }
+    if(sw_vt < 12 && sw_vt & 3) {
+      for (; pod <= _TME; ++pod) {
+        if (!(sw_vt == 1 && pod == _FPD)) {
+          DTB result = ATypeToEXT(sw_vt, pod);
+          A_ASSERT(result < 0);
+        }
+      }
+      for (; pod <= _PCl; ++pod) {
+        if(!(sw_vt == 1 && pod == _PCe)) {
+          DTB result = ATypeToEXT(sw_vt, pod);
+          A_ASSERT(result > 0);
+        }
       }
     }
   }
-  return nullptr;
+
+  return NILP;
 }
 
 static const CHA* TestPrintAType() {
-  D_COUT("Testing ATypef...");
-  D_RUN(TestATypefPOD);
-  D_RUN(TestATypefVHT);
-  D_RUN(TestATypefARY);
-  D_RUN(TestATypefSCK);
-  D_RUN(TestATypefMTX);
-  D_RUN(TestATypeMaps);
-  return nullptr;
+  D_COUT("\n\nTesting ATypef...");
+  //A_RUN_TEST(TestATypefVHT);
+  //A_RUN_TEST(TestATypefARY);
+  //A_RUN_TEST(TestATypefSCK);
+  //A_RUN_TEST(TestATypefMTX);
+  //A_RUN_TEST(TestATypeMaps);
+  A_RUN_TEST(TestATypeEXT);
+  return NILP;
 }
 
 static const CHA* TestProblemChildren() {
@@ -321,16 +436,18 @@ static const CHA* TestProblemChildren() {
     D_COUT(boofer);
     p.Reset();
   }
-  return nullptr;
+  return NILP;
 }
+
 #endif  //< #if SEAM >= SCRIPT2_UNIPRINTER
 
 static const CHA* Uniprinter(const CHA* args) {
+  A_TEST_BEGIN;
 #if SEAM >= SCRIPT2_UNIPRINTER
-  //D_RUN(TestPrintAType);
-  //D_RUN(TestSPrinter)
-  D_RUN(TestProblemChildren);
+  A_RUN_TEST(TestPrintAType);
+  //A_RUN_TEST(TestSPrinter);
+  //A_RUN_TEST(TestProblemChildren);
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

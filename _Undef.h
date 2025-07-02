@@ -1,7 +1,15 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 
+#undef ARY
+#undef SCK
+
+#undef D_
+#undef R_
 #undef D_THIS
 #undef A_TEST_BEGIN
+#undef A_RUN_TEST
+#undef D_RUN_TEST
+#undef R_RUN_TEST
 #undef D_PAUSE
 #undef D_COUT
 #undef D_COUT_NL
@@ -11,7 +19,9 @@
 #undef D_COUT_FUNCTION
 #undef D_COUT_FUNCTION_LINE
 #undef D_COUT_ARRAY
+#undef D_COUT_ARRAY_LINES
 #undef D_COUT_STACK
+#undef D_COUT_STRING
 #undef D_COUT_MATRIX
 #undef D_COUT_LIST
 #undef D_COUT_LOOM
@@ -20,8 +30,11 @@
 #undef D_COUT_BOOK
 #undef D_COUT_DIC
 #undef D_ARRAY_SAVE
-#undef D_ARRAY_FILL
-#undef D_ARRAY_WIPE
+#undef D_ARY_FILL
+#undef D_RAM_WIPE
+#undef D_ARY_WIPE
+#undef D_SCK_WIPE
+#undef D_STR_WIPE
 #undef D_OBJ_WIPE
 #undef A_CHECK
 #undef D_CHECK
@@ -39,6 +52,9 @@
 #undef A_AVOW
 #undef D_AVOW
 #undef R_AVOW
+#undef A_AVOW_NOT
+#undef D_AVOW_NOT
+#undef R_AVOW_NOT
 #undef A_AVOW_INDEX
 #undef R_AVOW_INDEX
 #undef D_AVOW_INDEX
@@ -64,6 +80,8 @@
 #undef D_CHECK_CPTR_RETURN
 #undef D_CHECK_TPTR_RETURN
 #undef D_CHECK_PTR_RETURN_NIL
+//
+#undef SCRIPT2_FAIL
 
 //@todo Delete me!
 //enum

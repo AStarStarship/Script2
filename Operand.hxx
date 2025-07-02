@@ -1,17 +1,17 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #include "Operand.h"
 #if SEAM >= SCRIPT2_CRABS
 #include "Op.hpp"
 #if SEAM == SCRIPT2_CRABS
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 namespace _ {
 
 const CHA* OperandName(Operand* operand) {
   A_ASSERT(operand);
-  const Op* op = operand->Star('?', nullptr);
+  const Op* op = operand->Star('?', NILP);
   A_ASSERT(op);
 
   return op->name;
@@ -19,19 +19,19 @@ const CHA* OperandName(Operand* operand) {
 
 IUW OperandCount(Operand* operand) {
   A_ASSERT(operand);
-  const Op* op = operand->Star(0, nullptr);
-  return (op == nullptr) ? 0 : IUW(op->in);
+  const Op* op = operand->Star(0, NILP);
+  return (op == NILP) ? 0 : IUW(op->in);
 }
 
 CHC OperandIndex(Operand* operand, CHA* origin, CHA* stop) {
   A_ASSERT(operand);
-  const Op* op = operand->Star('?', nullptr);
+  const Op* op = operand->Star('?', NILP);
   A_ASSERT(op);
   CHC index = OpFirst(op),
       last  = OpLast (op);
   A_ASSERT(index);
   for (; index <= last; ++index) {
-    if (TSTREquals<CHA>(origin, stop, operand->Star(index, nullptr)->name)) {
+    if (TStringEquals<CHA>(origin, stop, operand->Star(index, NILP)->name)) {
       return index;
     }
   }
@@ -55,7 +55,7 @@ UTF& Print (UTF& utf, const Operand* op) {
 UTF1& PrintOperand(UTF1& utf, Operand* operand) {
   A_ASSERT(operand);
 
-  const Op* op = operand->Star('?', nullptr);
+  const Op* op = operand->Star('?', NILP);
 
   A_ASSERT(op);
 
@@ -66,7 +66,7 @@ UTF1& PrintOperand(UTF1& utf, Operand* operand) {
   }
   utf << "\nOperand         :" << op->name << Line('-', 80);
   for (; op_num <= last_op; ++op_num) {
-    op = operand->Star((CHC)op_num, nullptr);
+    op = operand->Star((CHC)op_num, NILP);
     utf << "\nOp \'" << op_num << "\':" << op_num << ' ' << op << Line('-', 80);
   }
   return utf;
@@ -77,12 +77,12 @@ Slot& OperandQuery(Operand* root, const CHA* address, Slot& slot) {
   A_ASSERT(root);
 
   ISC index = *address++;
-  const Op* op = root->Star(index, nullptr);
+  const Op* op = root->Star(index, NILP);
   CHA socket[1024];
   D_COUT(op->name)
   index = *address++;
   while (index) {
-    op = root->Star(index, nullptr);
+    op = root->Star(index, NILP);
     A_ASSERT(op);
     D_COUT('.' << op->name)
     index = *address++;

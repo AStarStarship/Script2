@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_CIN_DECL
-#define SCRIPT2_CIN_DECL
+#define SCRIPT2_CIN_DECL 1
 #include "COut.h"
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
 namespace _ {
@@ -41,16 +41,16 @@ class LIB_MEMBER CIn {
   /* Pauses until any key is pressed. */
   CIn();
 
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
   CIn(CHA& result);
   /* CIns a string with a larger boofer than the */
   CIn(CHA* result, ISW boofer_size);
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   CIn(CHB& result);
   CIn(CHB* result, ISW boofer_size);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   CIn(CHC& result);
   CIn(CHC* result, ISW boofer_size);
 #endif
@@ -71,21 +71,21 @@ class LIB_MEMBER CIn {
   CIn(FPD& result);
 #endif
 
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
   /* Reads the character from the CIn stream. */
   LIB_MEMBER static BOL SScan(CHA& result);
 
   /* Reads the string with the given boofer_size from the CIn stream. */
   static LIB_MEMBER BOL SScan(CHA* result, ISW boofer_size);
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   /* Reads the character from the CIn stream. */
   static LIB_MEMBER BOL SScan(CHB& result);
 
   /* Reads the string with the given boofer_size from the CIn stream. */
   static LIB_MEMBER BOL SScan(CHB* result, ISW boofer_size);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   /* Reads the character from the CIn stream. */
   static LIB_MEMBER BOL SScan(CHC& result);
 
@@ -289,10 +289,10 @@ struct KeyId {
 
 }  //< namespace _
 
-_::COut& operator<<(_::COut& o, _::CIn i);
-_::COut& operator<<(_::COut& o, _::CIn& i);
+::_::COut& operator<<(::_::COut& o, ::_::CIn i);
+::_::COut& operator<<(::_::COut& o, ::_::CIn& i);
 
-_::COut& operator<<(_::COut& o, _::Pausef& i);
+::_::COut& operator<<(::_::COut& o, ::_::Pausef& i);
 
 #endif
 #endif

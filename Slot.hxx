@@ -1,33 +1,33 @@
-// Copyright Kabuki Starship� <kabukistarship.com>.
+// Copyright Kabuki Starship <kabukistarship.com>.
 #include "Slot.hpp"
 #if SEAM >= SCRIPT2_CRABS
 //#include "String.hpp"
-//#include "Types.h"
+//#include "AType.h"
 #if SEAM == SCRIPT2_CRABS
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 namespace _ {
 
 const Op* ReturnError(Slot* slot, ERC error) {
-  D_COUT('\n' << TSTRError<CHR>()[error]);
+  D_COUT('\n' << TStringError<CHR>()[error]);
   return OpError(error);
 }
 
 const Op* ReturnError(Slot* slot, ERC error, const ISC* header) {
-  D_COUT('\n' << TSTRError<CHR>()[error]);
+  D_COUT('\n' << TStringError<CHR>()[error]);
   return OpError(error);
 }
 
 const Op* ReturnError(Slot* slot, ERC error, const ISC* header, IUA offset) {
-  D_COUT('\n' << TSTRError<CHR>()[error]);
+  D_COUT('\n' << TStringError<CHR>()[error]);
   return OpError(error);
 }
 
 const Op* ReturnError(Slot* slot, ERC error, const ISC* header, ISC offset,
                       IUA* address) {
-  D_COUT('\n' << TSTRError<CHR>()[error]);
+  D_COUT('\n' << TStringError<CHR>()[error]);
   return OpError(error);
 }
 
@@ -62,11 +62,11 @@ Slot::Slot(BOut* bout) {
 void* Slot::Contains(void* address) {
   IUA* origin = TPtr<IUA>(this,  sizeof(Slot));
   if (address < origin) {
-    return nullptr;
+    return NILP;
   }
   IUA* l_end = stop;
   if (address > l_end) {
-    return nullptr;
+    return NILP;
   }
   return address;
 }
@@ -88,7 +88,7 @@ const Op* Slot::Write(const ISC* params, void** args) {
 
   A_ASSERT(false);
   // @todo Write me!
-  return nullptr;
+  return NILP;
 }
 
 BOL Slot::IsWritable() {
@@ -108,13 +108,13 @@ BOL Slot::IsReadable() { return origin != stop; }
                     IUA* const origin, IUA* const stop , IUA* const stop,
                     ISW size) {
     if (!slot) {
-        return nullptr;
+        return NILP;
     }
     if (!write) {
-        return nullptr;
+        return NILP;
     }
     if (write > write_end) {
-        return nullptr;
+        return NILP;
     }
 
     if ((origin > stop) && (origin + size >= stop)) {
@@ -122,12 +122,12 @@ BOL Slot::IsReadable() { return origin != stop; }
         ISW top_chunk = stop - stop;
         size -= top_chunk;
 
-        RAMCopy (target, target_end, origin, top_chunk);
-        RAMCopy (TPtr<IUA>(target) + top_chunk, size,
+        ArrayCopy (target, target_end, origin, top_chunk);
+        ArrayCopy (TPtr<IUA>(target) + top_chunk, size,
                     origin);
         return origin + size;
     }
-    RAMCopy (target, target_end, stop, size);
+    ArrayCopy (target, target_end, stop, size);
     return origin + size;
 }*/
 
@@ -368,7 +368,7 @@ const Op* Slot::Read(const ISC* params, void** args) {
         }
         // We don't care if it's a multidimensional array anymore.
         iua_ptr = TPtr<IUA>(args[index]);
-        if (iua_ptr == nullptr)
+        if (iua_ptr == NILP)
           return ReturnError(this, ErrorImplementation, params, index,
                              l_start);
         count &= 0x3;
@@ -484,9 +484,9 @@ const Op* Slot::Read(const Op& op, void** args) { return Read(op.in, args); }
 
 const Op* Slot::Write(const Op& op, void** args) { return Write(op.out, args); }
 
-const Op* Slot::Write(Slot& other) { return nullptr; }
+const Op* Slot::Write(Slot& other) { return NILP; }
 
-const Op* Slot::Write(const IUA* message) { return nullptr; }
+const Op* Slot::Write(const IUA* message) { return NILP; }
 
 #if USING_SCRIPT2_TEXT
 UTF1& Slot::Print(UTF1& utf) {
