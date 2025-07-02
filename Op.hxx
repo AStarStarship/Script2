@@ -5,9 +5,9 @@
 #include "Slot.h"
 #include "Test.h"
 #if SEAM == SCRIPT2_DIC
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 namespace _ {
 

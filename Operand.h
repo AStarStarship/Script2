@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_OPERAND_DECL
-#define SCRIPT2_OPERAND_DECL
+#define SCRIPT2_OPERAND_DECL 1
 #include "Slot.h"
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {

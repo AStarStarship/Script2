@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_CRABS_DECL
-#define SCRIPT2_CRABS_DECL
+#define SCRIPT2_CRABS_DECL 1
 #include "Operand.h"
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {
@@ -207,7 +207,7 @@ inline const Op* CrabsResult(Crabs* crabs, const Op& op, void** args) {
 @param args Pointers to the B-Sequence args. */
 inline const Op* CrabsResult(Crabs* crabs, const ISC* params, void** args) {
   if (!params) {
-    return nullptr;
+    return NILP;
   }
   return BOutWrite(CrabsBOut(crabs), params, args);
 }
@@ -219,7 +219,7 @@ inline const Op* CrabsResult(Crabs* crabs, const ISC* params, void** args) {
 @param args Pointers to the B-Sequence args. */
 inline const Op* CrabsResult(Crabs* crabs, const Op* op, void** args) {
   if (!op) {
-    return nullptr;
+    return NILP;
   }
   return BOutWrite(CrabsBOut(crabs), op->out, args);
 }

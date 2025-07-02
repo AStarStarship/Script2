@@ -1,5 +1,10 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 
+#undef ARY
+#undef SCK
+
+#undef D_
+#undef R_
 #undef D_THIS
 #undef A_TEST_BEGIN
 #undef A_RUN_TEST
@@ -14,7 +19,9 @@
 #undef D_COUT_FUNCTION
 #undef D_COUT_FUNCTION_LINE
 #undef D_COUT_ARRAY
+#undef D_COUT_ARRAY_LINES
 #undef D_COUT_STACK
+#undef D_COUT_STRING
 #undef D_COUT_MATRIX
 #undef D_COUT_LIST
 #undef D_COUT_LOOM
@@ -23,8 +30,11 @@
 #undef D_COUT_BOOK
 #undef D_COUT_DIC
 #undef D_ARRAY_SAVE
-#undef D_ARRAY_FILL
-#undef D_ARRAY_WIPE
+#undef D_ARY_FILL
+#undef D_RAM_WIPE
+#undef D_ARY_WIPE
+#undef D_SCK_WIPE
+#undef D_STR_WIPE
 #undef D_OBJ_WIPE
 #undef A_CHECK
 #undef D_CHECK

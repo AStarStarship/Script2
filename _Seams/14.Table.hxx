@@ -4,11 +4,11 @@
 //
 #include "./TestWords.h"
 #if SEAM == SCRIPT2_TABLE
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
 template<TBL_A>
@@ -142,19 +142,19 @@ static const CHA* Table(const CHA* args) {
 #if SEAM >= SCRIPT2_TABLE
   A_TEST_BEGIN;
 
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
   TestTable<CHA, ISC, ISB, IUC>();
   TestTable<CHA, ISD, ISC, IUD>();
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   TestTable<CHB, ISC, ISB, IUC>();
   TestTable<CHB, ISD, ISC, IUD>();
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   TestTable<CHC, ISC, ISB, IUC>();
   TestTable<CHC, ISD, ISC, IUD>();
 #endif
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_ARGS
-#define SCRIPT2_ARGS
+#define SCRIPT2_ARGS 1
 #include "BSeq.h"
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {

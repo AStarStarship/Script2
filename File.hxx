@@ -10,7 +10,7 @@
 #define stat _stat
 #endif
 
-namespace {
+namespace _ {
 File::File(const CHR* uri) : uri_(uri_) {}
 
 const CHR* File::URI() { return uri_; }
@@ -48,33 +48,33 @@ void File::Close() {}
 
 }  // namespace
 
-_::File& operator<<(_::File& o, CHA item) { return o.Print(item); }
-_::File& operator<<(_::File& o, const CHA* item) { return o.Print(item); }
-#if USING_UTF16 == YES_0
-_::File& operator<<(_::File& o, CHB item) { return o.Print(item); }
-_::File& operator<<(_::File& o, const CHB* item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, CHA item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, const CHA* item) { return o.Print(item); }
+#if USING_STB == YES_0
+::_::File& operator<<(::_::File& o, CHB item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, const CHB* item) { return o.Print(item); }
 #endif
-#if USING_UTF32 == YES_0
-_::File& operator<<(_::File& o, CHC item) { return o.Print(item); }
-_::File& operator<<(_::File& o, const CHC* item) { return o.Print(item); }
+#if USING_STC == YES_0
+::_::File& operator<<(::_::File& o, CHC item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, const CHC* item) { return o.Print(item); }
 #endif
-_::File& operator<<(_::File& o, ISC item) { return o.Print(item); }
-_::File& operator<<(_::File& o, IUC item) { return o.Print(item); }
-_::File& operator<<(_::File& o, ISD item) { return o.Print(item); }
-_::File& operator<<(_::File& o, IUD item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ISC item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, IUC item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ISD item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, IUD item) { return o.Print(item); }
 #if USING_FPC == YES_0
-_::File& operator<<(_::File& o, FPC item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, FPC item) { return o.Print(item); }
 #endif
 #if USING_FPD == YES_0
-_::File& operator<<(_::File& o, FPD item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, FPD item) { return o.Print(item); }
 #endif
-_::File& operator<<(_::File& o, _::Hexf item) { return o.Print(item); }
-_::File& operator<<(_::File& o, _::Binaryf item) { return o.Print(item); }
-_::File& operator<<(_::File& o, _::Centerf item) { return o.Print(item); }
-_::File& operator<<(_::File& o, _::Rightf item) { return o.Print(item); }
-_::File& operator<<(_::File& o, _::Linef item) { return o.Print(item); }
-_::File& operator<<(_::File& o, _::Headingf item) { return o.Print(item); }
-_::File& operator<<(_::File& o, _::Indentf item) { return o.Print(item); }
-_::File& operator<<(_::File& o, _::Charsf item) { return o.Print(item); }
-_::File& operator<<(_::File& o, _::File item) { return o; }
+::_::File& operator<<(::_::File& o, ::_::Hexf item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ::_::Binaryf item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ::_::Centerf item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ::_::Rightf item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ::_::Linef item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ::_::Headingf item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ::_::Indentf item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ::_::Charsf item) { return o.Print(item); }
+::_::File& operator<<(::_::File& o, ::_::File item) { return o; }
 #endif

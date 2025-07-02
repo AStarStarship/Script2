@@ -1,15 +1,15 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #if SEAM >= SCRIPT2_FTOS
-//#include "../RNG.h"
+#include "../RNG.h"
 #if SEAM == SCRIPT2_FTOS
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
 
 using namespace std;
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 const CHA* FtoS(const CHA* args) {
 #if SEAM >= SCRIPT2_FTOS
@@ -68,6 +68,6 @@ const CHA* FtoS(const CHA* args) {
   TBinary<>::PrintDebugInfo();
   */
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

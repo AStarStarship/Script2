@@ -1,120 +1,166 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #include <_Config.h>
-#ifndef SCRIPT2_STRING_TEMPLATES
-#define SCRIPT2_STRING_TEMPLATES
-#include "Array.hpp"
+#ifndef SCRIPT2_STRING_INLINE_CODE
+#define SCRIPT2_STRING_INLINE_CODE 1
+#include "Stack.hpp"
 #if SEAM >= SCRIPT2_STRING
 #include "Uniprinter.hpp"
-#include "Types.h"
+#include "AType.h"
 #if SEAM == SCRIPT2_STRING
-#include "_Debug.hxx"
-#define D_COUT_STRING(string) \
-  TStringPrint<COut, CHT, ISZ>(StdOut(), string)
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
-#define D_COUT_STRING(string)
+#include "_Release.h"
+#define D_COUT_STRING(s)
 #endif
+
+#define STR_A typename T=CHR, typename ISZ=ISC, typename ISY=ISZ
+#define STR_P T, ISZ, ISY
+#define STR TString<STR_P>
+
+//#define SND_A typename T = CHR, typename ISZ = ISC = ISC, typename ISY = ISB
+//#define SND_P T, ISZ, ISY
+//#define SND TRope<T, ISZ, ISY>
 namespace _ {
 
-/* An ASCII Object composed of a UTF-8/ASCII, UTF-16, or UTF-32 cursor. */
-template<typename ISZ>
+/* A ASCII str created from an ASCII Stack that doesn't keep track of the 
+number of Unicode characters. */
+template<STR_A>
 struct TString {
-  ISZ size;  //< Size of the ASCII Object.
+  ISZ total,  //< Total elements in the boofer.
+      count;  //< Count of characters in the boofer.
 };
 
-template<typename CH = CHR>
-const CH* TStringEmpty() {
-  static const CH empty_string[1] = { 0 };
-  return empty_string;
+/* A UTF-8 or UTF-16 ASCII str created from an ASCII Stack that keeps track 
+of the number of Unicode characters. */
+template<STR_A>
+struct TRope {
+  ISZ datum,  //< Memory alignment datum can be used for multiple purposes.
+      charc,  //< Unicode Character Count.
+      total,  //< Size of the str in bytes including the header.
+      count;  //< Count of elements in the boofer.
+};
+
+/* The ASCII Data Type for the given T, CHA, CHB, or CHC. */
+template<STR_A>
+constexpr DTB CATypeCH() {
+  return DTB((sizeof(T) == 1) ? _CHA :
+             (sizeof(T) == 2) ? _CHB : 
+             (sizeof(T) == 4) ? _CHC : 0);
 }
 
-/* The ASCII Data Type for the given CHT, CHA, CHB, or CHC. */
-/*template<typename CHT = CHR, typename DT = DTB>
-inline DT TATypeCH() {
-  return DT((sizeof(CHT) == 1) ? _CHA :
-            (sizeof(CHT) == 2) ? _CHB :
-            (sizeof(CHT) == 4) ? _CHC : 0);
-}*/
-template<typename CHT = CHR, typename DT = DTB>
-constexpr DT CATypeCH() {
-  return DT((sizeof(CHT) == 1) ? _CHA : 
-            (sizeof(CHT) == 2) ? _CHB : 
-            (sizeof(CHT) == 4) ? _CHC : 0);
+/* Gets the begin character in the str. */
+template<STR_A>
+inline T* TStringBegin(STR* str) {
+  return TStackBegin<SCK_P>(TPtr<TStack<SCK_P>>(str));
+}
+template<STR_A>
+inline const T* TStringBegin(const STR* str) {
+  return TStackBegin<SCK_P>(TPtr<TStack<SCK_P>>(str));
 }
 
-template<typename T, typename ISZ>
-inline ISZ TSizeBytes(TString<ISZ>* string) {
-  return TSizeBytes<T, ISZ, TString<ISZ>*>(TPtr<IUW>(string));
+/* Gets the first character in the str.
+template<STR_A>
+inline T* TStringStart(STR* str, ISZ count) {
+  return TStringBegin<STR_P>(str) + count;
 }
-template<typename T, typename ISZ>
-inline ISZ TSizeWords(TString<ISZ>* string) {
-  return TSizeWords<T, ISZ, TString<ISZ>*>(TPtr<IUW>(string));
+template<STR_A>
+inline const T* TStringStart(const STR* str, ISZ count) {
+  return CPtr<STR>(TStringStart<STR_P>(CPtr<STR>(str), str->count));
+}
+template<STR_A>
+inline T* TStringStart(STR* str) {
+  return TStringStart<STR_P>(str, str->count);
+}
+template<STR_A>
+inline const T* TStringStart(const STR* str) {
+  return TStringStart<STR_P>(str, str->count);
+} */
+
+/* Gets the stop char of the str.
+template<STR_A>
+inline T* TStringStop(STR* origin, ISW total) {
+  return TStringBegin<SCK_P>(origin) + total;
+}
+template<STR_A>
+inline const T* TStringStop(const STR* origin, ISW total) {
+  return CPtr<T>(TStringStop<STR_P>(CPtr<STR>(origin), total));
+}
+template<STR_A>
+inline T* TStringStop(STR* str) {
+  return TStringStop<SCK_P>(str, str->total);
+}
+template<STR_A>
+inline const T* TStringStop(const STR* str) {
+  return TStringStop<SCK_P>(str, str->total);
+} */
+
+/* Gets the stop char of the str. */
+template<STR_A>
+inline T* TStringEnd(STR* str, ISY total) {
+  return TStackBegin<SCK_P>(str, total);
+}
+template<STR_A>
+inline const T* TStringEnd(const STR* str, ISY total) {
+  return TStackEnd<SCK_P>(str, total);
 }
 
-/* Gets the first character in the string. */
-template<typename CHT = CHR, typename ISZ= ISW>
-inline CHT* TSTRStart(TString<ISZ>* string) {
-  return TPtr<CHT>(string, sizeof(TString<ISZ>));
+/* Searches for the stop of the str. */
+template<STR_A>
+inline T* TStringEnd(STR* str) {
+  return TStackEnd<SCK_P>(str, str->total);
 }
-template<typename CHT = CHR, typename ISZ= ISW>
-inline const CHT* TSTRStart(const TString<ISZ>* string) {
-  return TPtr<CHT>(string, sizeof(TString<ISZ>));
-}
-template<typename CHT = CHR, typename ISZ= ISW>
-inline CHT* TSTRStart(IUW* origin) {
-  return TSTRStart<CHT, ISZ>(TPtr<TString<ISZ>>(origin));
+template<STR_A>
+inline const T* TStringEnd(const STR* str) {
+  return TStackEnd<SCK_P>(str, str->total);
 }
 
-/* Searches for the stop of the string. */
-template<typename CHT = CHR, typename ISZ= ISW>
-inline CHT* TSTRStop(void* origin) {
-  ISZ size = TPtr<TString<ISZ>>(origin)->size;
-  CHT* start = TSTRStart<CHT, ISZ>(TPtr<TString<ISZ>>(origin));
-  return start + size - 1;
+/* Calculates the size of the string in bytes. */
+template<STR_A>
+inline ISZ TStringBytes(const STR* str, ISZ total) {
+  return sizeof(STR) + total * sizeof(T);
+}
+template<STR_A>
+inline ISZ TStringBytes(const STR* str) {
+  return TStringBytes<STR_P>(str, str->total);
 }
 
-/* Gets the stop char of the string. */
-template<typename CHT = CHR, typename ISZ= ISW>
-inline CHT* TSTRStop(void* origin, ISW size) {
-  CHT* ptr = TPtr<CHT>(TSTRStart<CHT, ISZ>(origin));
-  return ptr + size - 1;
-}
-
-template<typename CHT = CHR, typename ISZ= ISW>
-inline CHT* TStringReset(TString<ISZ>* string) {
-  CHT* start = TSTRStart<CHT, ISN>(string);
-  *start = 0;
-  return start;
+template<STR_A>
+inline T* TStringReset(STR* str) {
+  D_STR_WIPE(str);
+  D_ASSERT_PTR(str);
+  T* begin = TStringBegin<STR_P>(str);
+  *begin = 0;
+  str->count = 1;
+  return begin;
 }
 
 /* Initializes an ASCII String. */
-template<typename ISZ= ISW, typename CHT = CHR>
-inline TString<ISZ>* TStringInit(TString<ISZ>* string, ISZ size) {
-  if (!string || size < 1) return string;
-  string->size = size;
-  TStringReset<CHT, ISZ>(string);
-  return string;
-}
-
-/* Initializes an ASCII String. */
-template<typename CHT = CHR, typename ISZ= ISW>
-inline CHT* TStringInit(IUW* obj, ISZ size) {
-  return TStringInit<ISZ, CHT>(TPtr<TString<ISZ>>(obj), size);
+template<STR_A>
+inline STR* TStringInit(void* origin, ISZ total) {
+  STR* str = TPtr<STR>(origin);
+  D_ASSERT_PTR(str);
+  D_ASSERT(total >= 0);
+  str->total = total;
+  TStringReset(str);
+  return str;
 }
 
 /* Prints this object to the given printer. */
-template<typename Printer, typename CHT = CHR, typename ISZ= ISW>
-Printer& TStringPrint(Printer& o, const TString<ISZ>* string) {
-  if (!string) return o;
-  const CHT* start = TSTRStart<CHT, ISZ>(string);
-  ISZ size = string->size;
-  o << Linef("\n+---\n| TString<CH") << CSizeCodef<CHT>() << ",IS"
-    << CSizeCodef<ISZ>() << "> size:" << size << Linef("\n+---\n| \"");
+template<typename Printer, STR_A>
+Printer& TStringPrint(Printer& o, const STR* str) {
+  if (!str) return o;
+  const T* begin = TStringBegin<STR_P>(str);
+  ISZ total = str->total,
+      count = str->count,
+      bytes = TStringBytes<STR_P>(str);
+  o << Linef("\n+---\n| TString<CH") << CSizeCodef<T>() << ",IS"
+    << CSizeCodef<ISZ>() << "> total:" << total << " count:" << count
+    << " bytes:" << bytes << Linef("\n+---\n| \"");
   ISW column_count = AConsoleWidth;
   ISZ length = 0;
   CHL c = 0;
-  const CHT* cursor = SScan(start, c);
+  const T* cursor = SScan(begin, c);
   while (c) {
     ISW column = 2;
     while (++column < column_count) {
@@ -126,128 +172,45 @@ Printer& TStringPrint(Printer& o, const TString<ISZ>* string) {
     o << "\n| ";
   }
 PrintBottomLine:
-  return o << "\"\n| length:" << TSTRLength<CHT>(start) << Linef("\n+---");
-}
-
-template<typename Printer, typename CHT = CHR, typename ISZ= ISW>
-inline Printer& TStringPrint(Printer& o, Autoject autoject) {
-  return TStringPrint<Printer, CHT, ISZ>(o, TPtr<TString<ISZ>>(autoject.origin));
-}
-
-template<typename CHT = CHR, typename ISZ= ISW>
-IUW* TStringClone(Autoject& obj) {
-  IUW* origin = obj.origin;
-  ISZ size = TSize<ISZ>(origin);
-  IUW* new_begin = TRAMFactoryNew<CHT, ISZ, TString<ISZ>>(size);
-  D_COUT(" new size:" << TSize<ISZ>(new_begin));
-  TSPrinter<CHT, ISZ> new_utf(new_begin);
-  CHT* start = TSTRStart<CHT>(origin);
-  new_utf << start;
-  D_COUT("\nCopying \"" << start << "\" with result:\""
-                        << TSTRStart<CHT>(new_begin) << '\"');
-  return new_begin;
-}
-
-/* Gets the size from the string at the given origin address. */
-template<typename ISZ= ISW>
-inline ISZ TStringSize(IUW* origin) {
-  return *TPtr<ISZ>(origin);
-}
-
-template<typename CHT = CHR, typename ISZ = ISW>
-BOL TStringGrow(Autoject& obj, TSPrinter<CHT, ISZ>& sprinter) {
-  IUW* origin = obj.origin;
-  D_COUT("\n\nShit son, dez nutz; sizeof(ISZ):" << sizeof(ISZ));
-  ISZ size     = TStringSize<ISC>(origin), //
-      new_size = ATypeGrow(size);
-  #if SEAM == SCRIPT2_STRING
-  COut("\nsize: ").Star() << size <<
-       "\nnew_size: " << new_size;
+  #if D_THIS
+  o << Linef("\"\n+---") << Charsf(begin, bytes);
   #endif
-  if (!ATypeCanGrow(size, new_size))
-    return false;
-  size = new_size;
-  D_COUT(" new_size:" << new_size << " new_size:" << new_size);
-
-  IUW* new_begin = TRAMFactoryNew<CHT, ISZ, TString<ISZ>>(obj.ram, size);
-  if (!new_begin) return false;
-  D_COUT(" new size:" << new_size);
-
-  TSPrinter<CHT, ISZ> new_sprinter(TSTRStart<CHT, ISZ>(new_begin), size);
-  CHT* start = TSTRStart<CHT>(origin);
-  new_sprinter << start;
-  sprinter.Set(new_sprinter);
-  D_COUT("\nCopying \"" << start << "\" with result:\""
-    << TSTRStart<CHT>(new_begin) << '\"');
-
-  Delete(obj);
-  obj.origin = new_begin;
-  return true;
+  return o << Linef("\"\n+---");
 }
 
-template<typename T, typename CHT = CHR, typename ISZ= ISW>
-void TStringPrint(Autoject& obj, TSPrinter<CHT, ISZ>& sprinter, T item) {
-  CHT *start = sprinter.start,  //
-      *stop = sprinter.stop;
-  D_COUT("\ndez nutz sizeof(ISZ):" << sizeof(ISZ) <<
-         " delta_origin_start: " << TDelta<>(obj.origin, start) << 
-         " delta_origin_stop: " << TDelta<>(obj.origin, stop) <<
-         " delta_start_stop: " << TDelta<>(start, stop) << 
-         "\nobj.Size() before: " << *TPtr<ISC>(obj.origin) <<
-         " 0b" << Hexf(*TPtr<ISD>(obj.origin)) <<
-         "\norigin_hex:0x" << Hexf(TPtr<IUD>(obj.origin)));
-  auto cursor = _::TSPrint<CHT>(start, stop, item);
-  D_COUT("\nobj.Size() after : " << *TPtr<ISC>(obj.origin) <<
-         " 0b" << Hexf(*TPtr<ISD>(obj.origin)) <<
-         Charsf(obj.origin, stop + 1));
-  if (!cursor) {
-    *start = 0;  //< Replace the delimiter so we can copy the string.
-    do {
-      RAMFactory factory = obj.ram,  //
-          factory_heap = (RAMFactory)factory(nullptr, 0);
-      D_ASSERT(factory);
-      D_COUT(
-          "\nPrint failed, attempting to auto-grow from "
-          << ((factory != factory_heap) ? "stack-to-heap." : "heap-to-heap."));
+template<STR_A>
+CHA* TStringFill(STR* obj, CHA fill_char = 0, ISZ count_start = -1) {
+  CHA* result = TStackFill<SCK_P>(obj, fill_char);
+  *TStringBegin<STR_P>(obj) = 0;
+  return result;
+}
 
-      if (!TStringGrow<CHT, ISZ>(obj, sprinter)) return;
-
-      if (factory != factory_heap) {
-        factory = factory_heap;
-        obj.ram = factory;
-      }
-
-      cursor = _::TSPrint<CHT>(sprinter.start, sprinter.stop, item);
-      D_COUT("\nRe-printed:\"" << sprinter.start << "\"");
-      D_WARN(cursor);
-    } while (!cursor);
-  } else {
-    D_COUT("\nPrinted:\"" << sprinter.start << "\"");
-  }
-  sprinter.start = cursor;
-  // D_COUT_STRING(obj);
+/* Gets the size from the str at the given origin address. */
+template<STR_A>
+inline ISZ TStringSize(void* origin) {
+  return *TPtr<ISZ>(origin);
 }
 
 /* An ASCII String that can auto-grow from stack to heap.
 
-The count of the string is defined as the maximimum chars that can fit in the
+The count of the str is defined as the maximimum chars that can fit in the
 boofer, including the nil-term CHA.
 
 This class is designed to take advantage of the behavior of the C++ operator
-overloads. When you have a string of overloads, the objects get destructed
+overloads. When you have a str of overloads, the objects get destructed
 in the opposite order then where called.
 
 # Initialization
 
 A String may be initialed to print to the socket or to a dynamically allocated
-string. This behavior is configured with the constructors. The RAMFactory can
+str. This behavior is configured with the constructors. The RAMFactory can
 either be configured using the class template argument cFactory1_. If the
 obj_.Factory () is nil then it will get replaced with the foo.
 
 #
 
 @code
-AString<> (TBUF<64>).Star ("Hello ") << "world!";
+AString<> (TBOF<64>).Star ("Hello ") << "world!";
 @endcode
 
 # Dynamic Allocated Strings
@@ -255,157 +218,161 @@ AString<> (TBUF<64>).Star ("Hello ") << "world!";
 Strings that use dynamic memory use the TC:
 
 @code
-AString<IUC, TBUF<64>> () << "Hello world!";
+AString<IUC, TBOF<64>> () << "Hello world!";
 @endcode
 */
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_ = ASTRCount,
-          typename BUF = TBUF<Size_, CHT, ISZ, TString<ISZ>>>
+template<STR_A, ISZ TotalInit_ = ASTRCount,
+          typename BOF=TBOF<TotalInit_, T, ISZ, STR>>
 class AString {
-  AArray<CHT, ISZ, BUF> obj_;  //< AutoArray of CHT(s).
-  TSPrinter<CHT, ISZ> sprinter_;    //< String Printer.
+  AStack<SCK_P, TotalInit_, BOF> asck_;  //< AutoStack of T(s).
 
  public:
   static constexpr DTB Type() {
-    return CATypeVector(CATypeCH<CHT>(), _ARY, CATypeSize<ISZ>());
+    return CATypeVector(CATypeCH<T>(), _ARY, CATypeSW<ISZ>());
   }
 
   /* Constructs a String that auto-grows from stack to heap.
   @param factory RAMFactory to call when the String overflows. */
-  AString() : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString() : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
   }
 
   /* Constructs a String and prints the given item. */
-  AString(CHA item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(CHA item) : 
+      asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(const CHA* item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(const CHA* item) : 
+      asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   /* Constructs a String and prints the given item. */
-  AString(const CHB* item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(const CHB* item) : 
+    asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 #endif
 
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   /* Constructs a String and prints the given item. */
-  AString(CHC item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(CHC item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 #endif
   /* Constructs a String and prints the given item. */
-  AString(const CHC* item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(const CHC* item) : 
+    asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(ISA item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(ISA item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(IUA item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(IUA item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(ISB item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(ISB item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(IUB item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(IUB item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(ISC item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(ISC item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(IUC item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(IUC item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(ISD item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(ISD item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(IUD item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(IUD item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
 #if USING_FPC == YES_0
   /* Constructs a String and prints the given item. */
-  AString(FPC item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(FPC item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 #endif
 #if USING_FPD == YES_0
   /* Constructs a String and prints the given item. */
-  AString(FPD item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(FPD item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 #endif
 
   /* Constructs a String and prints the given item. */
-  AString(Hexf item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(Hexf item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
   /* Constructs a String and prints the given item. */
-  AString(Binaryf item) : obj_(Size_, TRAMFactory<Type(), ISZ>().Init<BUF>()) {
-    sprinter_.stop = TSTRStop<CHT, ISZ>(This());
-    Reset();
+  AString(Binaryf item) : asck_(TotalInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    Init();
     Print(item);
   }
 
+  /* Returns the String Stack total. */
+  inline ISZ Total() { return This()->total; }
+
+  /* Returns the String Stack count. */
+  inline ISZ Count() { return This()->count; }
+
+  /* Returns the String Stack count. */
+  inline ISZ Bytes() { return sizeof(STR) + Total() * sizeof(T); }
+
+  /* Gets the total ASCII Object size in words. */
+  inline ISZ SizeWords() { return Bytes() >> ACPUBytesLog2; }
+
   /* Resets the sprinter_ to the given word-aligned boofer. */
-  inline void Reset() { sprinter_.Set(TStringReset<CHT, ISZ>(This())); }
+  inline T* Init() {
+    return TStringBegin<STR_P>(TStringInit<STR_P>(This(), TotalInit_));
+  }
+
+  /* Resets the sprinter_ to the given word-aligned boofer. */
+  inline T* Reset() {
+    return TStringReset<STR_P>(This());
+  }
 
   /* Wipes the given */
-  inline void WipeFreeSpace() { sprinter_.Wipe(); }
+  inline void WipeFreeSpace() { TStackFill<SCK_P>(); }
 
   /* Wipes the given */
   inline void Wipe() {
@@ -413,22 +380,79 @@ class AString {
     WipeFreeSpace();
   }
 
-  /* Gets the UTF. */
-  inline TSPrinter<CHT, ISZ>& Star() { return sprinter_; }
+  /* Gets the UTF.
+  inline TSPrinter<SCK_P>& Star() { return sprinter_; } */
 
-  /* @todo I had the auto-grow code in a template but I could not figure out
-  which function wasn't working so I had to copy paste. This needs to get
-  changed back to a template as soon as it's fixed thanks. */
+  /* Prints the item to this String. */
+  template<typename Type>
+  inline AString& Print(Type item) {
+    Autoject& ajt = asck_.AJT();
+    IUW* origin = ajt.origin;
+    D_ASSERT(origin);
+    STR* str  = TPtr<STR>(origin);
+    ISZ total = str->total,
+        count = str->count;
+    D_COUT("\n\n---\nPrinting \"" << item << "\" to 0x" << Hexf(origin) << 
+           " total: " << total << " count : " << count);
+    D_ASSERT(total >= 0);
+    D_ASSERT(count > 0);
+    T* begin = TStringBegin<SCK_P>(str),
+     * start = begin + count - 1,
+     * end = begin + total - 1;
+    //D_AVOW(TStringLength<T, ISZ>(begin) + 1, count);
+    D_ASSERT(count <= total);
+    D_COUT("\n         \"" << begin << '\"');
+    T* stop = _::TSPrint<T>(start, end, item);
+    D_COUT("\n| delta_begin_stop:" << TDelta<>(begin, stop) << 
+           " delta_begin_end:" << TDelta<>(begin, end));
+    //D_COUT(Charsf(begin, end));  //< Why does this bug the unit test out?
 
-  /* Prints a item to the string.
+    if (IsError(stop)) {
+      D_COUT("\n\nFailed to print: attempting to grow...");
+      STR* str_new = NILP;
+      RAMFactory ram = ajt.ram;
+      D_ASSERT(ram);
+      do {
+        D_COUT("\nPrint failed, attempting to auto-grow from " <<
+          ((ram != RAMFactoryHeap(ram)) ? "stack-to-heap." : "heap-to-heap."));
+        Autoject growth = { NILP, ram };
+        ISY total_new = AutojectGrowTotal(total);
+        D_COUT(" total_new:" << total_new);
+        str_new = Clone(growth, str, total_new, 0, count);
+        if (IsError(str_new)) {
+          *start = 0;
+          D_COUT("\nWarning: Could not grow str!");
+          return *this;
+        }
+        D_COUT("\nCloned with total:" << str_new->total << 
+               " count:" << str_new->count);
+        begin = TStringBegin<STR_P>(str_new);
+        T* start = begin + count - 1,
+         * end   = begin + str_new->total;
+        stop = _::TSPrint<T>(start, end, item);
+      } while (IsError(stop));
+      count = ISZ(stop - begin) + 1;
+      str_new->count = count;
+      ajt.ram = RAMFactoryHeap(ram);
+      ajt.origin = TPtr<IUW>(str_new);
+    } else {
+      count = ISZ(stop - begin) + 1;
+      str->count = count;
+    }
+    D_COUT("\nPrinted:\"" << begin << "\":" << count << '/' << total);
+    //D_COUT_STRING(TPtr<const STR>(ajt.origin));
+    return *this;
+  }
+
+  /* Prints a item to the str.
   @return A reference to this. */
   inline AString& Print(CHA item) { return Print<CHA>(item); }
   inline AString& Print(const CHA* item) { return Print<const CHA*>(item); }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   inline AString& Print(CHB item) { return Print<CHB>(item); }
   inline AString& Print(const CHB* item) { return Print<const CHB*>(item); }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   inline AString& Print(CHC item) { return Print<CHC>(item); }
   inline AString& Print(const CHC* item) { return Print<const CHC*>(item); }
 #endif
@@ -443,240 +467,235 @@ class AString {
   inline AString& Print(FPD item) { return Print<FPD>(item); }
 #endif
 
-  /* Gets the size in elements. */
-  inline ISZ Size() { return obj_.Size(); }
+  /* Returns the begin char. */
+  inline T* Begin() { return TStringBegin<SCK_P>(This()); }
 
-  /* Gets the total ASCII Object size in bytes. */
-  inline ISZ SizeBytes() { return obj_.SizeBytes<TString<ISZ>>(AJT()); }
+  /* Returns the nil-term/start char.
+  inline T* Start() { return TStringStart<SCK_P>(This()); } */
 
-  /* Gets the total ASCII Object size in words. */
-  inline ISZ SizeWords() { return obj_.SizeWords<TString<ISZ>>(AJT()); }
-
-  /* Returns the origin of the obj. */
-  inline CHT* Start() { return TSTRStart<CHT, ISZ>(obj_.Origin()); }
+  /* Returns the stop char.
+  inline T* Stop() { return TStringStop<SCK_P>(This()); } */
 
   /* Returns the stop of the obj. */
-  inline CHT* Stop() { return TSTRStop<CHT, ISZ>(obj_.Origin()); }
-
-  /* Returns the stop of the obj. */
-  inline CHA* End() { return TArrayEnd<ISZ>(obj_); }
+  inline T* End() { return TStringEnd<SCK_P>(This()); }
 
   /* Calculates the space left in the boofer based on the sprinter_ pointers. */
-  inline ISZ SpaceLeft() { return sprinter_.SpaceLeft(); }
+  inline ISZ SpaceLeft() {
+    STR str = This();
+    return str.total - str.count;
+  }
 
-  /* Searches for the given querry, returning the end CHT of the qeurry in this
-  string. */
-  inline CHT* Find(const CHT* querry) { return TSTRFind(Start(), querry); }
+  /* Searches for the given querry, returning the end T of the qeurry in this
+  str. */
+  inline T* Find(const T* querry) { return TStringFind(Begin(), querry); }
 
-  /* Checks if this String to the other string are equivalent.
+  /* Checks if this String to the other str are equivalent.
   @return Nil if they Strings are not equivalent and a pointer to the next CHA
-  after the end of the equivalent part of this string upon success. */
-  inline CHT Equals(const CHT* other) { return TSTRFind(Start(), other); }
+  after the end of the equivalent part of this str upon success. */
+  inline T Equals(const T* other) { return TStringFind(Begin(), other); }
 
   /* Checks to see if the sprinter_ is using static memory. */
-  inline BOL IsStatic() { return obj_.Socket().Contains(sprinter_.cursor); }
-
-  /* Gets the obj of the Console obj. */
-  inline AArray<CHT, ISZ, BUF>& Array() { return obj_; }
-
-  /* Gets the obj of the Console obj. */
-  inline Autoject& AJT() { return obj_.AJT(); }
-
-  /* Gets the obj.origin as a TString<ISC>. */
-  inline TString<ISZ>* This() { return obj_.OriginAs<TString<ISZ>*>(); }
-
-  template<typename T>
-  inline AString& Print(T item) {
-    TStringPrint<T, CHT, ISZ>(obj_.AJT(), sprinter_, item);
-    return *this;
+  inline BOL IsStatic() { 
+    RAMFactory ram      = AJT().ram,
+               ram_heap = (RAMFactory)ram(NILP, 0);
+    return ram != ram_heap;
   }
+
+  /* Gets the obj of the Console obj. */
+  inline AStack<SCK_P, TotalInit_, BOF>& Stack() { return asck_; }
+
+  /* Gets the obj of the Console obj. */
+  inline Autoject& AJT() { return asck_.AJT(); }
+
+  /* Returns the Autoject origin as the specified Type pointer. */
+  template<typename Type = STR>
+  inline Type* As() {
+    return TPtr<Type>(AJT().origin);
+  }
+
+  /* Gets the Autoject origin as a TString<T, ISZ>. */
+  inline STR* This() { return As<>(); }
 
   /* Prints this object to the given printer. */
   template<typename Printer>
   inline Printer& PrintTo(Printer& o) {
-    return TStringPrint<Printer, CHT, ISZ>(o, This());
+    return TStringPrint<Printer, T, ISZ>(o, This());
   }
 
   inline void CPrint() { PrintTo<COut>(StdOut()); }
+
+  /* Creates a clone on the heap of the src Autoject. */
+  inline static STR* Clone(Autoject& dest, const STR* src, ISZ total_new = -1, 
+                           ISZ count_start = 0, ISZ count_stop = -1) {
+    AStack<SCK_P>::Clone(dest, TPtr<TStack<SCK_P>>(src),
+                         total_new, count_start, count_stop);
+    IUW* origin = dest.origin;
+    if (PtrIsValid(origin)) {
+      if (dest.origin != origin) {
+        Delete(dest);
+        dest.origin = origin;
+        dest.ram = RAMFactory(dest.ram(NILP, 0));
+      }
+      return TPtr<STR>(origin);
+    }
+    return NILP;
+  }
 };
 
 }  //< namespace _
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj,
-    _::AString<CHT, ISZ, Size_, BUF>& item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj,
+    ::_::AString<STR_P, Size, BOF>& item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, const CHA* item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, const CHA* item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-#if USING_UTF16 == YES_0
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, const CHB* item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+#if USING_STB == YES_0
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, const CHB* item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 #endif
 
-#if USING_UTF32 == YES_0
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, const CHC* item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+#if USING_STC == YES_0
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, const CHC* item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, CHC item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, CHC item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 #endif
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, CHA item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
-  return obj;
-}
-/*
-template<typename CHT = CHR, ISN kCount_, typename BUF>
-inline _::AString<CHT, kCount_, BUF>& operator<<(
-    _::AString<CHT, kCount_, BUF>& obj, CHB item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print (item);
-  D_COUT_OBJ (obj);
-  return obj;
-}*/
-
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, IUA item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, CHA item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, ISB item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, IUA item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, IUB item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ISB item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, ISC item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, IUB item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, IUC item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ISC item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, ISD item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, IUC item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, IUD item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ISD item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
+  return obj;
+}
+
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, IUD item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 
 #if USING_FPC == YES_0
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, FPC item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, FPC item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 #endif
 #if USING_FPD == YES_0
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, FPD item) {
-  _::AString<CHT, ISZ, Size_, BUF>& result = obj.Print(item);
-  D_COUT_OBJ(obj);
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, FPD item) {
+  ::_::AString<STR_P, Size, BOF>& result = obj.Print(item);
   return obj;
 }
 #endif
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, _::Hexf item) {
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ::_::Hexf item) {
   return obj.Print(item);
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, _::Binaryf item) {
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ::_::Binaryf item) {
   return obj.Print(item);
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, _::Centerf item) {
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ::_::Centerf item) {
   return obj.Print(item);
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, _::Rightf item) {
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ::_::Rightf item) {
   return obj.Print(item);
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, _::Linef item) {
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ::_::Linef item) {
   return obj.Print(item);
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, _::Headingf item) {
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ::_::Headingf item) {
   return obj.Print(item);
 }
 
-template<typename CHT = CHR, typename ISZ= ISW, ISZ Size_, typename BUF>
-inline _::AString<CHT, ISZ, Size_, BUF>& operator<<(
-    _::AString<CHT, ISZ, Size_, BUF>& obj, _::Charsf item) {
+template<STR_A, ISZ Size, typename BOF>
+inline ::_::AString<STR_P, Size, BOF>& operator<<(
+    ::_::AString<STR_P, Size, BOF>& obj, ::_::Charsf item) {
   return obj.Print(item);
 }
 

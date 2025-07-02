@@ -3,6 +3,7 @@
 #include <_Config.h>
 #ifndef SCRIPT2_STRINGF_DECL
 #define SCRIPT2_STRINGF_DECL 1
+#include "AType.h"
 namespace _ {
 
 // Returns true if the item is printable.
@@ -36,7 +37,7 @@ LIB_MEMBER ISC HexToByte(IUB hex);
 success. */
 LIB_MEMBER const CHA* SScan(const CHA* string, CHC& character);
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 /* Prints a UTF-32 character to the string terminated at the stop.
 @return  Nil upon failure or a pointer to the nil-term CHT upon success.
 @param string    The start of the string.
@@ -51,7 +52,7 @@ success. */
 LIB_MEMBER const CHB* SScan(const CHB* string, CHC& character);
 #endif
 
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 /* Prints a character to the string.
 @return  Nil upon failure or a pointer to the nil-term CHT upon success.
 @param stop The last character in the string boofer. */
@@ -66,7 +67,7 @@ LIB_MEMBER CHA* SPrint(CHA* string, CHA* stop, CHC character);
 /* Utility class for printing numbers. */
 struct LIB_MEMBER Valuef {
   ISW count;        //< Width of the item in bytes or columns.
-  TypeValue value;  //< The type and value.
+  ATypeValue value;  //< The type and value.
 
   /* Constrcts a NIL item. */
   Valuef();
@@ -74,15 +75,15 @@ struct LIB_MEMBER Valuef {
   /* Constructs a Valuef from the given item. */
   Valuef(const void* item, ISW count = 0);
   Valuef(void* item, ISW count = 0);
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
   Valuef(CHA item, ISW count = 0);
   Valuef(const CHA* item, ISW count = 0);
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   Valuef(CHB item, ISW count = 0);
   Valuef(const CHB* item, ISW count = 0);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   Valuef(CHC item, ISW count = 0);
   Valuef(const CHC* item, ISW count = 0);
 #endif
@@ -177,11 +178,11 @@ struct LIB_MEMBER Charsf {
   /* Constructs the value from the delta between start and stop. */
   Charsf(const void* start, const void* stop);
   Charsf(const void* start, ISW count);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   Charsf(const CHB* start, const CHB* stop);
   Charsf(const CHB* start, ISW count);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   Charsf(const CHC* start, const CHC* stop);
   Charsf(const CHC* start, ISW count);
 #endif
@@ -216,10 +217,10 @@ class LIB_MEMBER Stringf {
 
   /* Sets the String_ to the given pointer and stores the count. */
   Stringf(const CHA* item);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   Stringf(const CHB* item);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   Stringf(const CHC* item);
 #endif
 
@@ -241,10 +242,10 @@ class LIB_MEMBER Stringf {
 
   /* Sets the String_ to the given pointer and stores the count. */
   Stringf(const CHA* item, ISW count);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   Stringf(const CHB* item, ISW count);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   Stringf(const CHC* item, ISW count);
 #endif
 
@@ -287,19 +288,19 @@ class LIB_MEMBER Stringf {
 
   /* Saves the pointer to the String_. */
   void Print(const CHA* item);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   void Print(const CHB* item);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   void Print(const CHC* item);
 #endif
 
   /* Prints the given item to the boofer_. */
   void Print(CHA item);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   void Print(CHB item);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   void Print(CHC item);
 #endif
   void Print(ISC item);
@@ -323,10 +324,10 @@ class LIB_MEMBER Stringf {
   /* Stores the item to the first word of the boofer and the negative of the
   count. */
   void Hex(CHA item, ISW count = 80);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   void Hex(CHB item, ISW count = 80);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   void Hex(CHC item, ISW count = 80);
 #endif
   void Hex(ISA item, ISW count = 80);
@@ -355,11 +356,11 @@ struct LIB_MEMBER Centerf {
   /* Prints the item to the value. */
   Centerf(CHA item, ISW count = AConsoleWidth);
   Centerf(const CHA* start, ISW count = AConsoleWidth);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   Centerf(CHB item, ISW count = AConsoleWidth);
   Centerf(const CHB* item, ISW count = AConsoleWidth);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   Centerf(CHC item, ISW count = AConsoleWidth);
   Centerf(const CHC* item, ISW count = AConsoleWidth);
 #endif
@@ -379,10 +380,10 @@ struct LIB_MEMBER Centerf {
   /* Stores the item to the first word of the boofer and the negative of the
   count. */
   Centerf& Hex(CHA item, ISW count = 80);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   Centerf& Hex(CHB item, ISW count = 80);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   Centerf& Hex(CHC item, ISW count = 80);
 #endif
   Centerf& Hex(ISA item, ISW count = 80);
@@ -411,11 +412,11 @@ struct LIB_MEMBER Rightf {
   /* Prints the item to the value. */
   Rightf(CHA item, ISW count = AConsoleWidth);
   Rightf(const CHA* item, ISW count = AConsoleWidth);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   Rightf(CHB item, ISW count = AConsoleWidth);
   Rightf(const CHB* item, ISW count = AConsoleWidth);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   Rightf(CHC item, ISW count = AConsoleWidth);
   Rightf(const CHC* item, ISW count = AConsoleWidth);
 #endif
@@ -434,10 +435,10 @@ struct LIB_MEMBER Rightf {
   /* Stores the item to the first word of the boofer and the negative of the
   count. */
   Rightf& Hex(CHA item, ISW count = 80);
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
   Rightf& Hex(CHB item, ISW count = 80);
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
   Rightf& Hex(CHC item, ISW count = 80);
 #endif
   Rightf& Hex(ISA item, ISW count = 80);
@@ -465,7 +466,7 @@ struct LIB_MEMBER Linef {
   Linef(CHA item, ISW count = AConsoleWidth);
 
   /* Constructors a horizontal line of the given string. */
-  Linef(const CHA* start = nullptr, ISW count = AConsoleWidth);
+  Linef(const CHA* start = NILP, ISW count = AConsoleWidth);
 };
 
 /* Utility class for printing a Heading with formatting with operator<<. */
@@ -481,7 +482,7 @@ struct LIB_MEMBER Headingf {
 
   /* Saves the parameters to the corresponding data members. */
   Headingf(const CHA* caption, const CHA* caption2,
-           const CHA* caption3 = nullptr, const CHA* style = nullptr,
+           const CHA* caption3 = NILP, const CHA* style = NILP,
            ISW count = AConsoleWidth);
 };
 
@@ -524,7 +525,18 @@ struct LIB_MEMBER ATypef {
   Rightf Right(ISW count);
 };
 
+/* Utility class for printing an ASCII type-value one-liner. */
+struct LIB_MEMBER AValuef {
+};
+
+// Utility class for printing an ASCII Error Code.
+struct LIB_MEMBER AErrorf {
+  ISW error;          //< Error code.
+  const STR* message; //< Error message.
+
+  AErrorf(ISW error, const STR* message = NILP);
+};
 
 }  //< namespace _
 
-#endif
+#endif  //< #ifndef SCRIPT2_STRINGF_DECL

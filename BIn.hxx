@@ -10,11 +10,11 @@
 #include "Hash.hpp"
 //#include "Slot.hpp"
 #if SEAM == SCRIPT2_CRABS
-#include "_Debug.hxx"
+#include "_Debug.h"
 #define CLEAR(origin, stop) \
   while (origin <= stop) *origin++ = ' ';
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #define CLEAR(origin, stop)
 #endif
 namespace _ {
@@ -94,7 +94,7 @@ BIn* BInInit(IUW* socket, ISN size) {
   bin->origin = 0;
   bin->stop = 0;
   bin->read = 0;
-  D_ARRAY_WIPE(BInBegin(bin), size);
+  D_RAM_WIPE(BInBegin(bin), size);
   return bin;
 }
 
@@ -284,7 +284,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
         //< @todo Replace with pointer arithmetic.
         // Load next pointer and increment args.
         iua_ptr = TPtr<CHA>(args[arg_index]);
-        if (iua_ptr == nullptr)
+        if (iua_ptr == NILP)
           return BInError(bin, ErrorImplementation, params, index, origin);
         D_COUT("\nReading STR_:0x" << Hexf(iua_ptr) << " with length:" << 
                count);
@@ -316,7 +316,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
 #if CPU_SIZE <= 16
                  // Load next pointer and increment args.
         iub_ptr = TPtr<IUB>(args[arg_index]);
-        if (iub_ptr == nullptr)
+        if (iub_ptr == NILP)
           return BInError(bin, ErrorImplementation, params, index, origin);
         // SScan IUA 1.
         iua = *origin;
@@ -347,7 +347,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
 #else
                  // Load next pointer and increment args.
         iuc_ptr = TPtr<IUC>(args[arg_index]);
-        if (iuc_ptr == nullptr)
+        if (iuc_ptr == NILP)
           return BInError(bin, ErrorImplementation, params, index, origin);
 
         // SScan IUA 1.
@@ -418,7 +418,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
       case _BSQ:  //< _B_-_S_e_q_u_e_n_c_e__S_t_r_i_n_g______________
 #if USING_BSQ
         iua_ptr = TPtr<CHA>(args[arg_index]);
-        if (iua_ptr == nullptr)
+        if (iua_ptr == NILP)
           return BInError(bin, ErrorImplementation, params, index, origin);
         iua = *origin;
 #endif
@@ -434,7 +434,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
                               origin);
 
             iua_ptr = TPtr<CHA>(args[arg_index]);
-            if (iua_ptr == nullptr)
+            if (iua_ptr == NILP)
               return BInError(bin, ErrorImplementation, params, index, origin);
 
             iua = *origin;
@@ -452,7 +452,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
                               origin);
             length -= 2;
             iub_ptr = TPtr<IUB>(args[arg_index]);
-            if (iub_ptr == nullptr)
+            if (iub_ptr == NILP)
               return BInError(bin, ErrorImplementation, params, index, origin);
 
             for (ISN i = 0; i <= sizeof(IUB); i += 8) {
@@ -474,7 +474,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
                               origin);
             length -= 4;
             iuc_ptr = TPtr<IUC>(args[arg_index]);
-            if (iuc_ptr == nullptr)
+            if (iuc_ptr == NILP)
               return BInError(bin, ErrorImplementation, params, index, origin);
 
             for (ISN i = 0; i <= sizeof(IUC); i += 8) {
@@ -496,7 +496,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
                               origin);
             length -= 8;
             iud_ptr = TPtr<IUD>(args[arg_index]);
-            if (iud_ptr == nullptr)
+            if (iud_ptr == NILP)
               return BInError(bin, ErrorImplementation, params, index, origin);
 
             for (ISN i = 0; i <= sizeof(IUD); i += 8) {

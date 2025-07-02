@@ -5,12 +5,34 @@
 #include <ctime>
 #include "Uniprinter.hpp"
 #if SEAM == SCRIPT2_CLOCK
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
-using namespace _;
+using namespace ::_;
 namespace _ {
+
+TMD::TMD(IUB v1, IUB v2, IUB v3, IUB v4) : 
+  seconds(ISC(v1) & ISC(v2 << 16)),                                      
+  ticks  (IUC(v2) & IUC(v3 << 16)) {}
+
+TMD::TMD(ISC seconds, IUC ticks) : seconds(seconds), ticks(ticks) {}
+
+TMD::TMD(IUD value) : seconds(ISC(value)), ticks(IUC(value >> 32)) {}
+
+TME::TME(IUB v1, IUB v2, IUB v3, IUB v4, IUB v5, IUB v6, IUB v7, IUB v8) :
+  lsb(IUD(v1) & IUD(v2) << 16 & IUD(v2) << 32 & IUD(v2) << 48),
+  msb(IUD(v5) & IUD(v6) << 16 & IUD(v7) << 32 & IUD(v8) << 48) {}
+
+TME::TME(IUC v1, IUC v2, IUC v3, IUC v4) :
+  lsb(IUD(v1) & IUD(v2) << 32),
+  msb(IUD(v2) & IUD(v3) << 32) {}
+
+TME::TME(ISD lsb, IUD msb) : lsb(lsb), msb(msb) {}
+
+TME::TME(IUE value) : lsb(value.lsb), msb(value.msb) {}
+
+TME::TME(ISE value) : lsb(value.lsb), msb(value.msb) {}
 
 const ISB* ClockLastDayOfMonth() {
   static const ISB kMonthDayOfYear[12] = {31,  59,  90,  120, 151, 181,
@@ -249,7 +271,7 @@ ISD ClockTimeTME(ISN year, ISN month, ISN day, ISN hour, ISN minute,
   return TClockTime<ISC>(year, month, day, hour, minute, second);
 }
 
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
 CHA* SPrint(CHA* origin, CHA* stop, const AClock& clock) {
   return TSPrint<CHA>(origin, stop, clock);
 }
@@ -289,7 +311,7 @@ const CHA* ScanTime(const CHA* string, ISD& t) {
 }
 
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 
 CHB* SPrint(CHB* origin, CHB* stop, const AClock& clock) {
   return TSPrint<CHB>(origin, stop, clock);
@@ -344,7 +366,7 @@ const CHB* ScanTime(const CHB* string, ISD& result) {
 }
 #endif
 
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 
 CHC* SPrint(CHC* origin, CHC* stop, AClock& clock) {
   return TSPrint<CHC>(origin, stop, clock);

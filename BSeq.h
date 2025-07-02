@@ -1,9 +1,9 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_BSEQ_DELC
-#define SCRIPT2_BSEQ_DELC
-#include "Types.h"
-#if SEAM >= SCRIPT2_CRABS
+#define SCRIPT2_BSEQ_DELC 1
+#include "AType.h"
+#if SEAM >= SCRIPT2_LIST
 namespace _ {
 
 /* Utility class for printing B-Sequences. */

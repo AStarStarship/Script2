@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_ROOM_INLINE_CODE
-#define SCRIPT2_ROOM_INLINE_CODE
+#define SCRIPT2_ROOM_INLINE_CODE 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_ROOM
 #include "Interrupts.h"
@@ -171,7 +171,7 @@ class TRoom : public Operand {
   };
 
   /* Creates a Room with the given size.
-  @param floor Boofer used to create the Wall Stack. Set to nullptr to
+  @param floor Boofer used to create the Wall Stack. Set to NILP to
   enable dynamic memory.
   @param size  The room size that is bounded between the kMinRoomSize and
   RoomTotal. */
@@ -179,10 +179,10 @@ class TRoom : public Operand {
     state_(1),
     state_count_(state_count < 1 ? 1 : state_count),
     name_(!room_name ? "Unnamed" : room_name),
-    this_(nullptr),
-    xoff_(nullptr),
-    device_(nullptr),
-    devices_(nullptr) {}
+    this_(NILP),
+    xoff_(NILP),
+    device_(NILP),
+    devices_(NILP) {}
 
   /* RAMFactory. */
   virtual ~TRoom() {}
@@ -228,16 +228,16 @@ class TRoom : public Operand {
   /* Gets the given wall by index.
   @return Nil if the index is invalid  */
   TWall<ISZ>* GetWall(ISN wall_number) {
-    if (wall_number < 0) return nullptr;
-    if (wall_number >= walls_->count) return nullptr;
+    if (wall_number < 0) return NILP;
+    if (wall_number >= walls_->count) return NILP;
     return TStackGet<Wall*, ISC, ISN>(walls_, wall_number);
   }
 
   /* Ads a wall to the room.
   @return The inputed new_wall pointer upon success or nil upon failre. */
   TWall<ISZ>* AddWall(TWall<ISZ>* new_wall) {
-    if (new_wall == nullptr) return nullptr;
-    if (walls_->count >= walls_->total) return nullptr;
+    if (new_wall == NILP) return NILP;
+    if (walls_->count >= walls_->total) return NILP;
     TStackInsert<Wall*>(walls_, new_wall);
     return new_wall;
   }
@@ -266,11 +266,11 @@ class TRoom : public Operand {
 
   /* Sets up the Room. */
   virtual const Op* Init(Crabs* crabs) {
-    if (crabs != nullptr) {
+    if (crabs != NILP) {
       // @todo We need to load a stored Room state.
-      return nullptr;
+      return NILP;
     }
-    return nullptr;
+    return NILP;
   }
 
   /* Handler for shut down event. */
@@ -294,7 +294,7 @@ class TRoom : public Operand {
   /* The default main function.
       Please feel free to override this with your own main function. */
   virtual ISC Main(const CHA** args, ISC args_count) {
-    const Op* result = nullptr;
+    const Op* result = NILP;
     D_COUT("\nInitializing Chinese Room with " << args_count << " args:");
 #if D_THIS
     for (ISC i = 0; i < args_count; ++i)
@@ -303,7 +303,7 @@ class TRoom : public Operand {
     D_COUT('\n');
     while (IsOn()) {
       try {
-        result = Init(nullptr);
+        result = Init(NILP);
         if (result) return 1;
         do {
           this_->ExecAll();

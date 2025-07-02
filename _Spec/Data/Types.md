@@ -1,14 +1,14 @@
 # Standard Types
 
-ASCII Data Types use 3-letter acronyms in all capital letters[1][2]. Whenever possible, the letters in the ASCII Data Type acronyms are such that like-types are grouped alphabetically, and 8, 16, 32, 64, and 128-bit types use the post fix A, B, C, D, and E, and an 8-bit unsigned integer is a IUA and a 16-bit one is a IUB. Data Types can be represented using 1-byte, or two 2-byte such that 1-byte Data Types are forward compatible with 2-byte Types. Given there are only 8, 16, 32, and 64-bit CPUs, the bit pattern of the data type is required to be laid out such that the bit_1 of the 4 bits required to represent these 4 byte depths shall be laid out across the boundary between a IUA and IUB word boundaries.
+ASCII Data Types use 3-letter acronyms in all capital letters[1][2]. Whenever possible, the letters in the ASCII Data Type acronyms are such that like-types are grouped alphabetically, and 8, 16, 32, 64, and 128-bit types use the post fix A, B, C, D, and E, and an 8-bit unsigned integer is a IUA and a 16-bit one is a IUB.
+
+Data Types can be represented using 1-byte, or two 2-byte such that 1-byte Data Types are forward compatible with 2-byte Types. Given there are only 8, 16, 32, and 64-bit CPUs, the bit pattern of the data type is required to be laid out such that the bit_1 of the 4 bits required to represent these 4 byte depths shall be laid out across the boundary between a IUA and IUB word boundaries.
 
 ## POD Types Table
 
-The POD Types table is laid out such that the types are grouped into groups by width growing from NIL to the 16-byte types, and beyond the 16-byte types shall be CPU word-aligned POD types that shall be defined by the target implementation[10].
-
 | ID | Type | C++/Alt Name | Width | Description |
 |:--:|:----:|:------------:|:-----:|:------------|
-|  0 | NIL  |     null     |   0   | Nil/null/void type. |
+|  0 | NIL  |     void     |   0   | Null/zilch/nada/nothing. |
 |  1 | IUA  |    uint8_t   |   1   | 1-byte unsigned integer. |
 |  2 | ISA  |     int8_t   |   1   | 1-byte signed integer. |
 |  3 | CHA  |     char     |   1   | 1-byte Unicode/ASCII character. |
@@ -28,36 +28,29 @@ The POD Types table is laid out such that the types are grouped into groups by w
 | 17 | IUE  |   uint128_t  |  16   | 16-byte unsigned integer. |
 | 18 | ISE  |   int128_t   |  16   | 16-byte signed integer. |
 | 19 | TME  |   uint128_t  |  16   | 16-byte Linear ID Universally Unique Identifier. |
-| 20 | PTa  |      ?       |   ?   | Plain Type a. |
-| 21 | PTb  |      ?       |   ?   | Plain Type b. |
-| 22 | PTc  |      ?       |   ?   | Plain Type c. |
-| 23 | PTd  |      ?       |   ?   | Plain Type d. |
-| 24 | PTe  |      ?       |   ?   | Plain Type e. |
-| 25 | PTf  |      ?       |   ?   | Plain Type f. |
-| 26 | PTg  |      ?       |   ?   | Plain Type g. |
-| 27 | PTh  |      ?       |   ?   | Plain Type h. |
-| 28 | PTi  |      ?       |   ?   | Plain Type i. |
-| 29 | PTj  |      ?       |   ?   | Plain Type j. |
-| 30 | PTk  |      ?       |   ?   | Plain Type k. |
-| 31 | PTl  |      ?       |   ?   | Plain Type l. |
+| 20 | PCa  |      ?       |   ?   | Plain Context Type a. |
+| 21 | PCb  |      ?       |   ?   | Plain Context Type b. |
+| 22 | PCc  |      ?       |   ?   | Plain Context Type c. |
+| 23 | PCd  |      ?       |   ?   | Plain Context Type d. |
+| 24 | PCe  |      ?       |   ?   | Plain Context Type e. |
+| 25 | PCf  |      ?       |   ?   | Plain Context Type f. |
+| 26 | PCg  |      ?       |   ?   | Plain Context Type g. |
+| 27 | PCh  |      ?       |   ?   | Plain Context Type h. |
+| 28 | PCi  |      ?       |   ?   | Plain Context Type i. |
+| 29 | PCj  |      ?       |   ?   | Plain Context Type j. |
+| 30 | PCk  |      ?       |   ?   | Plain Context Type k. |
+| 31 | PCl  |      ?       |   ?   | Plain Context Type l. |
 
 ### List of Types Key
 
 | Width | Description |
 |:-----:|:------------|
-|   ?   | Nil-terminated string type. |
+|   ?   | Context dependent and remapped to another POD type. |
 |   x   | The numbers 0, 1, 2, 4, 8, and 16 are the number of bytes in the type. |
-|   xW  | Word-aligned size determined by implementation. |
 
 ### Justification for Ordering
 
-The table logic is based on the fact that there are only three types of Unicode character types, 8-bit, 16-bit, and 32-bit, and there are only four main types of floating-point numbers, 16-bit, 32-bit, 64-bit, and 128-bit. We always know that 0 will be nil, so thus we may conclude that FPB must be in index 4 because there is no such thing as an 8-bit floating-point number.
-
-It doesn't make sense to start out with FPx, CHx, ISx, IUx, so it must start out either FPx, ISx, IUx, or FPx, IUx, ISx, but you cannot create a signed integer without an unsigned inter, and thus the unsigned integers must come first, yielding the order FPx, IUx, ISx CHx,.
-
-We require a special type for a 64-bit timestamp. With the above order packing there is no room for a 4-bit timestamp, but there is no 64-bit Unicode character value, and thus we may conclude that TME is required to be Type 15.
-
-This leaves one type left we can use to store our BOL type, which is Type 19. After that are all implementation-defined types the user can place any other types where they see fit; and it's arguable that you really actually need any other POD data types for the vast majority of foreseeable of applications.
+The table logic is based on the fact that there is no 64-bit Unicode character. The POD types cycle though float, unsigned, signed, or { char or timestamp }. It's kind of arbitrary which metric to use to sort the table, but the chosen metric  is to use a 2-bit pattern where bit 1 means it's signed int and bit 0 means it's unsigned int. When neither are asserted, it's not an signed or unsigned, so it's a float. When only bit 0 is asserted, it's an unsigned, when only bit 1 is asserted it's a signed. A char and be both signed and unsigned because it could be an 8-bit signed ASCII value, or an 8-bit unsigned extended ASCII value. A TMD timestamp is also a combination of a signed timestamp and unsigned sub-second ticker. A 128-bit linear id is also signed timestamp with a 20-bit sub-second ticker and a 64-bit source id.
 
 ## VT Bits
 
@@ -67,8 +60,8 @@ The Vector types are stored in b6:b5 (mask 0x60) for 1, 2, and 4-byte Data Types
 |:-----:|:----:|:-------------------------------------------------:|
 |   0   | VHT  | Vector of 1, 2, 3, or 4 POD types 0-31.           |
 |   1   | ARY  | Array of homogenous types.                        |
-|   2   | STK  | Stack (vector) of homogenous types.               |
-|   3   | MTX  | Matrix (n-dimensional array) of homogenous types. |
+|   2   | SCK  | Stack of homogenous types or String.              |
+|   3   | MAT  | Matrix (n-dimensional array) of homogenous types. |
 
 ## Vector of Homotuples
 
@@ -114,50 +107,73 @@ The Size width (SW) bits stores the number of bits uses to store the Object Arra
 
 ## Illegal Types
 
-### MT Bits
+### MWT Bits
 
-A Map Type maps from of one POD type to other set, such as a Dictionary that maps a string, an integer hash, or floating-point number to an unsigned integer offset. Map Types are covered in the [Map Types](MapTypes) section. MT Bits contain a POD type A such that A maps to B.
+A Map Type maps from of one POD type to other set, such as a Dictionary that maps a string, an integer hash, or floating-point number to an unsigned integer offset. Map Types are covered in the [Map Types](MapTypes) section. MWT Bits contain a POD type A such that A maps to B.
 
 ### MOD Bits
 
-The Modifier Bits (MOD) allow for the creation of pointers and const pointers to POD and Vector types.
+The Modifier (MOD) Bits turn in the 13 LSb into either a SEC, FPV (Void Floating-point), CHV (Unsigned Void Character), or ISV Void Signed Integer numbers.
 
-| Value | Type | Description           |
-|:-----:|:----:|:----------------------|
-|   0   | CNS  | Const.                |
-|   1   | PTC  | Const Crabs pointer.  |
-|   2   | CTG  | Contiguous data.      |
-|   3   | PTR  | Crabs Crabs pointer.  |
+| Value | Type | Description            |
+|:-----:|:----:|:-----------------------|
+| 00/0  | SEC  | Standard, Extended, and Context Types. |
+| 01/1  | FPV  | r-bit Void float. |
+| 10/2  | CHV  | r-bit Void unsigned char. |
+| 11/3  | ISV  | (r-1)-bit Void signed integer or Extended Block Type. |
 
-## Two-byte Type Bit Pattern
+## Bit Pattern
 
 2-byte types can be used created a POD Type or a map one POD Type to another such as a STA_FPC (string-to-float in C++) map or a CHA_BOL (char-to-bool in C++) map. To create a single POD type set the Map type to 0.
 
-| b15:b14 | b13:b9 | b8:b7 | b6:b5 | b4:b0 |
-|:-------:|:------:|:-----:|:-----:|:-----:|
-|   MOD   |   MT   |  SW   |  VT   |  POD  |
+The One-byte, Two-be, Three-four, and Eight-byte ASCII Data Type bit patterns all use the same legend:
 
-|  b15  | b14 | b13:b9 | b8:b7 | b6:b5 | b4:b0 |
-|:-----:|:---:|:------:|:-----:|:-----:|:-----:|
-| Const | PTR |   MT   |  SW   |  VT   |  POD  |
+| Bit Group Code | Name                 |
+|:--------------:|:---------------------|
+|      POD       | Plain Old Data bits. |
+|      VT        | Vector Type bits.    |
+|      SW        | Size Width bits.     |
+|      MT        | Map Type bits.       |
+|      MD        | Modifier bits.       |
+|      CNS       | Constant.            |
+|      SPC       | Super 32-bit Types.  |
+|      SPD       | Super 64-bit Types.  |
 
-1. POD: Plain Old Data bits
-2. VT: Vector Type bits
-3. SW: Size Width bits
-4. MT: Map Type bits
-5. MOD: Modifier bits
+### Two-byte Type Bit Pattern
+
+The two-byte type bit pattern uses r=13-bit FPr void float, void signed int, and void uchar.
+
+| b15 | b14:b13 | b12:b9 | b8:b7 | b6:b5 | b4:b0 |
+|:---:|:-------:|:------:|:-----:|:-----:|:-----:|
+| CNS |    MD   |   MT   |  SW   |  VT   |  POD  |
+
+### Four-byte Type Bit Pattern
+
+The Four-byte Type bit pattern uses the same layout as the two-byte pattern with the exception that SPC turn the FPV, CHV, and ISV into r=29-bit void types spanning b30:b0, and the extra bits on row 0 of the SPC bits when the MOD bits is 0 become the 16-bit SPC (SuperC or Super32 Types) Types.
+
+| b31 | b30:b29 | b28:b13 | b12:b9 | b8:b7 | b6:b5 | b4:b0 |
+|:---:|:-------:|:-------:|:------:|:-----:|:-----:|:-----:|
+| CNS |    MD   |   SPC   |   MT   |  SW   |  VT   |  POD  |
+
+### Eight-byte Type Bit Pattern
+
+The Eight-byte Type bit pattern uses the same layout as the two-byte pattern with the exception that SPC turn the FPV, CHV, and ISV into 61-bit void types, and the extra bits on row 0 of the SPD (SuperD or Super64 Types) bits when the MOD bits is 0 become the SuperD Types.
+
+| b63 | b62:b61 | b60:b13 | b12:b9 | b8:b7 | b6:b5 | b4:b0 |
+|:---:|:-------:|:-------:|:------:|:-----:|:-----:|:-----:|
+| CNS |    MD   |   SPD   |   MT   |  SW   |  VT   |  POD  |
 
 ## Variable Byte Lengths
 
 Variable Byte Length (VBL) Types 1 to 2048 bytes long are created when the five Least Significant bits of any 16-bit ASCII Type are 0. The size is calculated by shifting the byte to the right 5 bits (i.e. shift bit_5 into bit-0).
 
-## Plain Types
+## Plain Context Types
 
-Plain Types PTa through PTl are implementation defined and may be 8, 16, 32, 64, or 128-bits wide. Plain types must be sorted descending by width, which is reverse order from POD types 1 through 18. All Plain Types except for 8-bit Plain Types can be deleted, which would make all of the Plain Data types 8-bit, hence why they are reverse sorted.
+Plain Context Types PCa through PCl are implementation defined and may be 8, 16, 32, 64, or 128-bits wide. Plain types must be sorted descending by width, which is reverse order from POD types 1 through 18. All Plain Context Types except for 8-bit Plain Context Types can be deleted, which would make all of the Plain Data types 8-bit, hence why they are reverse sorted.
 
-Plain Types are set by defining the last Plain Type index of that size such that `CT0 = 31 >= CT1 >= CT2 >= CT3 >= CT4 >= CT5 > 19`. When the machine is configured these values are CT0_STOP, CT1_STOP, CT2_STOP, CT3_STOP, CT4_STOP, and CT5_STOP respectively. After the machine has been configured the codes then turn into integer values _CT0, _CT1, _CT2, _CT3, _CT4, and _CT5.
+Plain Context Types are set by defining the last Plain Type index of that size such that `CT0 = 31 >= CT1 >= CT2 >= CT3 >= CT4 >= CT5 > 19`. When the machine is configured these values are CT0_STOP, CT1_STOP, CT2_STOP, CT3_STOP, CT4_STOP, and CT5_STOP respectively. After the machine has been configured the codes then turn into integer values _CT0, _CT1, _CT2, _CT3, _CT4, and _CT5.
 
-To delete all 128-bit Plain Types set CT4_STOP to BOL (19). To delete all 64-bit Plain Types set CT3_STOP to CT4_STOP. To delete all 32-bit Plain Types set CT2_STOP to CT3_STOP. To delete all 16-bit Plain Types set CT1_STOP to CT2_STOP. All unspecified Plain Types are then 8-bit types that cannot be deleted.
+To delete all 128-bit Plain Context Types set CT4_STOP to BOL (19). To delete all 64-bit Plain Context Types set CT3_STOP to CT4_STOP. To delete all 32-bit Plain Context Types set CT2_STOP to CT3_STOP. To delete all 16-bit Plain Context Types set CT1_STOP to CT2_STOP. All unspecified Plain Context Types are then 8-bit types that cannot be deleted.
 
 **[<< Previous Section: ASCII Data Specification Overview](./)  |  [Next Section: Extended Types >>](ExtendedTypes.md)**
 

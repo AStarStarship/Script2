@@ -4,12 +4,12 @@
 #include "../BIn.hpp"
 #include "../BOut.hpp"
 #if SEAM == SCRIPT2_CRABS
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
 static const CHA* Crabs(const CHA* args) {
@@ -27,7 +27,7 @@ static const CHA* Crabs(const CHA* args) {
 
   //This a;
 
-  //Crabs* crabs = CrabsInit(boofer, BooferSize, StackHeight, /*&a*/nullptr,
+  //Crabs* crabs = CrabsInit(boofer, BooferSize, StackHeight, /*&a*/NILP,
   //                         unpacked_expr, BooferSize);
   //CrabsPrint(crabs);
 
@@ -56,6 +56,6 @@ static const CHA* Crabs(const CHA* args) {
   //CrabsPrint(crabs);
   D_COUT("\n| Done with Crabs tests.");
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

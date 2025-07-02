@@ -7,13 +7,13 @@
 #include "../RNG.h"
 #include "../Uniprinter.hpp"
 #if SEAM == SCRIPT2_ITOS
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
 
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
 inline const CHA* ItoS(const CHA* args) {
@@ -114,13 +114,13 @@ inline const CHA* ItoS(const CHA* args) {
 
   D_COUT("\n\nTesting Puff ItoS Algorithm...\n\n");
 
-  ISN count = TSTRLength<IUD>(problem_child);
+  ISN count = TStringLength<IUD>(problem_child);
   D_COUT("\n\nTesting %i problem children...\n\n" << count);
 
   for (ISN i = 0; i < count; ++i) {
     expected_ui8 = problem_child[i];
     sprintf_s(expecting, 24, "%llu", expected_ui8);
-    static const CHA kPuffDebugHeader[] =
+    static const CHA PuffDebugHeader[] =
         "\n\n    "
         "|6666555555555544444444443333333333222222222211111111110000000000|\n"
         "    "
@@ -128,9 +128,9 @@ inline const CHA* ItoS(const CHA* args) {
         "    "
         "|*   *  *  *   *  *  *   *  *  *   *  *  *   *  *  *   *  *  *   |\n"
         "    |\0";
-    D_COUT(kPuffDebugHeader << Binaryf(expected_ui8) << '|' << '\n'
+    D_COUT(PuffDebugHeader << Binaryf(expected_ui8) << '|' << '\n'
                             << i << ".) ");
-    ISN expected_length = TSTRLength<CHA>(expecting);
+    ISN expected_length = TStringLength<CHA>(expecting);
     result = TSPrintUnsigned<IUD, CHA>(text, text + Size - 1, expected_ui8);
     if (!result) {
       D_PAUSE("An error occurred :-(");
@@ -140,7 +140,7 @@ inline const CHA* ItoS(const CHA* args) {
     D_AVOW(expecting, text);
   }
 
-  count = TSTRLength<IUD>(edge_condition);
+  count = TStringLength<IUD>(edge_condition);
   D_COUT("\n\nTesting " << count << " edge conditions...\n\n");
   for (ISW i = 0; i < count; ++i) {
     expected_ui8 = edge_condition[i];

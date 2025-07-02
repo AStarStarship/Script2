@@ -1,64 +1,222 @@
 # Extended Types
 
-Extended ASCII Types are contiguous types that use offsets such that ISZ means the largest signed integer, ISY is half the size of ISZ, and so on to IST. Because ISY and subsequent signed integer types must be half the size of the prior post-fixed letter type, the legal types are packed up contiguously in ascending order. The ASCII Code for the type is when the last character is a letter. Implementations may map the all-letter Extended ASCII Type code to one of the number post-fix ASCII Types to set the Default Extended Type for that implementation; for example thd default DIC may be DI4 and on that implementation DIC is the same integer value as DI4. The Extended ASCII Types are:
+There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Extended Standard) Types. In ES Types 0 through 511, there are a total of 52 Illegal Types that are not memory aligned on any system along with 15 NIL Vector types that are remapped to create EM Types. EM Types are created by setting MOD Bits `0b00`. Extended Standard Type 0 is the ANY wildcard type that can be any time.
 
-All ASCII Data Non-POD Types shall be memory aligned all systems. Some combinations of ASCII Data Types are illegal because they are not word aligned, such as an 8-bit Array of 16-bit types. Users also cannot create a pointer to a NIL type, so there are 15 illegal types mapping a POD type to NIL.
+## Extended Mappable Types
 
-Context Types DTa through CTA through CTL are not defined at this level and those data types may or may not be legal, so they are Context Types that are different in each Chinese Room Wall.
+| ID |  Type   |    Name    | Description |
+|:--:|:-------:|:----------:|:------------|
+| 00 |   INV   |  Invalid   | Invalid.    |
+| 01 |   WLD   | Type-Value | A Wildcard type-value tuple. |
+| 02 |   PTC   |  Pointer   | 4-byte pointer. |
+| 03 |   PTD   |  Pointer   | 8-byte pointer. |
+| 04 |   OBA   |   Object   | 1-byte size-width contiguous object. |
+| 05 |   OBB   |   Object   | 2-byte size-width contiguous object. |
+| 06 |   OBC   |   Object   | 4-byte size-width contiguous object. |
+| 07 |   OBD   |   Object   | 8-byte size-width contiguous object. |
+| 08 |   BSA   |    BSQ     | 1-byte size-width B-Sequence. |
+| 09 |   BSB   |    BSQ     | 2-byte size-width B-Sequence. |
+| 10 |   BSC   |    BSQ     | 4-byte size-width B-Sequence. |
+| 11 |   BSD   |    BSQ     | 8-byte size-width B-Sequence. |
+| 12 |   TB0   |   Table    | TTable<ISC, ISB, IUC>. |
+| 13 |   TB1   |   Table    | TTable<ISD, ISC, IUC>. |
+| 14 |   TB2   |   Table    | TTable<ISC, ISB, IUD>. |
+| 15 |   TB3   |   Table    | TTable<ISD, ISC, IUD>. |
+| 16 |   FAL   |    False   | Boolean false. |
+| 17 |   TRU   |    True    | Boolean true. |
+| 18 |   R02   |  Reserved  | Reserved. |
+| 19 |   R03   |  Reserved  | Reserved. |
+| 20 |   DTA   | Data Type  | 1-byte ASCII Data Type. |
+| 21 |   DTB   | Data Type  | 2-byte ASCII Data Type. |
+| 22 |   DTC   | Data Type  | 4-byte ASCII Data Type. |
+| 23 |   DTD   | Data Type  | 8-byte ASCII Data Type. |
+| 24 |   SQC   |  Big SInt  | A 32-bit n-bit signed bigint. |
+| 25 |   UQC   |  Big UInt  | A 32-bit n-bit unsigned bigint. |
+| 26 |   SQD   |  Big SInt  | A 64-bit n-bit signed bigint. |
+| 27 |   UQD   |  Big UInt  | A 64-bit n-bit unsigned bigint. |
+| 28 |   R05   |  Reserved  | Reserved. |
+| 29 |   R06   |  Reserved  | Reserved. |
+| 30 |   BOB   |  Boolean   | 2-byte BOL value. |
+| 31 |   BOC   |  Boolean   | 4-byte BOL value. |
+| 32 |   BO0   |    Book    | TBook<CHA, ISB, ISA, DTB>. |
+| 33 |   BO1   |    Book    | TBook<CHA, ISC, ISB, DTB>. |
+| 34 |   BO2   |    Book    | TBook<CHA, ISD, ISC, DTB>. |
+| 35 |   BO3   |    Book    | TBook<CHB, ISB, ISA, DTB>. |
+| 36 |   BO4   |    Book    | TBook<CHB, ISC, ISB, DTB>. |
+| 37 |   BO5   |    Book    | TBook<CHB, ISD, ISC, DTB>. |
+| 38 |   BO6   |    Book    | TBook<CHC, ISB, ISA, DTB>. |
+| 39 |   BO7   |    Book    | TBook<CHC, ISC, ISB, DTB>. |
+| 40 |   BO8   |    Book    | TBook<CHC, ISD, ISC, DTB>. |
+| 41 |   DI0   | Dictionary | TDic<CHA, ISC, ISB, IUC, DTB>. |
+| 42 |   DI1   | Dictionary | TDic<CHA, ISD, ISC, IUD, DTB>. |
+| 43 |   DI2   | Dictionary | TDic<CHB, ISC, ISB, IUC, DTB>. |
+| 44 |   DI3   | Dictionary | TDic<CHB, ISD, ISC, IUD, DTB>. |
+| 45 |   DI4   | Dictionary | TDic<CHC, ISC, ISB, IUC, DTB>. |
+| 46 |   DI5   | Dictionary | TDic<CHC, ISD, ISC, IUD, DTB>. |
+| 47 |   R07   |  Reserved  | Reserved. |
+| 48 |   LS0   |    List    | TList<ISB, ISA, DTB>. |
+| 49 |   LS1   |    List    | TList<ISC, ISB, DTB>. |
+| 50 |   LS2   |    List    | TList<ISD, ISC, DTB>. |
+| 52 |   R11   |  Reserved  | Reserved. |
+| 53 |   R12   |  Reserved  | Reserved. |
+| 54 |   R13   |  Reserved  | Reserved. |
+| 55 |   R10   |  Reserved  | Reserved. |
+| 56 |   R11   |  Reserved  | Reserved. |
+| 57 |   R12   |  Reserved  | Reserved. |
+| 58 |   R13   |  Reserved  | Reserved. |
+| 59 |   R11   |  Reserved  | Reserved. |
+| 60 |   R12   |  Reserved  | Reserved. |
+| 61 |   R13   |  Reserved  | Reserved. |
+| 62 |   R14   |  Reserved  | Reserved. |
+| 63 |   R15   |  Reserved  | Reserved. |
+| 64 |   R16   |  Reserved  | Reserved. |
+| 65 |   R17   |  Reserved  | Reserved. |
+| 66 |   R18   |  Reserved  | Reserved. |
+| 67 |   R19   |  Reserved  | Reserved. |
 
-There are a total of 207 Illegal Types that are remapped to 135 [Extended Types](ExtendedTypes.md) and 72 [Context Types](#ContextTypes).
+| ID |  Type   |    Name    | Description |
+|:--:|:-------:|:----------:|:------------|
+| 01 |   WLD   | Type-Value | A Wildcard type-value tuple. |
+| 02 |   PTC   |  Pointer   | 4-byte pointer. |
+| 03 |   PTD   |  Pointer   | 8-byte pointer. |
+| 04 |   OBA   |   Object   | 1-byte size-width contiguous object. |
+| 05 |   OBB   |   Object   | 2-byte size-width contiguous object. |
+| 06 |   OBC   |   Object   | 4-byte size-width contiguous object. |
+| 07 |   OBD   |   Object   | 8-byte size-width contiguous object. |
+| 08 |   BSA   |    BSQ     | 1-byte size-width B-Sequence. |
+| 09 |   BSB   |    BSQ     | 2-byte size-width B-Sequence. |
+| 10 |   BSC   |    BSQ     | 4-byte size-width B-Sequence. |
+| 11 |   BSD   |    BSQ     | 8-byte size-width B-Sequence. |
+| 12 |   DTA   | Data Type  | 1-byte ASCII Data Type. |
+| 13 |   DTB   | Data Type  | 2-byte ASCII Data Type. |
+| 14 |   DTC   | Data Type  | 4-byte ASCII Data Type. |
+| 15 |   DTD   | Data Type  | 8-byte ASCII Data Type. |
+
+| 16 |   TB0   |   Table    | TTable<ISC, ISB, IUC>. |
+| 17 |   TB1   |   Table    | TTable<ISD, ISC, IUC>. |
+| 18 |   TB2   |   Table    | TTable<ISC, ISB, IUD>. |
+| 19 |   TB3   |   Table    | TTable<ISD, ISC, IUD>. |
+| 20 |   BO0   |    Book    | TBook<CHA, ISB, ISA, DTB>. |
+| 21 |   BO3   |    Book    | TBook<CHB, ISB, ISA, DTB>. |
+| 22 |   BO6   |    Book    | TBook<CHC, ISB, ISA, DTB>. |
+| 23 |   LS0   |    List    | TList<ISB, ISA, DTB>. |
+| 24 |   DI0   | Dictionary | TDic<CHA, ISC, ISB, IUC, DTB>. |
+| 25 |   DI2   | Dictionary | TDic<CHB, ISC, ISB, IUC, DTB>. |
+| 26 |   DI4   | Dictionary | TDic<CHC, ISC, ISB, IUC, DTB>. |
+| 27 |   R06   |  Reserved  | Reserved. |
+| 28 |   BO1   |    Book    | TBook<CHA, ISC, ISB, DTB>. |
+| 29 |   BO4   |    Book    | TBook<CHB, ISC, ISB, DTB>. |
+| 30 |   BO7   |    Book    | TBook<CHC, ISC, ISB, DTB>. |
+| 31 |   LS1   |    List    | TList<ISC, ISB, DTB>. |
+| 33 |   DI1   | Dictionary | TDic<CHA, ISD, ISC, IUD, DTB>. |
+| 34 |   DI3   | Dictionary | TDic<CHB, ISD, ISC, IUD, DTB>. |
+| 35 |   DI5   | Dictionary | TDic<CHC, ISD, ISC, IUD, DTB>. |
+| 36 |   R06   |  Reserved  | Reserved. |
+| 37 |   BO2   |    Book    | TBook<CHA, ISD, ISC, DTB>. |
+| 38 |   BO5   |    Book    | TBook<CHB, ISD, ISC, DTB>. |
+| 39 |   BO8   |    Book    | TBook<CHC, ISD, ISC, DTB>. |
+| 40 |   LS2   |    List    | TList<ISD, ISC, DTB>. |
+
+| 41 |   BO0   |    Book    | TBook<CHA, ISB, ISA, DTC>. |
+| 21 |   BO3   |    Book    | TBook<CHB, ISB, ISA, DTC>. |
+| 22 |   BO6   |    Book    | TBook<CHC, ISB, ISA, DTC>. |
+| 23 |   LS0   |    List    | TList<ISB, ISA, DTC>. |
+| 24 |   DI0   | Dictionary | TDic<CHA, ISC, ISB, IUC, DTC>. |
+| 25 |   DI2   | Dictionary | TDic<CHB, ISC, ISB, IUC, DTC>. |
+| 26 |   DI4   | Dictionary | TDic<CHC, ISC, ISB, IUC, DTC>. |
+| 27 |   R06   |  Reserved  | Reserved. |
+| 28 |   BO1   |    Book    | TBook<CHA, ISC, ISB, DTC>. |
+| 29 |   BO4   |    Book    | TBook<CHB, ISC, ISB, DTC>. |
+| 30 |   BO7   |    Book    | TBook<CHC, ISC, ISB, DTC>. |
+| 31 |   LS1   |    List    | TList<ISC, ISB, DTC>. |
+| 33 |   DI1   | Dictionary | TDic<CHA, ISD, ISC, IUD, DTC>. |
+| 34 |   DI3   | Dictionary | TDic<CHB, ISD, ISC, IUD, DTC>. |
+| 35 |   DI5   | Dictionary | TDic<CHC, ISD, ISC, IUD, DTC>. |
+| 36 |   R06   |  Reserved  | Reserved. |
+| 37 |   BO2   |    Book    | TBook<CHA, ISD, ISC, DTC>. |
+| 38 |   BO5   |    Book    | TBook<CHB, ISD, ISC, DTC>. |
+| 39 |   BO8   |    Book    | TBook<CHC, ISD, ISC, DTC>. |
+| 27 |   R06   |  Reserved  | Reserved. |
+
+| 20 |   BO0   |    Book    | TBook<CHA, ISB, ISA, DTD>. |
+| 21 |   BO3   |    Book    | TBook<CHB, ISB, ISA, DTD>. |
+| 22 |   BO6   |    Book    | TBook<CHC, ISB, ISA, DTD>. |
+| 27 |   R06   |  Reserved  | Reserved. |
+| 24 |   DI0   | Dictionary | TDic<CHA, ISC, ISB, IUC, DTD>. |
+| 25 |   DI2   | Dictionary | TDic<CHB, ISC, ISB, IUC, DTD>. |
+| 26 |   DI4   | Dictionary | TDic<CHC, ISC, ISB, IUC, DTD>. |
+| 27 |   R06   |  Reserved  | Reserved. |
+| 28 |   BO1   |    Book    | TBook<CHA, ISC, ISB, DTD>. |
+| 29 |   BO4   |    Book    | TBook<CHB, ISC, ISB, DTD>. |
+| 30 |   BO7   |    Book    | TBook<CHC, ISC, ISB, DTD>. |
+| 27 |   R06   |  Reserved  | Reserved. |
+| 33 |   DI1   | Dictionary | TDic<CHA, ISD, ISC, IUD, DTD>. |
+| 34 |   DI3   | Dictionary | TDic<CHB, ISD, ISC, IUD, DTD>. |
+| 35 |   DI5   | Dictionary | TDic<CHC, ISD, ISC, IUD, DTD>. |
+| 36 |   R06   |  Reserved  | Reserved. |
+| 37 |   BO2   |    Book    | TBook<CHA, ISD, ISC, DTD>. |
+| 38 |   BO5   |    Book    | TBook<CHB, ISD, ISC, DTD>. |
+| 39 |   BO8   |    Book    | TBook<CHC, ISD, ISC, DTD>. |
+| 63 |   R06   |  Reserved  | Reserved. |
+
+| 64 |   SQC   |  Big SInt  | A 32-bit n-bit signed bigint. |
+| 65 |   UQC   |  Big UInt  | A 32-bit n-bit unsigned bigint. |
+| 66 |   SQD   |  Big SInt  | A 64-bit n-bit signed bigint. |
+| 67 |   UQD   |  Big UInt  | A 64-bit n-bit unsigned bigint. |
+
+All ASCII Data Types **shall** be memory aligned on 32-bit systems, leaving 32 types that that are not aligned 64-bit systems, and these types are illegal on 64-bit systems. Due to memory space constraints, 16-bit memory space processors (i.e. 8-bit microcontrollers with only 64KB RAM or less) do not support Context and Extended Types.
+
+Remapping 14-bit ASCII Data Type bit pattern to the Extended Types **shall** be fast as possible. For this reason all Plain Context Types **shall** be sorted by memory alignment in descending order such that PCa is of the largest and PCl is of the smallest type. Plain Context Types PCa through PCl are not defined at this level, they may or may not be remapped to legal types depending on the Context. PC types remapped to illegal types are Extended Context Types.
+
+## Remapping
 
 ```AsciiArt
-| Vector |     POD Type 0-31 (1=Valid, 0=Extended Types, ?=User Types)      |
-| Type   | N I I C F I I C F I I C T I I F  F I I T C C C D C C C C C C C C |
-| SW:VT  | I U S H P U S H P U S H M U S P  P U S M T T T T T T T T T T T T |
-| b8:b5  | L A A A B B B B C C C C D D D D  E E E E A B C D E F G H I J K L |
+| Vector | POD 0-31   1=Valid, 0=Invalid, 4=Valid on 32-bit CPU, ?=Unknown  |
+| Type   | N I I C F I I C F I I C T I I F  F I I T P P P P P P P P P P P P |
+| SW:VT  | I U S H P U S H P U S H M U S P  P U S M C C C C C C C C C C C C |
+| b8:b5  | L A A A B B B B C C C C D D D D  E E E E a b c d e f g h i j k l |
 +--------+------------------------------------------------------------------|
-|  8_VH1 | 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
-|  8_ARY | 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
-|  8_STK | 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
-|  8_MAT | 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
+|  8_VH1 | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
+|  8_ARY | 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
+|  8_SCK | 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
+|  8_MTX | 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
 | 16_VH2 | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
 | 16_ARY | 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
-| 16_STK | 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
-| 16_MAT | 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
+| 16_SCK | 0 1 1 1 1 1 1 1 1 1 1 1 4 4 4 4  4 4 4 4 ? ? ? ? ? ? ? ? ? ? ? ? |
+| 16_MTX | 0 1 1 1 1 1 1 1 1 1 1 1 4 4 4 4  4 4 4 4 ? ? ? ? ? ? ? ? ? ? ? ? |
 | 32_VH3 | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
-| 32_ARY | 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
-| 32_STK | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
-| 32_MAT | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  0 0 0 0 ? ? ? ? ? ? ? ? ? ? ? ? |
+| 32_ARY | 0 1 1 1 1 1 1 1 1 1 1 1 4 4 4 4  4 4 4 4 ? ? ? ? ? ? ? ? ? ? ? ? |
+| 32_SCK | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  4 4 4 4 ? ? ? ? ? ? ? ? ? ? ? ? |
+| 32_MTX | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  4 4 4 4 ? ? ? ? ? ? ? ? ? ? ? ? |
 | 64_VH4 | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
 | 64_ARY | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
-| 64_STK | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
-| 64_MAT | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
+| 64_SCK | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
+| 64_MTX | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 |
 +--------+------------------------------------------------------------------|
 | Total  | 0 1 2 3 4 5 6 7 8 9 1 1 1 1 1 1  1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 |
 |  512   |      Type 0-31      0 1 2 3 4 5  6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 |
 ```
 
-## Remapping Algorithm
-
-Remapping 14-bit ASCII Data Type bit pattern to the Extended Types shall be fast as possible. Types are remapped in blocks in order A through H in the table bellow.
-
-The fastest Extended Types to decode is the A column, which are remap transposed to E01 through E0F amd does not require shifting. The rest of the mappings only require subtracting or adding to the lower 5 bits to shift into place. B and C don't require any shifting. Types 1 through 135 are mapped to Extended Types and 136 through 135 are Context Types. This allows a signed integer to return either the Standard or Extended Type with where the Standard Type is negative and the Extended Types are positive.
+Types are remapped in blocks in order A through H in the table bellow. The columns of the blocks are grouped in powers of two, either four or eight wide. The upper left letter is then shifted to the origin (i.e. 0, 0) to convert the SW:VT and POD bits into contiguous integer values(i.e. by shifting the SW:VT bits to the left 5 bits and ORing it with the POD bits).
 
 ```AsciiArt
-| Vector |      POD Type 0-31 (.=Valid A-H=Order to convert blocks in)      |
+| Vector | POD 0-31  .=Valid A-H=Order to convert blocks, lower case:64-bit |
 | Type   | N I I C F I I C F I I C F I I T  F I I T P P P P P P P P P P P P |
-| SW:VT  | I U I H P U S H P U S H P U S M  P U S M T T T T T T T T T T T T |
+| SW:VT  | I U I H P U S H P U S H P U S M  P U S M C C C C C C C C C C C C |
 | b8:b5  | L A A A B B B B C C C C D D D D  E E E E a b c d e f g h i j k l |
 +--------+------------------------------------------------------------------|
-|   0/A  | . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
-|   1/B  | A . . . H H H H B B B B B B B B  B B B B B B B B B B B B B B B B |
-|   2/C  | A . . . . . . . B B B B B B B B  B B B B B B B B B B B B B B B B |
-|   3/D  | A . . . . . . . B B B B B B B B  B B B B B B B B B B B B B B B B |
+|   0/A  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
+|   1/C  | A . . . I I I I H H H H G G G G  G G G G C C C C B B B B B B B B |
+|   2/C  | A . . . . . . . H H H H G G G G  G G G G C C C C B B B B B B B B |
+|   3/D  | A . . . . . . . H H H H G G G G  G G G G C C C C B B B B B B B B |
 |   4/E  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
-|   5/F  | A . . . . . . . H H H H F F F F  F F F F D D D D C C C C C C C C |
-|   6/G  | A . . . . . . . . . . . F F F F  F F F F D D D D C C C C C C C C |
-|   7/H  | A . . . . . . . . . . . F F F F  F F F F D D D D C C C C C C C C |
+|   5/F  | A . . . . . . . I I I I G G G G  G G G G C C C C B B B B B B B B |
+|   6/G  | A . . . . . . . . . . . . . . .  . . . . E E E E B B B B B B B B |
+|   7/H  | A . . . . . . . . . . . . . . .  . . . . E E E E B B B B B B B B |
 |   8/I  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
-|   9/J  | A . . . . . . . . . . . H H H H  G G G G E E E E C C C C C C C C |
-|  10/K  | A . . . . . . . . . . . . . . .  G G G G E E E E C C C C C C C C |
-|  11/L  | A . . . . . . . . . . . . . . .  H H H H E E E E C C C C C C C C |
+|   9/J  | A . . . . . . . . . . . . . . .  . . . . F F F F B B B B B B B B |
+|  10/K  | A . . . . . . . . . . . . . . .  . . . . D D D D B B B B B B B B |
+|  11/L  | A . . . . . . . . . . . . . . .  . . . . D D D D B B B B B B B B |
 |  12/M  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
 |  13/N  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
 |  14/O  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
@@ -68,172 +226,94 @@ The fastest Extended Types to decode is the A column, which are remap transposed
 |  512   |      Type 0-31      0 1 2 3 4 5  6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 |
 ```
 
-For the optimization for Block H please see "Faster EXT Boolean Method" bellow.
+To convert the blocks above to contiguous Repacked Extended Mappable Types or Repacked Plain Context Types you shift the blocks to the origin (i.e. SW_VT:0 and POD: 0), then shift the SW_VT and POD bits back up to convert the blocks that are 4-wide to the blocks that are 8-wide.
 
-## Remapped Extended Standard Types 1-135
+### Repacked Extended Mappable Types
 
 ```AsciiArt
 | Total | 0 1 2 3 4 5 6 7 8 9 1 1 1 1 1 1  1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 |
-|  135  | Extended Type 0-31  0 1 2 3 4 5  6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 |
+|  60   | Extended Type 0-31  0 1 2 3 4 5  6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 |
 +-------+------------------------------------------------------------------|
-|  000  | x A A A A A A A A A A A A A A A  H H H H H H H H H H H H H H H H |
-|  001  | F F F F F F F F B B B B B B B B  B B B B B B B B B B B B B B B B |
-|  010  | F F F F F F F F B B B B B B B B  B B B B B B B B B B B B B B B B |
-|  011  | F F F F F F F F B B B B B B B B  B B B B B B B B B B B B B B B B |
-|  111  | G G G G G G G x x x x x x x x x  x x x x x x x x x x x x x x x x |
-+-------+------------------------------------------------------------------|
+| 00/0  | . A A A A A A A A A A A A A A A  G G G G G G G G G G G G G G G G |
+| 01/1  | G G G G G G G G I I I I I I I I  G G G G G G G G H H H H H H H H |
+| 10/2  | H H H H . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
 ```
 
-## Remapped Context Types 136-208
+### Repacked Plain Context Types
 
 ```AsciiArt
 | Total | 0 1 2 3 4 5 6 7 8 9 1 1 1 1 1 1  1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 |
 |  72   | Extended Type 0-31  0 1 2 3 4 5  6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 |
 +-------+------------------------------------------------------------------|
-|  00   | E E E E D D D D C C C C C C C C  C C C C C C C C C C C C C C C C |
-|  01   | E E E E D D D D C C C C C C C C  C C C C C C C C C C C C C C C C |
-|  10   | E E E E D D D D x x x x x x x x  x x x x x x x x x x x x x x x x | 
-+-------+------------------------------------------------------------------|
+| 00/0  | B B B B B B B B B B B B B B B B  B B B B B B B D D D D D D D D D |
+| 01/1  | B B B B B B B B B B B B B B B B  B B B B B B B E E E E E E E E E |
+| 10/2  | B B B B B B B B B B B B B B B B  B B B B B B B C C C C C C C C C |
+| 10/2  | C C C C F F F F C C C C . . . .  . . . . . . . . . . . . . . . . |
 ```
 
-## Faster EXT Boolean Method
+## Extended Block Types
 
-```AsciiArt
-| Vector |    POD Type 0-31 (.=Valid A-C=Order to convert x=Don't care)     |
-| Type   | N I I C F I I C F I I C F I I T  F I I T C C C D C C C C C C C C |
-| SW:VT  | I U I H P U S H P U S H P U S M  P U S M T T T T T T T T T T T T |
-| b8:b5  | L A A A B B B B C C C C D D D D  E E E E A B C D E F G H I J K L |
-+--------+------------------------------------------------------------------|
-|   0/A  | . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
-|   1/B  | A . . . C C C C 0 0 0 0 0 0 0 0  B B B B B B B B B B B B B B B B |
-|   2/C  | A . . . . . . . 0 0 0 0 0 0 0 0  B B B B B B B B B B B B B B B B |
-|   3/D  | A . . . . . . . 0 0 0 0 0 0 0 0  B B B B B B B B B B B B B B B B |
-|   4/E  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
-|   5/F  | A . . . . . . . C C C C 0 0 0 0  B B B B B B B B B B B B B B B B |
-|   6/G  | A . . . . . . . . . . . 0 0 0 0  B B B B B B B B B B B B B B B B |
-|   7/H  | A . . . . . . . . . . . 0 0 0 0  B B B B B B B B B B B B B B B B |
-|   8/I  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
-|   9/J  | A . . . . . . . . . . . C C C C  B B B B B B B B B B B B B B B B |
-|  10/K  | A . . . . . . . . . . . . . . .  B B B B B B B B B B B B B B B B |
-|  11/L  | A . . . . . . . . . . . . . . .  B B B B B B B B B B B B B B B B |
-+--------+------------------------------------------------------------------|
-| Total  | 0 1 2 3 4 5 6 7 8 9 1 1 1 1 1 1  1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 |
-|  512   |      Type 0-31      0 1 2 3 4 5  6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 |
-```
+Because there are 12 Plain Context Types and only four 128-bit types, Extended Block Type are created by setting the MSb of the 16-bit data type pattern to `0b111...`, yielding eight Blocks of 511 Extended Block Types.
 
-```AsciiArt
-| Vector | .=Valid C=Block C x=Don't care  |
-| SW:VT  | 0 1 2 3 4 5 6 7 8 9 1 1 1 1 1 1 |
-| b8:b5  |                     0 1 2 3 4 5 |
-+--------+---------------------------------|
-|   0/A  | x x x x x x x x x x x x x x x x |
-|   1/B  | x . . . C C C C 0 0 0 0 0 0 0 0 |
-|   2/C  | x . . . . . . . 0 0 0 0 0 0 0 0 |
-|   3/D  | x . . . . . . . 0 0 0 0 0 0 0 0 |
-|   4/E  | x . . . . . . . x x x x x x x x |
-|   5/F  | x . . . . . . . C C C C 0 0 0 0 |
-|   6/G  | x . . . . . . . . . . . 0 0 0 0 |
-|   7/H  | x . . . . . . . . . . . 0 0 0 0 |
-|   8/I  | x . . . . . . . . . . . x x x x |
-|   9/J  | x . . . . . . . . . . . C C C C |
-|  10/K  | x . . . . . . . . . . . . . . . |
-|  11/L  | x . . . . . . . . . . . . . . . |
-+--------+---------------------------------|
-```
+### Extended Blocks Table
 
-```AsciiArt
-| SW:VT | 0 1 2 3 |
-| b8:b5 | type_m4 |
-+-------+---------|
-|  0/A  | x x x x |
-|  1/B  | x x x x |
-|  2/C  | x x x x |
-|  3/D  | x x x x |
-|  4/E  | . C 0 0 |
-|  5/F  | . . 0 0 |
-|  6/G  | . . 0 0 |
-|  7/H  | . . x x |
-|  8/I  | . . C 0 |
-|  9/J  | . . . 0 |
-| 10/K  | . . . 0 |
-| 11/L  | . . . x |
-| 12/M  | . . . C |
-| 13/N  | . . . . |
-+-------+---------|
-```
+The CNS, MD, and EB (Extended Block) bits take up 6 control bits, leaving 10 LSb.
 
-## Extended Types Table
+| Value | Code | Description |
+|:-----:|:----:|:------------|
+|  00   | CIX  | A 9-bit Scoped or 9-bit Global Crabs Index. |
+|  01   | EXT  | Extended Standard or Extended Context Types. |
+|  02   | I1K  | 0 is NIL and A block of 1-1024 bytes. |
+|  03   | I2K  | 0 is NIL and A block of 1025-2048 bytes. |
+|  04   | R00  | Reserved. |
+|  05   | R01  | Reserved. |
+|  06   | R02  | Reserved. |
+|  07   | BFA  | An 8-bit Void Signed Boolean or Void Minifloat. |
+
+### Extended Standard Types
 
 | ID  |  Type   |    Name    | Description |
 |:---:|:-------:|:----------:|:------------|
-| 000 |   IMP   | Impossible | Impossible type. |
-| 001 |   INV   |  Invalid   | Invalid type. |
-| 002 |   BOB   |  Boolean   | 2-byte BOL value. |
-| 003 |   BOC   |  Boolean   | 4-byte BOL value. |
-| 004 |   DTA   | Data Type  | 8-bit ASCII Data Type. |
-| 005 |   DTB   | Data Type  | 16-bit ASCII Data Type. |
-| 006 |   DTC   | Data Type  | Two contiguous 16-bit ASCII Data Types. |
-| 007 |   DTD   | Data Type  | Three contiguous 16-bit ASCII Data Types. |
-| 008 |   OBA   |  Object    | 1-byte size-width contiguous object. |
-| 009 |   OBB   |  Object    | 2-byte size-width contiguous object. |
-| 010 |   OBC   |  Object    | 4-byte size-width contiguous object. |
-| 011 |   OBD   |  Object    | 8-byte size-width contiguous object. |
-| 012 |   BSA   |   BSQ      | 1-byte total B-Sequence.|
-| 013 |   BSB   |   BSQ      | 2-byte total B-Sequence.|
-| 014 |   BSC   |   BSQ      | 4-byte total B-Sequence.|
-| 015 |   BSD   |   BSQ      | 8-byte total B-Sequence.|
-| 016 |   LS0   |   List     | TList<ISB, ISA, DTB>. |
-| 017 |   LS1   |   List     | TList<ISC, ISB, DTB>. |
-| 018 |   LS2   |   List     | TList<ISD, ISC, DTB>. |
-| 019 |   ...   |     ...    | ...|
-| 010 |   TB0   |   Table    | TTable<ISC, ISB, IUC>.|
-| 021 |   TB1   |   Table    | TTable<ISC, ISB, IUC>.|
-| 022 |   TB2   |   Table    | TTable<ISC, ISB, IUD>.|
-| 023 |   TB3   |   Table    | TTable<ISC, ISB, IUD>.|
-| 024 |   DI0   | Dictionary | TDic<CHA, ISC, ISB, IUC, DTB>. |
-| 025 |   DI1   | Dictionary | TDic<CHA, ISD, ISC, IUD, DTB>. |
-| 026 |   DI2   | Dictionary | TDic<CHB, ISC, ISB, IUC, DTB>. |
-| 027 |   DI3   | Dictionary | TDic<CHB, ISD, ISC, IUD, DTB>. |
-| 028 |   DI4   | Dictionary | TDic<CHC, ISC, ISB, IUC, DTB>. |
-| 029 |   DI5   | Dictionary | TDic<CHC, ISD, ISC, IUD, DTB>. |
-| 030 |   BO0   |    Book    | TBook<CHA, ISB, ISA, DTB>. |
-| 031 |   BO1   |    Book    | TBook<CHA, ISC, ISB, DTB>. |
-| 032 |   BO2   |    Book    | TBook<CHA, ISD, ISC, DTB>. |
-| 033 |   BO3   |    Book    | TBook<CHB, ISB, ISA, DTB>. |
-| 034 |   BO4   |    Book    | TBook<CHB, ISC, ISB, DTB>. |
-| 035 |   BO5   |    Book    | TBook<CHB, ISD, ISC, DTB>. |
-| 036 |   BO6   |    Book    | TBook<CHC, ISB, ISA, DTB>. |
-| 037 |   BO7   |    Book    | TBook<CHC, ISC, ISB, DTB>. |
-| 038 |   BO8   |    Book    | TBook<CHC, ISD, ISC, DTB>. |
-| 039 |         |            | .|
-| 040 |   ERA   |   Error    | 1-byte Error type. |
-| 041 |   ERB   |   Error    | 2-byte Error type. |
-| 042 |   ERC   |   Error    | 4-byte Error type. |
-| 043 |   ERD   |   Error    | 8-byte Error type. |
-| 044 |   EOA   | Err Object | 1-byte size-width Error type. |
-| 045 |   EOB   | Err Object | 2-byte size-width Error type. |
-| 046 |   EOC   | Err Object | 4-byte size-width Error type. |
-| 047 |   EOD   | Err Object | 8-byte size-width Error type. |
-|  |   ...   |     ...    | ...|
-| 128 |  IUF    |    256     | 32-byte unsigned integer. |
-| 129 |  IUG    |    512     | 64-byte unsigned integer. |
-| 130 |  IUH    |   1024     | 128-byte unsigned integer. |
-| 131 |  IUI    |   2048     | 256-byte unsigned integer. |
-| 132 |  IUJ    |   4096     | 512-byte unsigned integer. |
-| 133 |  IUK    |   8192     | 1024-byte unsigned integer. |
-| 134 |  IUL    |   16384    | 2048-byte unsigned integer. |
-| 135 |  IUM    |   32768    | 4096-byte unsigned integer. |
+| 00  |   FAL   |    False   | Boolean false. |
+| 01  |   TRU   |    True    | Boolean true. |
+| 02  |   VSB   |   Varint   | 16-bit signed MSb variant encoded integer. |
+| 03  |   VUB   |   Varint   | 16-bit unsigned MSb variant encoded integer. |
+| 04  |   VSC   |   Varint   | 32-bit signed MSb variant encoded integer. |
+| 05  |   VUC   |   Varint   | 32-bit unsigned MSb variant encoded integer. |
+| 06  |   VSD   |   Varint   | 64-bit signed MSb variant encoded integer. |
+| 07  |   VUD   |   Varint   | 64-bit unsigned MSb variant encoded integer. |
+| 08  |   STA   |   String   | Nil-terminated UTF-8 string. |
+| 09  |   STB   |   String   | Nil-terminated UTF-16 string. |
+| 10  |   STC   |   String   | Nil-terminated UTF-32 string. |
+| 11  |   R01   |  Reserved  | Reserved. |
+| 12  |   R02   |  Reserved  | Reserved. |
+| 13  |   R03   |  Reserved  | Reserved. |
+| 14  |   R04   |  Reserved  | Reserved. |
+| 15  |   RSe   |  Reserved  | Reserved. |
+| 16  |   ERA   |   Error    | 1-byte Error type. |
+| 17  |   ERB   |   Error    | 2-byte Error type. |
+| 18  |   ERC   |   Error    | 4-byte Error type. |
+| 19  |   ERD   |   Error    | 8-byte Error type. |
+| 20  |   EOA   | Err Object | 1-byte size-width Error type. |
+| 21  |   EOB   | Err Object | 2-byte size-width Error type. |
+| 22  |   EOC   | Err Object | 4-byte size-width Error type. |
+| ..  |   ...   |     ...    | .... |
+| 254 |   Any   |  Wildcard  | Wildcard; can be any type. |
+| 255 |   INV   |   Invalid  | Marks an invalid type in a B-Sequence. |
 
-|  Type   |    Name    | Description |
-|:-------:|:----------:|:------------|
-|   LOM   |    Loom    | An array of strings. |
-|   LST   |    List    | A collection of type-value tuples. |
-|   BOK   |    Book    | An associative list without a hash-table. |
-|   DIC   | Dictionary | An associative list with a hash-table. |
-|   BSQ   | B-Sequence | Header for a sequence of bytes. |
-|   BIN   |  B-Input   | A Byte-input ring buffer socket. |
-|   BOU   |  B-Output  | A Byte-output ring buffer socket. |
-|   SLT   |    Slot    | A slot in a Door with a BIn and BOut to pass messages. |
+## Extended 8-bit Types
+
+The ETA, Extended Type 8-bit, Block stores either an 8-bit Void Boolean value if the MSb is 0, or 8-bit signed int if the MSb is 1.
+
+### Pointers
+
+There are two ways to make an ASCII Pointer, one is by setting the MD bits to MDP, the other is by making a negative ISZ (AKA the largest signed integer type). All ASCII Objects are pointer types, so setting the pointer types to ASCII Objects creates a pointer to a pointer.
+
+When an ASCII Object's bytes is positive the type is a contiguous number of bytes, if the values is negative then it becomes a raw pointer from the origin of the Crabs machine.
+
+At the very origin of the Crabs machine is a word aligned block of memory, which does not apply to 16-bit address space CPUs, that is 256 bytes plus the width of the CPU's cache line plus size of variables, which is typically 64 bytes on all CPUs with DDR RAM. 8-bit Crabs pointers are mapped to this 256-byte Crabs origin.
+
+Pointer values between 257-65535
 
 **[<< Previous Section: Types](Types.md) | [Next Section: Numbers >>](Numbers.md)**
 

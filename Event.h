@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_EVENT_DECL
-#define SCRIPT2_EVENT_DECL
+#define SCRIPT2_EVENT_DECL 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_DIC
 namespace _ {

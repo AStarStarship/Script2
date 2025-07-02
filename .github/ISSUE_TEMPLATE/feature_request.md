@@ -29,7 +29,7 @@ RequestFeature
 
 ## Sessions
 
-* CookingWithCale/.github#9
+* AStarCale/.github#9
 
 ## License
 

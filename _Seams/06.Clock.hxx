@@ -3,13 +3,13 @@
 #include "../Clock.hpp"
 #include "../Uniprinter.hpp"
 #if SEAM == SCRIPT2_CLOCK
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
 
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 static const CHA* Clock(const CHA* args) {
 #if SEAM >= SCRIPT2_CLOCK
@@ -79,6 +79,6 @@ static const CHA* Clock(const CHA* args) {
 
   D_COUT("\nDone testing date parsing utils! :-)\n");
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

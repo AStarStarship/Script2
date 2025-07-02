@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_HASH_HEADER_IMPL
-#define SCRIPT2_HASH_HEADER_IMPL
+#define SCRIPT2_HASH_HEADER_IMPL 1
 #include <_Config.h>
 namespace _ {
 /* Returns the highest signed prime that can fit in type IS.

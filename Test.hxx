@@ -1,5 +1,5 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
-#include "Test.h"
+#include "Test.hpp"
 #include "COut.h"
 #include "Stringf.hpp"
 namespace _ {
@@ -46,7 +46,7 @@ const CHA* ArgsToString(ISN arg_count, CHA** args) {
 }
 
 const CHA* TestTree(const CHA* args, TestCase* tests, ISN count) {
-  if (!tests) return nullptr;
+  if (!tests) return NILP;
   for (ISN i = 0; i < count; ++i) {
     TestCase test = tests[i];
     if (!test) {
@@ -58,7 +58,7 @@ const CHA* TestTree(const CHA* args, TestCase* tests, ISN count) {
     const CHA* error = test(args);
     if (error) return error;
   }
-  return nullptr;
+  return NILP;
 }
 
 ISN SeamResult(const CHA* result) {
@@ -80,12 +80,27 @@ ISN SeamTreeTest(ISN arg_count, CHA** args, TestCase* tests, ISN test_count) {
 
 BOL Test(BOL condition) { return condition; }
 
+BOL TestEQ(ISA a, ISA b) { return a >= b; }
+BOL TestEQ(ISB a, ISB b) { return a >= b; }
+BOL TestEQ(ISC a, ISC b) { return a >= b; }
+BOL TestEQ(ISD a, ISD b) { return a >= b; }
+
+BOL TestGEQ(ISA a, ISA b) { return a >= b; }
+BOL TestGEQ(ISB a, ISB b) { return a >= b; }
+BOL TestGEQ(ISC a, ISC b) { return a >= b; }
+BOL TestGEQ(ISD a, ISD b) { return a >= b; }
+
+BOL TestLEQ(ISA a, ISA b) { return a >= b; }
+BOL TestLEQ(ISB a, ISB b) { return a >= b; }
+BOL TestLEQ(ISC a, ISC b) { return a >= b; }
+BOL TestLEQ(ISD a, ISD b) { return a >= b; }
+
 static const CHA STRErrorExpecting[] = "\n\nERROR: Expecting:0x\0";
 static const CHA STRFound[] = "\n           Found:0x\0";
 //static const CHA STRErrorNil[] = "\nERROR: value was nil!\0";
 
 BOL Test(const CHA* a, const CHA* b) {
-  ISN difference = TSTRCompare<CHA>(a, b);
+  ISN difference = TStringCompare<CHA>(a, b);
   if (!difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut("\n\nERROR: Expecting:\"").Print(a)
@@ -95,9 +110,9 @@ BOL Test(const CHA* a, const CHA* b) {
   return false;
 }
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 BOL Test(const CHB* a, const CHB* b) {
-  ISN difference = TSTRCompare<CHB>(a, b);
+  ISN difference = TStringCompare<CHB>(a, b);
   if (!difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut("\n\nERROR: Expecting:\"").Print(a)
@@ -107,9 +122,9 @@ BOL Test(const CHB* a, const CHB* b) {
   return false;
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 BOL Test(const CHC* a, const CHC* b) {
-  ISN difference = TSTRCompare<CHC>(a, b);
+  ISN difference = TStringCompare<CHC>(a, b);
   if (!difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut("\n\nERROR: Expecting:\"").Print(a)
@@ -248,8 +263,8 @@ BOL Test(FPD a, FPD b) {
 
 
 BOL TestNot(const CHA* a, const CHA* b) {
-  ISN difference = !TSTRCompare<CHA>(a, b);
-  if (!difference) return true;
+  ISN difference = TStringCompare<CHA>(a, b);
+  if (difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut("\n\nERROR: Expecting:\"").Print(a)
       << "\"\n           Found:\"" << b << "\"\n      Difference:\0"
@@ -258,10 +273,10 @@ BOL TestNot(const CHA* a, const CHA* b) {
   return false;
 }
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 BOL TestNot(const CHB* a, const CHB* b) {
-  ISN difference = !TSTRCompare<CHB>(a, b);
-  if (!difference) return true;
+  ISN difference = TStringCompare<CHB>(a, b);
+  if (difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut("\n\nERROR: Expecting:\"").Print(a)
       << "\"\n           Found:\"" << b << "\"\n      Difference:\0"
@@ -270,10 +285,10 @@ BOL TestNot(const CHB* a, const CHB* b) {
   return false;
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 BOL TestNot(const CHC* a, const CHC* b) {
-  ISN difference = TSTRCompare<CHC>(a, b);
-  if (!difference) return true;
+  ISN difference = TStringCompare<CHC>(a, b);
+  if (difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut("\n\nERROR: Expecting:\"").Print(a)
       << "\"\n           Found:\"" << b << "\"\n      Difference:\0"
@@ -408,7 +423,7 @@ BOL TestNot(FPD a, FPD b) {
 }
 #endif
 
-BOL Test(const void* value) { return value != nullptr; }
+BOL Test(const void* value) { return value != NILP; }
 
 BOL Test(IUA value) { return value != 0; }
 

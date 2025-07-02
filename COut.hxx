@@ -3,12 +3,13 @@
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
 //
 #include "Uniprinter.hpp"
+#include "Puff.hpp"
 //#include <cstdio>
 #include <iostream>
 #if SEAM == SCRIPT2_COUT
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 #define STD_COUT std::wcerr
 namespace _ {
@@ -17,11 +18,11 @@ COut::COut() {}
 
 COut::COut(CHA item) { Print(item); }
 COut::COut(const CHA* item) { Print(item); }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 COut::COut(CHB item) { Print(item); }
 COut::COut(const CHB* item) { Print(item); }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 COut::COut(CHC item) { Print(item); }
 COut::COut(const CHC* item) { Print(item); }
 #endif
@@ -96,7 +97,7 @@ COut& COut::Print(CHA item) {
   return TSPrintString<COut, CHA>(*this, item);
 }
 
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 COut& COut::Print(CHB item) {
   STD_COUT << (CHN)item;
   return *this;
@@ -107,7 +108,7 @@ COut& COut::Print(const CHB* item) {
 }
 #endif
 
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 COut& COut::Print(CHC item) {
   if (item >= (CHC(1) << 9)) {
     STD_COUT << (CHN)(item & 0x3f) + 0xD800;
@@ -226,15 +227,15 @@ COut& COut::Print(Linef& item) { return TPrint<COut>(*this, item); }
 COut& COut::Print(Headingf& item) { return TPrint<COut>(*this, item); }
 
 COut& COut::Print(Indentf& item) {
-  return _::TPrintIndent<_::COut>(*this, item.indent_count);
+  return ::_::TPrintIndent<::_::COut>(*this, item.indent_count);
 }
 
 COut& COut::Print(Charsf& item) {
-  return _::TPrint<COut>(*this, item);
+  return ::_::TPrint<COut>(*this, item);
 }
 
 //COut& COut::Print(TypeWordValue item) {
-//  return _::TPrintAType<COut>(*this, item);
+//  return ::_::TPrintAType<COut>(*this, item);
 //}
 
 COut& COut::NL() { return Print('\n'); }
@@ -246,7 +247,7 @@ COut& COut::NL(const CHA* item) {
   NL();
   return Print(item);
 }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 COut& COut::NL(CHB item) {
   NL();
   return Print(item);
@@ -256,7 +257,7 @@ COut& COut::NL(const CHB* item) {
   return Print(item);
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 COut& COut::NL(CHC item) {
   NL();
   return Print(item);
@@ -266,6 +267,7 @@ COut& COut::NL(const CHC* item) {
   return Print(item);
 }
 #endif
+
 COut& COut::NL(ISC item) {
   NL();
   return Print(item);
@@ -352,12 +354,12 @@ COut& COut::Binary(FPD item) { return TPrintBinary<COut>(*this, item); }
 ISN COut::PrintAndCount(const CHA* string) {
   return TPrintAndCount<COut, CHA>(*this, string);
 }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 ISN COut::PrintAndCount(const CHB* string) {
   return TPrintAndCount<COut, CHB>(*this, string);
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 ISN COut::PrintAndCount(const CHC* string) {
   return TPrintAndCount<COut, CHC>(*this, string);
 }
@@ -367,11 +369,11 @@ COut& StdOut() { return COut().Star(); }
 
 COut CPrint(CHA item) { return COut(item); }
 COut CPrint(const CHA* item) { return COut(item); }
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 COut CPrint(CHB item) { return COut(item); }
 COut CPrint(const CHB* item) { return COut(item); }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 COut CPrint(CHC item) { return COut(item); }
 COut CPrint(const CHC* item) { return COut(item); }
 #endif
@@ -396,67 +398,79 @@ COut CPrint(Indentf& item) { return COut(item); }
 
 }  //< namespace _
 
-_::COut& operator<<(_::COut& o, CHA item) { return o.Print(item); }
-_::COut& operator<<(_::COut& o, const CHA* item) { return o.Print(item); }
-#if USING_UTF16 == YES_0
-_::COut& operator<<(_::COut& o, CHB item) { return o.Print(item); }
-_::COut& operator<<(_::COut& o, const CHB* item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, CHA item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, const CHA* item) { return o.Print(item); }
+#if USING_STB == YES_0
+inline ::_::COut& operator<<(::_::COut& o, CHB item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, const CHB* item) { return o.Print(item); }
 #endif
-#if USING_UTF32 == YES_0
-_::COut& operator<<(_::COut& o, CHC item) { return o.Print(item); }
-_::COut& operator<<(_::COut& o, const CHC* item) { return o.Print(item); }
+#if USING_STC == YES_0
+inline ::_::COut& operator<<(::_::COut& o, CHC item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, const CHC* item) { return o.Print(item); }
 #endif
-_::COut& operator<<(_::COut& o, ISC item) { return o.Print(item); }
-_::COut& operator<<(_::COut& o, IUC item) { return o.Print(item); }
-_::COut& operator<<(_::COut& o, ISD item) { return o.Print(item); }
-_::COut& operator<<(_::COut& o, IUD item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, ISC item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, IUC item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, ISD item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, IUD item) { return o.Print(item); }
 #if USING_FPC == YES_0
-_::COut& operator<<(_::COut& o, FPC item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, FPC item) { return o.Print(item); }
 #endif
 #if USING_FPD == YES_0
-_::COut& operator<<(_::COut& o, FPD item) { return o.Print(item); }
+inline ::_::COut& operator<<(::_::COut& o, FPD item) { return o.Print(item); }
 #endif
 
-_::COut& operator<<(_::COut& o, _::Hexf item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Hexf item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
-_::COut& operator<<(_::COut& o, _::Binaryf item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Binaryf item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
 
-_::COut& operator<<(_::COut& o, _::Headingf item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Headingf item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
 
 #if SEAM >= SCRIPT2_UNIPRINTER
-_::COut& operator<<(_::COut& o, _::Centerf item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Centerf item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
-_::COut& operator<<(_::COut& o, _::Rightf item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Rightf item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
-_::COut& operator<<(_::COut& o, _::Linef item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Linef item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
-_::COut& operator<<(_::COut& o, _::Indentf item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Indentf item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
-_::COut& operator<<(_::COut& o, _::Charsf item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Charsf item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
-_::COut& operator<<(_::COut& o, _::Sizef item) {
-  return _::TPrint<_::COut>(o, item);
+inline ::_::COut& operator<<(::_::COut& o, ::_::Sizef item) {
+  return ::_::TPrint<::_::COut>(o, item);
 }
-_::COut& operator<<(_::COut& printer, _::ATypef item) {
-  return _::TPrint<_::COut>(printer, item);
+inline ::_::COut& operator<<(::_::COut& printer, ::_::ATypef item) {
+  return ::_::TPrint<::_::COut>(printer, item);
 }
-/*
-inline _::COut& operator<<(_::COut& printer, _::TypeWordValue item) {
-  return _::TPrint<_::COut>(printer, item);
-}*/
+inline ::_::COut& operator<<(::_::COut& printer, ::_::AErrorf item) {
+  return ::_::TPrint<::_::COut>(printer, item);
+}
 
-_::COut& operator<<(_::COut& o, _::COut& item) {
+inline ::_::COut& operator<<(::_::COut& printer, ::_::ATypeValue item) {
+  return ::_::TPrint<::_::COut>(printer, item);
+}
+
+inline ::_::COut& operator<<(::_::COut& printer, ::_::ATypePtr item) {
+  return ::_::TPrint<::_::COut>(printer, item);
+}
+
+template<typename T, typename CH>
+inline ::_::COut& operator<<(::_::COut& printer, ::_::TSizeCodef<T, CHA> item) {
+  return ::_::TPrint<::_::COut>(printer, item);
+}
+
+::_::COut& operator<<(::_::COut& o, ::_::COut& item) {
   return o;
 }
 #endif
-#endif
+#endif  //< #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0

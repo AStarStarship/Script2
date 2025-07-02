@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>; all rights reserved.
 #pragma once
 #ifndef SCRIPT2_VARINT_INLINE_CODE
-#define SCRIPT2_VARINT_INLINE_CODE
+#define SCRIPT2_VARINT_INLINE_CODE 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_DIC
 namespace _ {

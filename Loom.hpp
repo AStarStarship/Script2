@@ -1,19 +1,20 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
-#ifndef SCRIPT2_LOOM_TEMPLATES
-#define SCRIPT2_LOOM_TEMPLATES
+#ifndef SCRIPT2_LOOM_INLINE_CODE
+#define SCRIPT2_LOOM_INLINE_CODE 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_LOOM
 #include "Array.h"
 #include "Stack.hpp"
-#include "Types.hpp"
+#include "AType.hpp"
 #if SEAM == SCRIPT2_LOOM
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 #define LOM_A typename CHT = CHR, typename ISZ = ISR, typename ISY = ISQ
 #define LOM_P CHT, ISZ, ISY
+#define LOM TLoom<LOM_P>
 namespace _ {
 /* @ingroup Loom
 Please see the ASCII Data Specificaiton for DRY documentation.
@@ -40,12 +41,10 @@ Please see the ASCII Data Specificaiton for DRY documentation.
 /* An array of Strings. */
 template<LOM_A>
 struct TLoom {
-  ISZ bytes,          //< Size of the Loom in bytes.
-      start;          //< Offset to the start of the string stack.
-  TStack<SCK_P> map;  //< A Stack of offset mappings to strings.
+  ISZ bytes,                  //< Size of the Loom in bytes.
+      start;                  //< Offset to the start of the string stack.
+  TStack<ISZ, ISZ, ISY> map;  //< A Stack of offset mappings to strings.
 };
-
-#define LOM TLoom<LOM_P>
 
 template<LOM_A>
 constexpr ISY TLoomCountMin() {
@@ -111,16 +110,13 @@ inline ISZ TLoomKeysSize(ISY total, ISZ average_length_string =
           total * sizeof(ISY) + sizeof(TLoom<LOM_P>);
 }
 
+/* Returns the offset to the begin of the strings. */
+template<LOM_A>
+inline ISZ TLoomKeysBeginOffset(ISY total) {
+  return sizeof(ISZ) * total + sizeof(TLoom<LOM_P>);
+}
+
 /* Returns the pointer to the first character in the loom string boofer. */
-template<LOM_A>
-inline CHT* TLoomKeysBegin(TLoom<LOM_P>* loom, ISY total) {
-  return TPtr<CHT>(&TStackStart<ISZ, ISZ>(&loom->map)[total]);
-}
-template<LOM_A>
-inline const CHT* TLoomKeysBegin(const TLoom<LOM_P>* loom, ISY total) {
-  return CPtr<CHT>(
-    TLoomKeysBegin<LOM_P>(CPtr<TLoom<LOM_P>>(loom), total));
-}
 template<LOM_A>
 inline CHT* TLoomKeysBegin(TLoom<LOM_P>* loom) {
   return TLoomKeysBegin<LOM_P>(loom, loom->map.total);
@@ -130,10 +126,14 @@ inline const CHT* TLoomKeysBegin(const TLoom<LOM_P>* loom) {
   return TLoomKeysBegin<LOM_P>(loom, loom->map.total);
 }
 
-/* Returns the offset to the begin of the strings. */
+/* Returns the first char in the string boofer. */
 template<LOM_A>
-inline ISZ TLoomKeysBegin(ISY total) {
-  return sizeof(ISZ) * total + sizeof(TLoom<LOM_P>);
+inline CHT* TLoomKeysBegin(TLoom<LOM_P>* loom, ISY total) {
+  return TPtr<CHT>(loom, TLoomKeysBeginOffset<LOM_P>(total));
+}
+template<LOM_A>
+inline const CHT* TLoomKeysBegin(const TLoom<LOM_P>* loom, ISY total) {
+  return TPtr<const CHT>(loom, TLoomKeysBeginOffset<LOM_P>(total));
 }
 
 template<LOM_A>
@@ -178,8 +178,7 @@ inline T * TLoomTop(const TLoom<LOM_P>*loom) {
 
 /* Free space left in the keys boofer */
 template<LOM_A>
-inline ISZ TLoomFreeSpace(const TLoom<LOM_P>* loom) {
-  D_COUT("\n\nTLoomFreeSpace::loom->bytes:" << loom->bytes << "\n\n");
+inline ISZ TLoomSpace(const TLoom<LOM_P>* loom) {
   return loom->bytes - loom->start;
 }
 
@@ -197,8 +196,8 @@ const ISZ* TLoomKeysMap(const TLoom<LOM_P>* loom) {
 template <LOM_A>
 CHT* TLoomGet(TLoom<LOM_P>* loom, ISY index) {
   D_ASSERT(loom);
-  if (index < 0 || index >= loom->map.count) return nullptr;
-  return TPtr<CHT>(loom, TStackStart<ISZ, ISZ>(&loom->map)[index]);
+  if (index < 0 || index >= loom->map.count) return NILP;
+  return TPtr<CHT>(loom, TStackBegin<ISZ, ISZ>(&loom->map)[index]);
 }
 template <LOM_A>
 const CHT* TLoomGet(const TLoom<LOM_P>* loom, ISY index) {
@@ -219,16 +218,15 @@ CHT* TLoomGet_NC(TLoom<LOM_P>* loom, ISY index) {
 template <typename Printer, LOM_A>
 Printer& TLoomPrint(Printer& o, const TLoom<LOM_P>* loom) {
   ISY count = ISY(loom->map.count);
-  // CHT, ISZ, ISY
-  o << "\nLoom<CH" << CSizeCodef<CHA>() << ", IS" << CSizeCodef<ISZ>() << ", IS"
-    << CSizeCodef<ISY>() << "> size:" << loom->bytes
-    << " start:" << loom->start << " total:" << loom->map.total
+  o << Linef("\n+---\nLoom<CH") << CSizeCodef<CHT>() << ", IS" 
+    << CSizeCodef<ISZ>() << ", IS" << CSizeCodef<ISY>() << "> size:" 
+    << loom->bytes << " start:" << loom->start << " total:" << loom->map.total
     << " count:" << count;
-  const ISZ* offsets = TStackStart<ISZ, ISZ>(&loom->map);
+  const ISZ* offsets = TStackBegin<ISZ, ISZ>(&loom->map);
   for (ISY i = 0; i < count; ++i)
-    o << '\n'
-      << i << ".) \"" << TLoomGet<LOM_P>(loom, i) << "\":" << offsets[i];
-  return o << '\n';
+    o << '\n' << i << ".) \"" << TLoomGet<LOM_P>(loom, i) << "\":"
+      << offsets[i];
+  return o << Linef("\n+---\n");
 }
 
 /* Initializes the loom with the given total.
@@ -237,7 +235,7 @@ template<LOM_A>
 inline TLoom<LOM_P>* TLoomInit(TLoom<LOM_P>* loom, ISY total) {
   D_ASSERT(loom);
   A_ASSERT(total >= TLoomCountMin<LOM_P>());
-  D_ARRAY_WIPE(&loom->start, loom->bytes - sizeof(ISZ));
+  D_RAM_WIPE(&loom->start, loom->bytes - sizeof(ISZ));
 
   // total -= total & 3; // @todo Ensure the values are word-aligned?
   auto start = TLoomKeysBegin<LOM_P>(loom, total); // @todo Why???
@@ -255,27 +253,33 @@ inline TLoom<LOM_P>* TLoomInit(TLoom<LOM_P>* loom, ISY total) {
 /* Adds a string to the end of the Loom.
 @return The index upon success or -1 upon failure. */
 template<LOM_A, typename CH = CHT>
-ISY TLoomInsert(TLoom<LOM_P>* loom, const CH* string, ISY index = PSH) {
+ISY TLoomInsert(TLoom<LOM_P>* loom, const CH* str, ISY index = PSH) {
   D_ASSERT(loom);
-  if (!string || loom->map.count >= loom->map.total) 
-    return -ErrorInvalidIndex;
-  ISY count = ISY(loom->map.count);
+  D_ASSERT(str);
+  if (IsError(loom) || IsError(str))
+    return -ErrorInvalidInput;
+  ISY count = ISY(loom->map.count),
+      total = ISY(loom->map.total);
+  if (count >= total) {
+    D_COUT("\n\nERROR: count:" << count << " total:" << total);
+    return -ErrorInvalidInput;
+  }
   D_ASSERT(count >= 0);
-  CHT* cursor = nullptr;
+  CHT* cursor = NILP;
   if (index < 0) {
     if (index == ANY) {
       D_COUT("\n\nindex == _ANY\n\n");
       if (count <= 1) {
         index = count;
       } else {
-        auto length = TSTRLength<CH>(string);
+        auto length = TStringLength<CH>(str);
         for (ISN i = 0; i < count; ++i) {
           if (i == count) {
             index = count;
             break;
           }
-          cursor = TSTREnd<CHT>(TLoomGet<LOM_P>(loom, i)) + 1;
-          CHT* start_next_string = (CHT*)(TLoomGet<LOM_P>(loom, i + 1));
+          cursor = TStringStop<CHT>(TLoomGet<LOM_P>(loom, i)) + 1;
+          CHT* start_next_string = TLoomGet<LOM_P>(loom, i + 1);
           if (start_next_string - cursor > length) {
             index = i;
             break;
@@ -285,17 +289,18 @@ ISY TLoomInsert(TLoom<LOM_P>* loom, const CH* string, ISY index = PSH) {
       }
       if (index != count) {
         index = TStackInsert<ISZ, ISZ, ISY>(&loom->map, TDelta<ISZ>(loom, cursor), 
-                                       index);
-        TSPrintString<CHT>(cursor, (CHT*)TLoomEnd<LOM_P>(loom), string);
+                                            index);
+        TSPrintString<CHT>(cursor, TLoomEnd<LOM_P, CHT>(loom), str);
         return index;
       }
     }
   }
   cursor = TPtr<CHT>(loom, loom->start);
-  cursor = TSPrintString<CHT>(cursor, (CHT*)TLoomEnd<LOM_P>(loom), string);
-  if (!cursor) return -1;
+  cursor = TSPrintString<CHT>(cursor, (CHT*)TLoomEnd<LOM_P>(loom), str);
+  if (IsError(cursor))
+    return -1;
 
-  auto i = TStackInsert<ISZ, ISZ, ISY>(&loom->map, loom->start, ISZ(index));
+  auto i = TStackInsert<ISZ, ISZ, ISY>(&loom->map, loom->start, index);
   index = ISY(i);
   loom->start = TDelta<ISZ>(loom, cursor + 1);
   return index;
@@ -310,103 +315,78 @@ BOL TLoomWrite(TLoom<LOM_P>* destination, TLoom<LOM_P>* soure) {
   return true;
 }
 
-/* Clones the loom to the pre-allocated destination Socket. */
+/* Clones the loom to the pre-allocated destination Socket.
+@note dest is an ASCII Object at this point and is not initialized. */
 template<LOM_A>
-BOL TLoomClone(const TLoom<LOM_P>* loom, TLoom<LOM_P>* destination,
-               ISY total = loom->total, ISY total_additional = 0,
-               ISY bytes = loom->bytes, ISY bytes_additional = 0) {
-  if (!loom || !destination) return false;
-  ISZ start              = loom->start;
-  ISY count              = loom->map.count;
-  destination->bytes     = bytes + bytes_additional;
-  destination->start     = loom->start + (total_additional * sizeof(ISY));
-  destination->map.total = total + total_additional;
-  destination->map.count = count;
-  const ISZ* loom_offsets      = TStackStart<ISZ, ISZ>(&loom->map),
-           * loom_offsets_end  = loom_offsets + total + total_additional;
-  ISZ* clone_offsets     = TStackStart<ISZ, ISZ>(&destination->map);
-
-  if (!total_additional) {
-    while (loom_offsets <= loom_offsets_end)
-      *clone_offsets++ = (*loom_offsets++);
+TLoom<LOM_P>* TLoomClone(TLoom<LOM_P>* dest, const TLoom<LOM_P>* src,
+    ISZ src_bytes, ISY src_total, ISY total_new = src_total) {
+  D_COUT("\n\nTLoomClone:\n  dest_bytes:" << dest->bytes << " src_bytes:" <<
+         src_bytes << " src_total:" << src_total << " total_new:" << total_new);
+  if (IsError(src) || IsError(dest) || total_new <= 0)
+    return NILP;
+  ISZ src_start = src->start;
+  ISY src_count = ISY(src->map.count);
+  const ISZ* src_offsets = TLoomKeysMap<LOM_P>(src);
+  ISZ src_start_new = 0;
+  ISY copy_count = 0;
+  if (total_new < src_count) {
+    copy_count = total_new;
+    src_start_new = TDelta<ISZ>(src, &src_offsets[copy_count]);
   } else {
-    while (loom_offsets <= loom_offsets_end)
-      *clone_offsets++ = (*loom_offsets++) + total_additional * sizeof(ISY);
+    copy_count = src_count;
+    src_start_new = src_start;
   }
-
-  // Copy the Strings.
-  ISZ keys_bytes = start - TLoomKeysBegin<LOM_P>(total);
-  RAMCopy(TLoomKeysBegin<LOM_P>(destination), keys_bytes,
-          TLoomKeysBegin<LOM_P>(loom       ), keys_bytes);
-  return true;
+  ISZ offsets_copy_bytes = copy_count * sizeof(ISZ);
+  const CHT* src_start_char = TPtr<CHT>(src, src_start_new);
+  dest->map.total = total_new;
+  dest->map.count = src_count;
+  // Copy offsets.
+  ISZ* dest_offsets     = TLoomKeysMap<LOM_P>(dest),
+     * dest_offsets_end = dest_offsets + copy_count;
+  ISZ growth_delta = (total_new - src_total) * sizeof(ISZ);
+  while (dest_offsets <= dest_offsets_end) 
+    *dest_offsets++ = *src_offsets++ + growth_delta;
+  D_COUT("\n  growth_delta:" << growth_delta);
+  dest->start = src_start_new + growth_delta;
+  
+  // Copy strings.
+  CHT* dest_begin = TLoomKeysBegin<LOM_P>(dest, total_new);
+  ISZ src_begin_offset = TLoomKeysBeginOffset<LOM_P>(src_total);
+  const CHT* src_begin = TPtr<CHT>(src, src_begin_offset);
+  ISZ src_copy_end_offset = copy_count < src_count ? src_offsets[copy_count - 1] 
+                                                   : src_start;
+  ISZ string_copy_bytes = src_copy_end_offset - src_begin_offset;
+  D_COUT("\n  dest_begin:" << TDelta<>(dest, dest_begin) << 
+         " src_copy_end_offset:" << src_copy_end_offset <<
+         " src_begin_offset:" << src_begin_offset <<
+         " string_copy_bytes:" << string_copy_bytes <<
+         " src_begin:" << TDelta<>(src, src_begin));
+  D_ASSERT(string_copy_bytes > 0);
+  ISW result = ArrayCopy(dest_begin, string_copy_bytes, src_begin, 
+                         string_copy_bytes);
+  D_ASSERT(result > 0);
+  if (result <= 0)
+    return NILP;
+  return dest;
 }
-
-/* Doubles the size and total of the loom.
-@return Returns nil if the size is greater than the amount of memory that
-can fit in type ISW, the unaltered socket pointer if the Stack has grown to
-the size upper bounds, or a new dynamically allocated socket upon failure. */
 template<LOM_A>
-BOL TLoomGrow(Autoject& obj) {
-  D_COUT("\n\nGrowing Loom...");
-  auto loom = TPtr<TLoom<LOM_P>>(obj.origin);
-  A_ASSERT(loom);
-  ISZ size = loom->bytes,
-      new_size = ATypeGrow(size);
-  if (!ATypeCanGrow(size, new_size)) return false;
-  ISY total = loom->map.total;
-
-  //  D_COUT(" size:" << size " new_size:");<< new_size << " total : " <<
-         //total);
-
-#if D_THIS
-  D_COUT("\n\nBefore:\n");
-  TLoomPrint<COut, LOM_P>(StdOut(), loom);
-  D_COUT('\n' << Charsf(loom, loom->bytes));
-#endif
-
-  // @see RAMFactory for documentation on how to create a new block of memory.
-  auto size_double = size << 1;
-  IUW* growth = obj.ram(nullptr, size_double);
-  D_ARRAY_WIPE(growth, size);
-  auto destination = TPtr<TLoom<LOM_P>>(growth);
-
-  TLoomClone<LOM_P>(loom, destination, total, total, size, size);
-#if D_THIS
-  D_COUT("\n\nAfter:\n");
-  TLoomPrint<COut, LOM_P>(StdOut(), destination);
-  D_COUT('\n');
-  D_COUT(Charsf(destination, destination->bytes));
-#endif
-
-  Delete(obj);
-  obj.origin = growth;
-  return true;
+inline TLoom<LOM_P>* TLoomClone(TLoom<LOM_P>* dest, const TLoom<LOM_P>* src,
+  ISY total_new) {
+  return TLoomClone<LOM_P>(dest, src, src->bytes, ISY(src->map->total), 
+                           total_new);
 }
-
-/* Adds a string to the end of the Loom, auto-growing if neccissary.
-@return The index upon success or -1 if the obj can't grow anymore. */
-template<LOM_A, typename CH=CHT>
-ISY TLoomInsert(Autoject& obj, const CH* item, ISY index = PSH) {
-  if (!item) return -1;
-  D_COUT("\nAdding:\"" << item << '\"');
-  ISY result =
-      TLoomInsert<LOM_P, CH>(TPtr<LOM>(obj.origin), item, index);
-  while (result < 0) {
-    if (!TLoomGrow<LOM_P>(obj)) {
-      D_COUT("\n\nFailed to grow.\n\n");
-      return -1;
-    }
-    result = TLoomInsert<LOM_P, CH>(TPtr<LOM>(obj.origin), item, index);
-  }
-  return result;
+template<LOM_A>
+inline TLoom<LOM_P>* TLoomClone(TLoom<LOM_P>* dest, const TLoom<LOM_P>* src) {
+  return TLoomClone<LOM_P>(dest, src, src->bytes, ISY(src->map->total));
 }
 
 /* Adds a string to the end of the Loom.
 @return The index upon success or -1 upon failure. */
 template<LOM_A>
 CHT* TLoomPop(TLoom<LOM_P>* loom) {
-  if (loom->map.count == 0) return nullptr;
-  ISZ offset = TStackPop<ISZ, ISZ>(&loom->map), start = loom->start;
+  if (loom->map.count == 0) return NILP;
+  ISZ offset = TStackPop<ISZ, ISZ>(&loom->map),
+      start  = loom->start;
   loom->start = offset;
   return TPtr<CHT>(ISW(loom) + offset);
 }
@@ -422,7 +402,7 @@ ISY TLoomRemove(TLoom<LOM_P>* loom, ISY index) {
   }
   if (index < 0 || index > count) return -1;
 
-  ISZ* offsets = TStackStart<ISZ, ISZ>(&loom->map);
+  ISZ* offsets = TStackBegin<ISZ, ISZ>(&loom->map);
   ISZ offset   = offsets[index],        //
       offset_b = offsets[index + 1],  //
       delta    = offset_b - offset;      //
@@ -439,22 +419,22 @@ template<LOM_A>
 ISY TLoomFind(TLoom<LOM_P>* loom, const CHT* string) {
   D_ASSERT(loom);
   D_ASSERT(string);
-  ISZ* offsets = TStackStart<ISZ, ISZ>(&loom->map);
-  for (ISZ i = 0; i < loom->map.count; ++i) {
+  ISZ* offsets = TStackBegin<ISZ, ISZ>(&loom->map);
+  for (ISY i = 0; i < loom->map.count; ++i) {
     ISZ offset = offsets[i];
     CHT* other = TPtr<CHT>(IUW(loom) + offset);
-    if (!TSTRCompare<CHT>(string, other)) return i;
+    if (!TStringCompare<CHT>(string, other)) return i;
   }
   return -1;
 }
 
 /* An ASCII Loom Autoject. */
-template<LOM_A, ISZ Size_ = 512,
-          typename BUF = TBUF<Size_, CHT, ISZ, TLoom<LOM_P>>>
+template<LOM_A, ISZ Total_ = 512,
+          typename BOF = TBOF<Total_, CHT, ISZ, TLoom<LOM_P>>>
 class ALoom {
-  AArray<IUA, ISZ, BUF> obj_;  //< An Auto-Array object.
+  AArray<IUA, ISZ, Total_, BOF> obj_;  //< An Auto-Array object.
  public:
-  enum { CountDefault = Size_ / 16 };
+  enum { CountDefault = Total_ / 16 };
   /* Constructs a Loom. */
   ALoom(ISY total = CountDefault) {
     TLoomInit<LOM_P>(This(), total);
@@ -477,15 +457,8 @@ class ALoom {
 
   inline ISZ Size() { return obj_.Size(); }
 
-  /* Deep copies the given string into the Loom.
-  @return The index of the string in the Loom. */
-  template<typename CH=CHT>
-  inline ISZ Insert(const CH* string, ISY index = PSH) {
-    return TLoomInsert<LOM_P, CH>(AJT(), string, index);
-  }
-
   /* Removes the string at the given index from the Loom. */
-  inline ISZ Remove(ISY index) { return TLoomRemove<LOM_P>(This(), index); }
+  inline ISY Remove(ISY index) { return TLoomRemove<LOM_P>(This(), index); }
 
   /* Gets the string at the given index. */
   inline CHT* Get(ISY index) { return TLoomGet<LOM_P>(This(), index); }
@@ -493,26 +466,84 @@ class ALoom {
   /* Searches for the given string.
   @return -1 if the Loom doesn't contain the string or the index if it does.
 */
-  inline ISZ Find(const CHT* string) {
+  inline ISY Find(const CHT* string) {
     return TLoomFind<LOM_P>(This(), string);
   }
 
   /* Gets the ASCII Object. */
-  inline TLoom<LOM_P>* This() { return obj_.OriginAs<TLoom<LOM_P>*>(); }
+  inline TLoom<LOM_P>* This() { return obj_.As<TLoom<LOM_P>>(); }
 
   /* Gets the Auto-Array. */
   inline Autoject& AJT() { return obj_.AJT(); }
 
   /* Gets the Auto-Array.
-  inline AArray<IUA, ISZ, BUF>& AJT_ARY() { return obj_; } */
+  inline AArray<IUA, ISZ, BOF>& AJT_ARY() { return obj_; } */
 
   template<typename Printer>
-  inline Printer& PrintTo(Printer& o) {
+  inline Printer& PrintTo( Printer& o) {
     TLoomPrint<Printer, LOM_P>(o, This());
     return o;
   }
 
-  inline void COut() { PrintTo<_::COut>(_::StdOut()); }
+  inline void COut() { PrintTo<::_::COut>(::_::StdOut()); }
+
+  /* Doubles the size and total of the loom.
+  @return Returns nil if the size is greater than the amount of memory that
+  can fit in type ISW, the unaltered socket pointer if the Stack has grown to
+  the size upper bounds, or a new dynamically allocated socket upon failure. */
+  BOL Grow() {
+    Autoject& obj = AJT();
+    auto src = TPtr<TLoom<LOM_P>>(obj.origin);
+    if(!src)
+      return false;
+    ISZ bytes     = src->bytes,
+        bytes_new  = AutojectGrowBytes(bytes);
+    if (bytes == bytes_new) return false;
+    ISY total     = ISY(src->map.total),
+        total_new = AutojectGrowTotal(total);
+    #if D_THIS
+    D_COUT("\n\nGrowing Loom... bytes_new:" << bytes_new << " total:" << 
+           total << " total_new:" << total_new << "\n\nBefore:\n");
+    COut();
+    D_COUT(Charsf(src, bytes));
+    #endif
+    IUW* growth = obj.ram(NILP, bytes_new);
+    D_OBJ_WIPE(growth, ISZ);
+    auto dest = TPtr<TLoom<LOM_P>>(growth);
+    auto dest_copy = TLoomClone<LOM_P>(dest, src, bytes, total, total_new);
+    if (IsError(dest_copy))
+      return false;
+    Delete(obj, growth);
+    #if D_THIS
+    dest = TPtr<LOM>(obj.origin);
+    D_COUT("\n\nAfter:\n");
+    TLoomPrint<::_::COut, LOM_P>(StdOut(), dest);
+    D_COUT(Charsf(dest, dest->bytes));
+    #endif
+    return true;
+  }
+
+  /* Deep copies the given string into the Loom.
+  @return The index of the string in the Loom. */
+  template<typename CH = CHT>
+  inline ISY Insert(const CH* item, ISY index = PSH) {
+    if (IsError(item)) return -1;
+    D_COUT("\nAdding:\"" << item << '\"' << " freespace:" << 
+           TLoomSpace<LOM_P>(This()));
+    IUW* origin = AJT().origin;
+    LOM* loom = TPtr<LOM>(origin);
+    ISY result = TLoomInsert<LOM_P, CH>(loom, item, index);
+    while (result < 0) {
+
+      if (!Grow()) {
+        ISZ total = loom->map.total;
+        D_COUT("\n\nFailed to grow with total:" << total << ".\n\n");
+        return -1;
+      }
+      result = TLoomInsert<LOM_P, CH>(This(), item, index);
+    }
+    return result;
+  }
 };
 }  //< namespace _
 #endif

@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
 #ifndef SCRIPT2_PUFF_DECL
-#define SCRIPT2_PUFF_DECL
+#define SCRIPT2_PUFF_DECL 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_ITOS
 namespace _ {

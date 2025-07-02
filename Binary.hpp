@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
-#ifndef SCRIPT2_KABUKI_BINARY_WITH_TEMPLATES
-#define SCRIPT2_KABUKI_BINARY_WITH_TEMPLATES
+#ifndef SCRIPT2_BINARY_INLINE_CODE
+#define SCRIPT2_BINARY_INLINE_CODE 1
 #include <_Config.h>
 namespace _ {
 
@@ -23,8 +23,13 @@ inline const T* TPtr(const void* ptr) {
   return reinterpret_cast<const T*>(ptr);
 }
 
-/* Checks if the pointer is between values 0-63. */
-inline BOL PtrIsValid(const void* ptr) { return IUW(ptr) >= CrabsErrorCount; }
+/* Checks if the pointer is not an ASCII Error Code. */
+inline BOL PtrIsValid(const void* ptr) { return IUW(ptr) >= ASCIIErrorCount; }
+
+/* Checks if the pointer is an ASCII Error Code. */
+inline BOL IsError(const void* ptr) {
+  return !PtrIsValid(ptr);
+}
 
 // Checks if the input is aligned to the T word boundary.
 template<typename T = void>
@@ -56,6 +61,15 @@ inline const T* TPtr(const void* origin, ISW offset) {
   return reinterpret_cast<const T*>(ISW(origin) + offset);
 }
 
+template<typename T, typename Class>
+inline T* TPtr(void* origin) {
+  return reinterpret_cast<T*>(ISW(origin) + sizeof(Class));
+}
+template<typename T, typename Class>
+inline const T* TPtr(const void* origin) {
+  return reinterpret_cast<const T*>(ISW(origin) + sizeof(Class));
+}
+
 /* Creates a T pointer from a base pointer plus the offset.
 @param base The base address.
 @param offset The offset in bytes. */
@@ -76,10 +90,6 @@ inline const T* TPtr(const void* origin, ISW offset1, ISW offset2,
   ISW offset3) {
   return reinterpret_cast<const T*>(ISW(origin) + offset1 + offset2 + offset3);
 }
-}
-
-#if SEAM >= SCRIPT2_SOCKET
-namespace _ {
 
 /* @ingroup Binary
 @brief Misc binary and pointer function. */
@@ -150,10 +160,21 @@ inline IS TDelta(const void* start) {
   ISW delta = ISW(start);
   return IS(delta);
 }
-
 template<typename IS = ISW>
 inline IS TDelta(const void* start, const void* stop) {
   ISW delta = ISW(stop) - ISW(start);
+  return IS(delta);
+}
+
+/* Calculates the delta between the start and stop minus the sizeof(Class. */
+template<typename IS, typename Class>
+inline IS TDelta(const void* start) {
+  ISW delta = ISW(start) - sizeof(Class);
+  return IS(delta);
+}
+template<typename IS, typename Class>
+inline IS TDelta(const void* start, const void* stop) {
+  ISW delta = ISW(stop) - ISW(start) - sizeof(Class);
   return IS(delta);
 }
 
@@ -235,10 +256,10 @@ constexpr ISN TBitCode() {
   if (dt <= _CHC) return 2;
   if (dt <= _TMD) return 3;
   if (dt <= _ISE) return 4;
-  if (dt <= _CTE) return 4;
-  if (dt <= _CTD) return 3;
-  if (dt <= _CTC) return 2;
-  if (dt <= _CTB) return 1;
+  if (dt <= _ECE) return 4;
+  if (dt <= _ECD) return 3;
+  if (dt <= _ECC) return 2;
+  if (dt <= _ECB) return 1;
   return 0;
 }
 
@@ -252,7 +273,7 @@ algorithm works the same for all memory widths as proven by the truth
 tables bellow.
 
 @code
-// The convention KT uses is that the unsigned size always comes first
+// The convention is that the unsigned size always comes first
 // because it's the first IUA of an ASCII AArray.
 ISC signed_example = 7;
 signed_example = AlignUp<ISD, IUC, ISC> (signed_example);
@@ -280,60 +301,60 @@ unsgiend_example = AlignUp<ISC, IUB, IUB> (unsigned_example);
 // 8-bit example:
 // value + ((~value) + 1) & (sizeof (ISA) - 1) = value
 @endcode */
-inline ISA AlignUp(ISA value, ISA align_mask = ALUWordMask) {
+inline ISA AlignUp(ISA value, ISA align_mask = ACPUMask) {
   return value + ((-value) & align_mask);
 }
-inline IUA AlignUp(IUA value, IUA align_mask = ALUWordMask) {
+inline IUA AlignUp(IUA value, IUA align_mask = ACPUMask) {
   return IUA(AlignUp(ISA(value), ISA(align_mask)));
 }
-inline ISB AlignUp(ISB value, ISB align_mask = ALUWordMask) {
+inline ISB AlignUp(ISB value, ISB align_mask = ACPUMask) {
   return value + ((-value) & align_mask);
 }
-inline IUB AlignUp(IUB value, IUB align_mask = ALUWordMask) {
+inline IUB AlignUp(IUB value, IUB align_mask = ACPUMask) {
   return value + (IUB(-ISB(value)) & align_mask);
 }
-inline ISC AlignUp(ISC value, ISC align_mask = ALUWordMask) {
+inline ISC AlignUp(ISC value, ISC align_mask = ACPUMask) {
   return value + ((-value) & align_mask);
 }
-inline IUC AlignUp(IUC value, IUC align_mask = ALUWordMask) {
+inline IUC AlignUp(IUC value, IUC align_mask = ACPUMask) {
   return value + (IUC(-ISC(value)) & align_mask);
 }
-inline ISD AlignUp(ISD value, ISD align_mask = ALUWordMask) {
+inline ISD AlignUp(ISD value, ISD align_mask = ACPUMask) {
   return value + ((-value) & align_mask);
 }
-inline IUD AlignUp(IUD value, IUD align_mask = ALUWordMask) {
+inline IUD AlignUp(IUD value, IUD align_mask = ACPUMask) {
   return value + (IUD(-ISD(value)) & align_mask);
 }
-constexpr ISA CAlignUp(ISA value, ISA align_mask = ALUWordMask) {
+constexpr ISA CAlignUp(ISA value, ISA align_mask = ACPUMask) {
   return value + ((-value) & align_mask);
 }
-constexpr IUA CAlignUp(IUA value, IUA align_mask = ALUWordMask) {
+constexpr IUA CAlignUp(IUA value, IUA align_mask = ACPUMask) {
   return IUA(CAlignUp(ISA(value), ISA(align_mask)));
 }
-constexpr ISB CAlignUp(ISB value, ISB align_mask = ALUWordMask) {
+constexpr ISB CAlignUp(ISB value, ISB align_mask = ACPUMask) {
   return value + ((-value) & align_mask);
 }
-constexpr IUB CAlignUp(IUB value, IUB align_mask = ALUWordMask) {
+constexpr IUB CAlignUp(IUB value, IUB align_mask = ACPUMask) {
   return value + (IUB(-ISB(value)) & align_mask);
 }
-constexpr ISC CAlignUp(ISC value, ISC align_mask = ALUWordMask) {
+constexpr ISC CAlignUp(ISC value, ISC align_mask = ACPUMask) {
   return value + ((-value) & align_mask);
 }
-constexpr IUC CAlignUp(IUC value, IUC align_mask = ALUWordMask) {
+constexpr IUC CAlignUp(IUC value, IUC align_mask = ACPUMask) {
   return value + (IUC(-ISC(value)) & align_mask);
 }
-constexpr ISD CAlignUp(ISD value, ISD align_mask = ALUWordMask) {
+constexpr ISD CAlignUp(ISD value, ISD align_mask = ACPUMask) {
   return value + ((-value) & align_mask);
 }
-constexpr IUD CAlignUp(IUD value, IUD align_mask = ALUWordMask) {
+constexpr IUD CAlignUp(IUD value, IUD align_mask = ACPUMask) {
   return value + (IUD(-ISD(value)) & align_mask);
 }
 
-inline void* PtrUp(void* pointer, ISW mask = ALUWordMask) {
+inline void* PtrUp(void* pointer, ISW mask = ACPUMask) {
   ISW address = ISW(pointer);
   return TPtr<void>(CAlignUp(address, mask));
 }
-inline const void* PtrUp(const void* pointer, ISW mask = ALUWordMask) {
+inline const void* PtrUp(const void* pointer, ISW mask = ACPUMask) {
   ISW value = IUW(pointer);
   return TPtr<void>(CAlignUp(value, mask));
 }
@@ -343,7 +364,7 @@ inline const void* PtrUp(const void* pointer, ISW mask = ALUWordMask) {
 @param value The value to align.
 @param mask  The power of 2 to align to minus 1 (makes the mask). */
 template<typename T = CHA>
-inline T* TPtrUp(void* pointer, ISW mask = ALUWordMask) {
+inline T* TPtrUp(void* pointer, ISW mask = ACPUMask) {
   ISW value = ISW(pointer);
   return TPtr<T>(value + ((-value) & mask));
 }
@@ -353,7 +374,7 @@ inline T* TPtrUp(void* pointer, ISW mask = ALUWordMask) {
 @param value The value to align.
 @param mask  The power of 2 to align to minus 1 (makes the mask). */
 template<typename T = CHA>
-inline T* TPtrUp(const void* pointer, ISW mask = ALUWordMask) {
+inline T* TPtrUp(const void* pointer, ISW mask = ACPUMask) {
   ISW value = ISW(pointer);
   return TPtr<T>(value + ((-value) & mask));
 }
@@ -415,9 +436,9 @@ inline I TAlignUpArray(I count) {
   return AlignUpArray(count);
 }
 
-/* Aligns the given pointer up to the given least_significant_bits_max. */
-inline const CHA* AlignUp(const CHA* pointer, IUW least_significant_bits_max) {
-  return TPtrUp<const CHA>(pointer, least_significant_bits_max);
+/* Aligns the given pointer up to the given lsb_max. */
+inline const CHA* AlignUp(const CHA* pointer, IUW lsb_max) {
+  return TPtrUp<const CHA>(pointer, lsb_max);
 }
 
 
@@ -456,9 +477,13 @@ ISW a = TAlignUp(foo, sizeof(ISA)), //< Can't align up to a 8-bit word boundary.
     c = TAlignUp(foo, sizeof(ISC)), //< Aligns to a 32-bit word boundary.
     d = TAlignUp(foo, sizeof(ISD)); //< Aligns to a 64-bit word boundary.
 @endcode */
-template<typename I = ISW, typename DT = ISW>
-I TAlignUp(I value, I align_mask = (sizeof(DT) - 1)) {
+template<typename I>
+I TAlignUp(I value, I align_mask) {
   return value + (TwosComplementInvert(value) & align_mask);
+}
+template<typename I = ISW, typename DT = ISW>
+I TAlignUp(I value) {
+  return value + (TwosComplementInvert(value) & (sizeof(DT) - 1));
 }
 
 /* Aligns the given pointer to the sizeof (WordBoundary) down.
@@ -466,7 +491,7 @@ I TAlignUp(I value, I align_mask = (sizeof(DT) - 1)) {
 @param value The value to align.
 @param mask  The power of 2 to align to minus 1 (makes the mask). */
 template<typename IS = IUW>
-inline IS TAlignDownI(IS value, IS mask = ALUWordMask) {
+inline IS TAlignDownI(IS value, IS mask = ACPUMask) {
   return value & (~mask);
 }
 
@@ -495,28 +520,28 @@ inline ISD AlignDown(ISD value, ISD align_mask) {
 inline IUD AlignDown(IUD value, IUD align_mask) {
   return value - (value & align_mask);
 }
-constexpr ISA CAlignDown(ISA value, ISA align_mask = ALUWordMask) {
+constexpr ISA CAlignDown(ISA value, ISA align_mask = ACPUMask) {
   return value - (value & align_mask);
 }
-constexpr IUA CAlignDown(IUA value, IUA align_mask = ALUWordMask) {
+constexpr IUA CAlignDown(IUA value, IUA align_mask = ACPUMask) {
   return value + (value & align_mask);
 }
-constexpr ISB CAlignDown(ISB value, ISB align_mask = ALUWordMask) {
+constexpr ISB CAlignDown(ISB value, ISB align_mask = ACPUMask) {
   return value + (value & align_mask);
 }
-constexpr IUB CAlignDown(IUB value, IUB align_mask = ALUWordMask) {
+constexpr IUB CAlignDown(IUB value, IUB align_mask = ACPUMask) {
   return value + (value & align_mask);
 }
-constexpr ISC CAlignDown(ISC value, ISC align_mask = ALUWordMask) {
+constexpr ISC CAlignDown(ISC value, ISC align_mask = ACPUMask) {
   return value - (value & align_mask);
 }
-constexpr IUC CAlignDown(IUC value, IUC align_mask = ALUWordMask) {
+constexpr IUC CAlignDown(IUC value, IUC align_mask = ACPUMask) {
   return value + (value & align_mask);
 }
-constexpr ISD CAlignDown(ISD value, ISD align_mask = ALUWordMask) {
+constexpr ISD CAlignDown(ISD value, ISD align_mask = ACPUMask) {
   return value - (value & align_mask);
 }
-constexpr IUD CAlignDown(IUD value, IUD align_mask = ALUWordMask) {
+constexpr IUD CAlignDown(IUD value, IUD align_mask = ACPUMask) {
   return value + (value & align_mask);
 }
 
@@ -549,33 +574,42 @@ inline const T* TPtrDown(const void* ptr, ISW ptr_offset) {
   IUW value = IUW(ISW(ptr) + ptr_offset);
   return TPtr<const T>(value - (value & (sizeof(AlignT) - 1)));
 }
+template<typename T = IUW>
+inline T* TPtrDown(void* ptr, ISW ptr_offset, ISW align_mask) {
+  IUW value = IUW(ISW(ptr) + ptr_offset);
+  return TPtr<T>(value - (value & align_mask));
+}
+template<typename T = IUW>
+inline const T* TPtrDown(const void* ptr, ISW ptr_offset, ISW align_mask) {
+  IUW value = IUW(ISW(ptr) + ptr_offset);
+  return TPtr<const T>(value - (value & align_mask));
+}
 
-/* Aligns the given pointer down to the given least_significant_bits_max. */
-inline CHA* AlignDown(CHA* pointer, IUW least_significant_bits_max) {
-  return TPtrDown<CHA>(pointer);
+/* Aligns the given pointer down to the given align_mask. */
+inline CHA* AlignDown(CHA* pointer, IUW align_mask = ACPUMask) {
+  return TPtrDown<CHA>(pointer, align_mask);
 }
-inline const CHA* AlignDown(const CHA* pointer,
-  IUW least_significant_bits_max) {
-  return TPtrDown<const CHA>(pointer);
+inline const CHA* AlignDown(const CHA* pointer, IUW align_mask) {
+  return TPtrDown<const CHA>(pointer, align_mask);
 }
-inline const IUW* AlignDown(const IUW* pointer, IUW least_significant_bits_max) {
-  return TPtrDown<const IUW>(pointer);
+inline const IUW* AlignDown(const IUW* pointer, IUW align_mask) {
+  return TPtrDown<const IUW>(pointer, align_mask);
 }
-inline IUW* AlignDown(IUW* pointer, IUW least_significant_bits_max) {
+inline IUW* AlignDown(IUW* pointer, IUW align_mask) {
   return const_cast<IUW*>(
-    AlignDown(const_cast<const IUW*>(pointer), least_significant_bits_max));
+    AlignDown(const_cast<const IUW*>(pointer), align_mask));
 }
 
 /* Calculates the bytes in size_words. */
 template<typename IS>
 inline IS TSizeWords(IS size) {
-  return AlignUp(size) >> WordSizeLog2;
+  return AlignUp(size) >> ACPUBytesLog2;
 }
 
 template<typename IS>
 constexpr IS CSizeWords(IS size) {
-  IS size_aligned = size + ((-size) & ALUWordMask);
-  size_aligned = size_aligned >> WordSizeLog2;
+  IS size_aligned = size + ((-size) & ACPUMask);
+  size_aligned = size_aligned >> ACPUBytesLog2;
   return (size_aligned < 1) ? 1 : size_aligned;
 }
 
@@ -846,7 +880,67 @@ inline ISW SizeOf(const void* start, const void* stop) {
   return TDelta<ISW>(start, stop) + 1;
 }
 
+/* Converts the given hex nibble to lowercase hex. */
+inline CHA HexNibbleToLowerCase(IUA b) {
+  b = b & 0xf;
+  if (b > 9) return b + ('a' - 10);
+  return b + '0';
+}
+
+/* Converts a IUA a two-IUA hex representation. */
+inline IUB HexByteToLowerCase(IUA b) {
+  IUB value = HexNibbleToLowerCase(b & 0xf);
+  value = value << 8;
+  value |= HexNibbleToLowerCase(b >> 4);
+  return value;
+}
+
+/* Converts the given hex nibble to uppercase hex. */
+inline CHA HexNibbleToUpperCase(IUA nibble) {
+  nibble = nibble & 0xf;
+  if (nibble > 9) return nibble + ('A' - 10);
+  return nibble + '0';
+}
+
+/* Converts a IUA a two-IUA hex representation. */
+inline IUB HexByteToUpperCase(IUA b) {
+  IUB value = (IUB)HexNibbleToUpperCase(b & 0xf);
+  value = value << 8;
+  IUB second_nibble = HexNibbleToUpperCase(b >> 4);
+  value |= second_nibble;
+  return value;
+}
+
+/* Converts a hex value to a byte. */
+inline ISN HexToByte(CHA c) {
+  if (c < '0') {
+    return -1;
+  }
+  if (c >= 'a') {
+    if (c > 'f') return -1;
+    return c - ('a' - 10);
+  }
+  if (c >= 'A') {
+    if (c > 'F') return -1;
+    return c - ('A' - 10);
+  }
+  if (c > '9') return -1;
+  return c - '0';
+}
+
+/* Converts a single hex IUA a IUA.
+@return Returns -1 if c is not a hex IUA. */
+inline ISN HexToByte(IUB h) {
+  ISN lowerValue = HexToByte((CHA)(h >> 8));
+
+  if (lowerValue < 0) return -1;
+
+  ISN upper_value = HexToByte((CHA)h);
+  if (upper_value < 0) return -1;
+
+  return lowerValue | (upper_value << 4);
+}
+
 }  //< namespace _
 
-#endif
 #endif

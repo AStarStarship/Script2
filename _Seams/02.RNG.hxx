@@ -2,12 +2,12 @@
 #if SEAM >= SCRIPT2_RNG
 #include "../RNG.h"
 #if SEAM == SCRIPT2_RNG
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
 static const CHA* RNG(const CHA* args) {
@@ -15,15 +15,15 @@ static const CHA* RNG(const CHA* args) {
   A_TEST_BEGIN;
 
 #if SEAM == SCRIPT2_RNG
-  enum { cPrintCount = 256 };
+  enum { PrintCount = 256 };
 #else
-  enum { cPrintCount = 1 };
+  enum { PrintCount = 1 };
 #endif
 
-  for (ISN i = 0; i < cPrintCount; ++i)
+  for (ISN i = 0; i < PrintCount; ++i)
     D_COUT('\n' << i << ".) " << Random(TSignedMin<ISN>(), TSignedMax<ISN>()));
 
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

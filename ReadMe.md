@@ -22,14 +22,10 @@ The Serial Chinese Room, Interprocess, and Telemetry Specification (SCRIPT Speci
 * The [Automaton Standard Code for Information Interchange (ASCII) Data Specification](./_Spec/data/) is an Abstract Data Type Specification that defines a contiguous memory layout and test suite optimized for CPU cache performance, Data Driven Design and Development.
 * The [ASCII C++ Style Guide](./_StyleGuide/) is a divergent fork of the Google C++ Style Guide that uses ASCII Data Types and intelligent rules to dramatically reduced clutter and improved readability.
 
-## Status and Help Wanted
-
-I need help debugging the ASCII Data Types contiguous-memory data structures. Right now (2025-05-18) I'm still working on the Book data structure. It's a show stpeer becasue there are some stuff in the core that is missing, and I can't do anything until the core is fixed. You can switch seams to the Book seam in the `_Seams/_Config.h`. You can find a list of the seams in the `_Seams/_Seams.hxx` file. You will need to Fork this repo to contribute and debug in your own fork, then push the changes to your fork and then merge with the master branch from there. The current show stopper is the memory copy algorithms.
-
 ## Documentation
 
 * [SCRIPT Specification](./Spec/) - *Release for Comment for Serial Chinese Room, Interprocess, and Telemetry (SCRIPT) Specification.*
-* [KabukiPress Cookbook Chapter on Script2](https://github.com/CookingWithCale/KabukiPressCookbook/tree/master/Script2) - *The official documentation for Script2.*l
+* [KabukiPress Cookbook Chapter on Script2](https://github.com/AStarCale/KabukiPressCookbook/tree/master/Script2) - *The official documentation for Script2.*l
 
 ## License
 

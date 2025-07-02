@@ -4,25 +4,25 @@
 //
 #include "TestWords.h"
 #if SEAM == SCRIPT2_LOOM
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
-template<typename CHT = CHR, typename ISZ = ISN, typename ISY = ISN>
+template<typename CH = CHR, typename ISZ = ISN, typename ISY = ISN>
 void TestLoom() {
   D_COUT(Linef("\n\n---\n\n"));
 
   enum {
-    Size = 192 * sizeof(CHT),
-    cCount = 32,
+    Size = 256 * sizeof(CH),
+    Count = 16,
   };
-  D_COUT("Testing ALoom<CH" << CSizeCodef<CHT>() << ",IS" << CSizeCodef<ISZ>()
-         << "> with Size:" << Size << " and cCount:" << cCount);
+  D_COUT("Testing ALoom<CH" << CSizeCodef<CH>() << ",IS" << CSizeCodef<ISZ>()
+         << "> with Size:" << Size << " and Count:" << Count);
 
-  ALoom<CHT, ISZ, ISY, Size, TBUF<Size>> loom(cCount);
+  ALoom<CH, ISZ, ISY, Size, TBOF<Size>> loom(Count);
 #if D_THIS
   D_COUT("\nPrinting empty loom:\n");
   loom.COut();
@@ -32,31 +32,32 @@ void TestLoom() {
     LengthMax = (Size << 2) - 1,
   };
 
-  CHT str[LengthMax + 1] = {};
-  CHT* string_end = &str[LengthMax];
-
-  for (ISN i = 0; i < 32; ++i) {
-    TSPrint<CHT>(str, string_end, i);
-    A_AVOW(ISY(i), loom.Insert(str));
+  CH str[LengthMax + 1] = {};
+  CH* string_end = &str[LengthMax];
+  ISY i = 0;
+  for (; i < Count; ++i) {
+    TSPrint<CH>(str, string_end, i);
+    D_COUT("\nstr:" << str);
+    A_AVOW(ISY(i), loom.Insert<CH>(str));
   }
 
   D_COUT("\n\nTesting Factory.Grow...\n");
 
-  TSPrint<CHT>(str, string_end, 32);
+  TSPrint<CH>(str, string_end, Count);
   loom.Insert(str);
   auto boofer = loom.AJT().origin;
   auto dez_nutz = loom.Insert(str);
-  auto boofing_dez_nutz = loom.AJT().origin;
-  A_AVOW(boofer, boofing_dez_nutz);
-  ISY i = 33;
-  A_AVOW(i, dez_nutz);
+  A_AVOW(boofer, loom.AJT().origin);
+  //i = Count + 1;
+  A_AVOW(++i, dez_nutz);
   for (i; i < 96; ) {
-    TSPrint<CHT>(str, string_end, i);
+    TSPrint<CH>(str, string_end, i);
     A_AVOW(ISY(++i), loom.Insert(str));
   }
 
-  TSPrint<CHT>(str, string_end, i);
+  TSPrint<CH>(str, string_end, i);
   A_AVOW(++i, loom.Insert(str));
+
 
   D_COUT("\n\nAttmpeting to add a very large string...\n");
 
@@ -78,7 +79,7 @@ void TestLoom() {
 
   D_COUT("\nTesting TLoomFind...\n");
 
-  static const CHT a[] = {'A', '\0'}, b[] = {'B', '\0'}, c[] = {'C', '\0'},
+  static const CH a[] = {'A', '\0'}, b[] = {'B', '\0'}, c[] = {'C', '\0'},
                    d[] = {'D', '\0'}, abc[] = {'a', 'b', 'c', '\0'},
                    bac[] = {'b', 'a', 'c', '\0'}, cba[] = {'c', 'b', 'a', '\0'},
                    cab[] = {'c', 'a', 'b', '\0'},
@@ -88,16 +89,16 @@ void TestLoom() {
   A_AVOW(ISY(99), loom.Find(d));
 
   A_AVOW(ISY(100), loom.Insert(c));
-  A_AVOW(ISY(99), loom.Find(d));
+  A_AVOW(ISY( 99), loom.Find(d));
   A_AVOW(ISY(100), loom.Find(c));
 
   A_AVOW(ISY(101), loom.Insert(b));
-  A_AVOW(ISY(99), loom.Find(d));
+  A_AVOW(ISY( 99), loom.Find(d));
   A_AVOW(ISY(100), loom.Find(c));
   A_AVOW(ISY(101), loom.Find(b));
 
   A_AVOW(ISY(102), loom.Insert(a));
-  A_AVOW(ISY(99), loom.Find(d));
+  A_AVOW(ISY( 99), loom.Find(d));
   A_AVOW(ISY(100), loom.Find(c));
   A_AVOW(ISY(101), loom.Find(b));
   A_AVOW(ISY(102), loom.Find(a));
@@ -135,16 +136,25 @@ namespace Script2 {
 static const CHA* Loom(const CHA* args) {
 #if SEAM >= SCRIPT2_LOOM
   A_TEST_BEGIN;
-  TestLoom<CHA, ISB, ISB>();
-  TestLoom<CHA, ISC, ISC>();
-#if USING_UTF16 == YES_0
-  TestLoom<CHB, ISB, ISB>();
-  TestLoom<CHB, ISC, ISC>();
+  //TestLoom<CHA, ISB, ISB>();
+  //TestLoom<CHA, ISC, ISC>();
+  //TestLoom<CHA, ISB, ISA>();
+  //TestLoom<CHA, ISC, ISB>();
+  TestLoom<CHA, ISD, ISC>();
+#if USING_STB == YES_0
+  //TestLoom<CHB, ISB, ISB>();
+  //TestLoom<CHB, ISC, ISC>();
+  //TestLoom<CHB, ISB, ISA>();
+  //TestLoom<CHB, ISC, ISB>();
+  TestLoom<CHB, ISD, ISC>();
 #endif
-#if USING_UTF32 == YES_0
-  TestLoom<CHC, ISC, ISC>();
+#if USING_STC == YES_0
+  //TestLoom<CHC, ISC, ISC>();
+  //TestLoom<CHC, ISB, ISA>();
+  //TestLoom<CHC, ISC, ISB>();
+  TestLoom<CHC, ISD, ISC>();
 #endif
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

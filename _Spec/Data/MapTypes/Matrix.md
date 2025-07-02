@@ -7,10 +7,11 @@
 ***C++ Header***
 
 ```C++
-template <typename SIZ = ISC>
+template<MTX_A>
 struct TMatrix {
-  SIZ size;                //< SIZ of the array in bytes.
-  TStack<SIZ> dimensions;  //< The stack of dimensions.
+  ISZ bytes,      //< Size in bytes.
+      elems;      //< Total number of matrix elements.
+  TStack<T, ISZ> dimensions; //< Stack of dimensions.
 };
 ```
 

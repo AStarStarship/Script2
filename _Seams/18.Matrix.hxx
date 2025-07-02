@@ -2,11 +2,11 @@
 #if SEAM >= SCRIPT2_MATRIX
 #include "../Matrix.hpp"
 #if SEAM == SCRIPT2_MATRIX
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
 template<typename ISZ, typename T>
@@ -51,6 +51,6 @@ static const CHA* Matrix(const CHA* args) {
   TestMatrixIntegers<IUD, ISC>();
   TestMatrixIntegers<IUD, ISD>();
 #endif
-  return nullptr;
+  return NILP;
 }
 }  //< namespace Script2

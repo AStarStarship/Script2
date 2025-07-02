@@ -1,7 +1,7 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #include <_Config.h>
-#ifndef SCRIPT2_FILE_TEMPLATES
-#define SCRIPT2_FILE_TEMPLATES
+#ifndef SCRIPT2_FILE_INLINE_CODE
+#define SCRIPT2_FILE_INLINE_CODE 1
 #if SEAM >= SCRIPT2_FILE
 #include "Uniprinter.hpp"
 //
@@ -110,9 +110,9 @@ class TFile {
 
  public:
   void Extension() {
-    CHR *period = TSTRFindLast<CHT>('.');
-    if (period == nullptr) {
-      extension = &(name[TSTRLength<CHT>(name)]);
+    CHR *period = TStringFindLast<CHT>('.');
+    if (period == NILP) {
+      extension = &(name[TStringLength<CHT>(name)]);
     } else {
       extension = period + 1;
     }
@@ -133,11 +133,11 @@ class TFile {
     CHR ext_buf[cFilenameLengthMax];
 #endif
 
-    if (!path || TSTRLength<CHT>(path) == 0) {
+    if (!path || TStringLength<CHT>(path) == 0) {
       errno = EINVAL;
       return -1;
     }
-    if (TSTRLength<CHT>(path) + cFilenamePad >= cPathLengthMax) {
+    if (TStringLength<CHT>(path) + cFilenamePad >= cPathLengthMax) {
       errno = ENAMETOOLONG;
       return -1;
     }
@@ -189,7 +189,7 @@ class TFile {
         result = -1;
         goto bail;
       }
-      if (TSTRCompare<CHR>(name, base_name) == 0) {
+      if (TStringCompare<CHR>(name, base_name) == 0) {
         found = 1;
         break;
       }
@@ -209,7 +209,7 @@ class TFile {
     if (is_directory_ != other->is_directory_) {
       return -(is_directory_ - other->is_directory_);
     }
-    return TSTRCompare<CHT>(name, other->name);
+    return TStringCompare<CHT>(name, other->name);
   }
 };
 
@@ -243,30 +243,30 @@ class TFolder {
 #endif
     CHR *pathp;
 
-    if (!dir || !path || TSTRLength<CHT>(path) == 0) {
+    if (!dir || !path || TStringLength<CHT>(path) == 0) {
       errno = EINVAL;
       return cErrorInvalidInput;
     }
-    if (TSTRLength<CHT>(path) + cFilenamePad >= cPathLengthMax) {
+    if (TStringLength<CHT>(path) + cFilenamePad >= cPathLengthMax) {
       errno = ENAMETOOLONG;
       return cErrorInvalidInput;
     }
 
     // initialize dir.
-    _files = nullptr;
+    _files = NILP;
 #ifdef _MSC_VER
     _h = INVALID_HANDLE_VALUE;
 #else
-    _d = nullptr;
+    _d = NILP;
 #ifndef _TINYDIR_USE_READDIR
-    _ep = nullptr;
+    _ep = NILP;
 #endif
 #endif
     Close();
 
     SPrint(path, cPathLengthMax, path);
     // Remove trailing slashes.
-    pathp = &path[TSTRLength<CHT>(path) - 1];
+    pathp = &path[TStringLength<CHT>(path) - 1];
     CHT c = *pathp;
     while (pathp != path && (c == '\\' || c == '/')) {
       *pathp = 0;
@@ -277,7 +277,7 @@ class TFolder {
     TSConcat<CHT>(path_buf, cPathLengthMax, "\\*");
 #if (defined WINAPI_FAMILY) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
     _h = FindFirstFileEx(path_buf, FindExInfoStandard, &_f,
-                         FindExSearchNameMatch, nullptr, 0);
+                         FindExSearchNameMatch, NILP, 0);
 #else
     _h = FindFirstFile(path_buf, &_f);
 #endif
@@ -285,7 +285,7 @@ class TFolder {
       errno = ENOENT;
 #else
     _d = _tinydir_opendir(path);
-    if (_d == nullptr) {
+    if (_d == NILP) {
 #endif
       goto bail;
     }
@@ -300,12 +300,12 @@ class TFolder {
     size = _tinydir_dirent_buf_size(_d);  // conversion to ISN.
     if (size == -1) return -1;
     _ep = (struct _tinydir_dirent *)_TINYDIR_MALLOC(size);
-    if (_ep == nullptr) return -1;
+    if (_ep == NILP) return -1;
 
     error = readdir_r(_d, _ep, &_e);
     if (error != 0) return -1;
 #endif
-    if (_e == nullptr) {
+    if (_e == NILP) {
       has_next = 0;
     }
 #endif
@@ -364,7 +364,7 @@ class TFolder {
     has_next_ = 0;
     file_count_ = 0;
     _TINYDIR_FREE(_files);
-    _files = nullptr;
+    _files = NILP;
 #ifdef _MSC_VER
     if (_h != INVALID_HANDLE_VALUE) {
       FindClose(_h);
@@ -374,11 +374,11 @@ class TFolder {
     if (_d) {
       _tinydir_closedir(_d);
     }
-    _d = nullptr;
-    _e = nullptr;
+    _d = NILP;
+    _e = NILP;
 #ifndef _TINYDIR_USE_READDIR
     _TINYDIR_FREE(_ep);
-    _ep = nullptr;
+    _ep = NILP;
 #endif
 #endif
   }
@@ -399,14 +399,14 @@ class TFolder {
 #ifdef _TINYDIR_USE_READDIR
     _e = _tinydir_readdir(_d);
 #else
-    if (_ep == nullptr) {
+    if (_ep == NILP) {
       return -1;
     }
     if (readdir_r(_d, _ep, &_e) != 0) {
       return -1;
     }
 #endif
-    if (_e == nullptr)
+    if (_e == NILP)
 #endif
     {
       has_next_ = 0;
@@ -444,13 +444,13 @@ class TFolder {
 #else
         _e->d_name;
 #endif
-    if (TSTRLength<CHT>(path_) + TSTRLength<CHT>(filename) + 1 + cFilenamePad >=
+    if (TStringLength<CHT>(path_) + TStringLength<CHT>(filename) + 1 + cFilenamePad >=
         cPathLengthMax) {
       // the path for the file will be too long.
       errno = ENAMETOOLONG;
       return -1;
     }
-    if (TSTRLength<CHT>(filename) >= cFilenameLengthMax) {
+    if (TStringLength<CHT>(filename) >= cFilenameLengthMax) {
       errno = ENAMETOOLONG;
       return -1;
     }

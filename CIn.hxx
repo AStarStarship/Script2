@@ -3,9 +3,9 @@
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
 #include "Stringf.hpp"
 #if SEAM == SCRIPT2_COUT
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
 #include <conio.h>
 //#include <windows.h>
@@ -124,21 +124,21 @@ inline BOL TCInFloatingPoint(FP& result) {
   return false;  // TScanFloat<FP, IS, IU, CHA>(boofer, result) != 0;
 }
 
-ISN IsYesNo(const CHA* string) { return TSTRIsYesNo<CHA>(string); }
-ISN IsYesNo(const CHB* string) { return TSTRIsYesNo<CHB>(string); }
-ISN IsYesNo(const CHC* string) { return TSTRIsYesNo<CHC>(string); }
+ISN IsYesNo(const CHA* string) { return TStringIsYesNo<CHA>(string); }
+ISN IsYesNo(const CHB* string) { return TStringIsYesNo<CHB>(string); }
+ISN IsYesNo(const CHC* string) { return TStringIsYesNo<CHC>(string); }
 
 CIn::CIn() : boofer_{} {}
 
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
 CIn::CIn(CHA& result) { SScan(result); }
 CIn::CIn(CHA* result, ISW boofer_size) { SScan(result, boofer_size); }
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 CIn::CIn(CHB& result) { SScan(result); }
 CIn::CIn(CHB* result, ISW boofer_size) { SScan(result, boofer_size); }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 CIn::CIn(CHC& result) { SScan(result); }
 CIn::CIn(CHC* result, ISW boofer_size) { SScan(result, boofer_size); }
 #endif
@@ -157,7 +157,7 @@ CIn::CIn(FPC& result) { SScan(result); }
 CIn::CIn(FPD& result) { SScan(result); }
 #endif
 
-#if USING_UTF8 == YES_0
+#if USING_STA == YES_0
 BOL CIn::SScan(CHA& result) {
   result = ScanKey();
   return true;
@@ -167,7 +167,7 @@ BOL CIn::SScan(CHA* result, ISW boofer_size) {
   return TCInString<CHA>(result, boofer_size);
 }
 #endif
-#if USING_UTF16 == YES_0
+#if USING_STB == YES_0
 BOL CIn::SScan(CHB& result) {
   result = ScanKey();
   return true;
@@ -176,7 +176,7 @@ BOL CIn::SScan(CHB* result, ISW boofer_size) {
   return TCInString<CHB>(result, boofer_size);
 }
 #endif
-#if USING_UTF32 == YES_0
+#if USING_STC == YES_0
 BOL CIn::SScan(CHC& result) {
   result = ScanKey();
   return true;
@@ -376,7 +376,7 @@ const ISB* KeyIdOffset() {
       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
       -1};
   return cKeyIdOffset;
-  return nullptr;
+  return NILP;
 }
 
 inline const IUA* KeyIdOrder() {
@@ -398,7 +398,7 @@ ISC KeyIdCodeFromName(const CHA* name) {
   while (l < r) {
     m = (l + r) / 2;
     x = KeyIdOrder()[m];
-    c = TSTRCompare<>(name, KeyIdName() + KeyIdOffset()[x]);
+    c = TStringCompare<>(name, KeyIdName() + KeyIdOffset()[x]);
     if (c < 0)
       r = m;
     else if (c > 0)
@@ -418,14 +418,14 @@ const CHA* KeyIdNameFromCode(ISC code) {
 }
 
 KeyId::KeyId(VKCode vk_code, const CHA* label)
-    : vk_code(vk_code), label(label), description(nullptr) {}
+    : vk_code(vk_code), label(label), description(NILP) {}
 
 void KeyId::ReprogramConsole() {}
 
 }  //< namespace _
 
-_::COut& operator<<(_::COut& o, _::CIn i) { return o; }
-_::COut& operator<<(_::COut& o, _::CIn& i) { return o; }
+::_::COut& operator<<(::_::COut& o, ::_::CIn i) { return o; }
+::_::COut& operator<<(::_::COut& o, ::_::CIn& i) { return o; }
 
-_::COut& operator<<(_::COut& o, _::Pausef& i) { return o; }
+::_::COut& operator<<(::_::COut& o, ::_::Pausef& i) { return o; }
 #endif

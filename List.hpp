@@ -1,25 +1,26 @@
 // Copyright Kabuki Starship <kabukistarship.com>.
 #pragma once
-#ifndef SCRIPT_LIST_CODE
-#define SCRIPT_LIST_CODE
+#ifndef SCRIPT_LIST_INLINE_CODE
+#define SCRIPT_LIST_INLINE_CODE 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_LIST
 #include "Binary.hpp"
 #include "Set.hpp"
 #include "Stack.hpp"
-#include "Types.hpp"
+#include "BSeq.hpp"
 #if SEAM == SCRIPT2_LIST
-#include "_Debug.hxx"
+#include "_Debug.h"
 #else
-#include "_Release.hxx"
+#include "_Release.h"
 #endif
-#define LST_A typename ISZ = ISR, typename ISY = ISR, typename DT = DTB
+#define LST_A typename ISZ = ISC, typename ISY = ISB, typename DT = DTB
 #define LST_P ISZ, ISY, DT
+#define LST TList<LST_P>
 namespace _ {
 
 /* A collection of type-value tuples.
 @see ASCII Data Type Specification.
-@link /Spec/Data/MapTypes/Map.md
+@link /Spec/Data/MapTypes/List.md
 @code
       List Memory Layout
 +============================+
@@ -33,29 +34,40 @@ namespace _ {
 |----------------------------|
 |_______   Boofer            |
 |_______ ^ Offset to Value N |
-|        | Offset to Value 0 | 
+|        | Offset to Value 0 |
 +============================+  ^  Up in addresses.
 |        TList Struct        |  |
 +============================+ 0xN Base address
 @endcode
-
-2024-09-02: Right now we're having a problem writing teh complex types because 
-we have to be able to autogrow and insert other than push, which has some 
-circular inclusion challenges.
 */
 template<LST_A>
 struct TList {
-  ISZ bytes,   //< Size of the List in bytes.
+  ISZ bytes,        //< Size of the List in bytes.
       top;          //< Offset to the top of the data.
-  TStack<ISZ> map;  //< Stack of offset mappings to the list items.
+  TStack<ISZ, ISZ, ISY> map;  //< Stack of offset mappings to the list items.
 };
 
-#define LST TList<LST_P>
+/* Gets the ASCII Data Types. */
+template<LST_A>
+constexpr DT CListType() {
+  return -_LS0 + CASizeCode<ISZ>();
+}
 
 /* Calculates the minimum size of a List with all nil objects. */
 template<LST_A>
-inline ISZ TListSizeMin(ISY total) {
+inline ISZ TListBytesMin(ISY total) {
   return sizeof(LST) + total * (sizeof(ISZ) + sizeof(DT));
+}
+
+template<LST_A>
+inline BOL TListTopIsValid(ISZ bytes, ISZ top, ISY total) {
+  return (top > TListBytesMin<LST_P>(total)) || (top < bytes);
+}
+
+template<LST_A>
+inline BOL TListIsValid(ISZ bytes, ISZ top, ISY total, ISY count) {
+  if (bytes < 0) return false;
+  return (count >= 0) && (count <= total) && TListTopIsValid<LST_P>(bytes, top, total);
 }
 
 /* The maximum theoretical amount of freespace in a List. */
@@ -119,7 +131,7 @@ inline T* TListBase(const LST* list) {
 template<LST_A, typename T>
 inline const T* TListBase(const LST* list) {
   return TPtr<T>(list, sizeof(LST) +
-                  list->map.total * (sizeof(ISZ) + sizeof(DT)));
+                 list->map.total * (sizeof(ISZ) + sizeof(DT)));
 }
 
 /* Returns the type at the given index. */
@@ -128,7 +140,7 @@ inline const T* TListBase(const LST* list) {
 @return Returns nil if the index is out of the count range. */
 template<LST_A, typename T = void>
 inline const T* TListValue(const LST* list, ISY index) {
-  if (index < 0 || index >= list->map.count) return nullptr;
+  if (index < 0 || index >= list->map.count) return NILP;
   return TPtr<T>(list, TListValuesMap<LST_P>(list)[index]);
 }
 
@@ -155,7 +167,7 @@ inline const T* TListValue_NC(const LST* list, ISY index) {
 /* Returns the value at the given index witout error checking. */
 template<LST_A>
 const ISZ TListValueOffset_NC(const LST* list, ISY index) {
-  return TStackStart<SCK_P>(&list->map)[index];
+  return TStackBegin<TStack<ISZ, ISZ, ISY>>(&list->map)[index];
 }
 
 /* Returns the type and value offset at the given index. */
@@ -187,9 +199,9 @@ inline void* TListTop(LST* list) {
 template<LST_A>
 inline const TATypeValuePtr<DT> TListTypeValue(LST* list, ISY index) {
   if (index < 0 || index >= list->map.count) return { 0, 0 };
-  auto value_offsets = TListValuesMap<LST_P>(list);
-  auto types = TPtr<DT>(value_offsets + list->map.total);
-  return { types[index], TPtr<void>(list, value_offsets[index])};
+  auto vmap = TListValuesMap<LST_P>(list);
+  auto types = TPtr<DT>(vmap + list->map.total);
+  return { types[index], TPtr<void>(list, vmap[index])};
 }
 
 /* Returns the TTypeValue at the given index.
@@ -198,17 +210,17 @@ template<LST_A>
 inline const TATypeValue<ISZ, DT> 
     TListTypeValueOffset(const LST* list, ISY index) {
   if (index < 0 || index >= list->map.count) return { 0, 0 };
-  auto value_offsets = TListValuesMap<LST_P>(list);
-  auto types = TPtr<DT>(value_offsets + list->map.total);
-  return { types[index], value_offsets };
+  auto vmap = TListValuesMap<LST_P>(list);
+  auto types = TPtr<DT>(vmap + list->map.total);
+  return { types[index], vmap };
 }
 
 // I don't have to have these.
 // Prints the list to the output stream.
 template<typename Printer, LST_A>
 Printer& TListPrintTypeValue(Printer& o, const LST* list, ISY index) {
-  return TPrintValue<Printer, DT>(o, TListType<LST_P>(list, index),
-                                  TListValue<LST_P>(list, index));
+  return TPrintValue<Printer>(o, TListType<LST_P>(list, index),
+                              TListValue<LST_P>(list, index));
 }
 
 // Prints the list to the output stream.
@@ -220,19 +232,19 @@ Printer& TListPrintValue(Printer& o, const LST* list, ISY index) {
 /* Prints the list to the output stream. */
 template<typename Printer, LST_A>
 Printer& TListPrint(Printer& o, const LST* list) {
-  ISY count     = ISY(list->map.count), 
+  ISY count = ISY(list->map.count),
       total = ISY(list->map.total);
   o << Linef("\n\n+---\n| List<IS") << CSizeCodef<ISZ>()
-    << "> bytes:" << list->bytes << " total:" << total
-    << " count:" << count << Linef("\n+---");
+    << "> bytes:" << list->bytes << " total:" << (total - 1)
+    << " count:" << (count - 1) << Linef("\n+---");
 
-  const ISZ* value_offsets = TListValuesMap<LST_P>(list);
-  const DT*  dt_offsets    = TPtr<DT>(value_offsets + total);
+  const ISZ* vmap  = TListValuesMap<LST_P>(list);
+  const DT * types = TPtr<DT>(vmap + total);
   for (ISY index = 0; index < count; ++index) {
-    DT type = *dt_offsets++;
-    o << "\n| " << Centerf(index, ISW(STRLength(count)) + 2);
+    o << "\n| " << index << " " << Centerf(index, STRLength(count) + 2);
+    DT type = *types++;
     o << ATypef(type) << ' ';
-    TPrintValue<Printer, DT>(o, type, TPtr<CHA*>(list, *value_offsets++));
+    TPrintValue<Printer>(o, ATypeMDP(type), list, *vmap++);
   }
   return o << Linef("\n+---");
 }
@@ -243,16 +255,17 @@ constexpr ISZ TListTotalBoundsLower() {
   return 8 / sizeof(ISZ);
 }
 
-/* Initializes a AsciiList from preallocated memory.
-total must be in multiples of 4. Given there is a fixed size, both the
-total and size will be downsized to a multiple of 4 automatically. */
+/* Initializes a AsciiList from preallocated memory. */
 template<LST_A>
-LST* TListInit(LST* list, ISZ bytes, ISY total) {
-  D_ARRAY_WIPE(list, bytes);
-  list->bytes = bytes;
+LST* TListInit(LST* list, ISY total) {
+  ISZ bytes = list->bytes;
+  D_OBJ_WIPE(list, ISZ);
+  D_ASSERT(bytes > sizeof(LST));
   list->map.count = 0;
   list->map.total = total;
-  list->top = sizeof(LST) + total * (sizeof(ISZ) + sizeof(DT));
+  ISZ top = sizeof(LST) + total * (sizeof(ISZ) + sizeof(DT));
+  list->top = top;
+  if (bytes <= top) return NILP;
   return list;
 }
 
@@ -300,7 +313,7 @@ inline CHA* TListValuesEnd(LST* list) {
 
 /* Calculates the amount of space left in the list. */
 template<LST_A>
-inline ISZ TListFreeSpace(const LST* list) {
+inline ISZ TListSpace(const LST* list) {
   return list->bytes - list->top;
 }
     /* Returns the max count an array can handle. */
@@ -318,36 +331,36 @@ ISZ TListSize() {
 /* Deletes the list contents without wiping the contents. */
 template<LST_A>
 void TListClear(LST* list) {
-  list->map.count = 0;
+  list->map.count = 1;
   list->top = sizeof(LST) + list->map.total * (sizeof(ISZ) + sizeof(DT));
 }
 
-/* Gets an element of the Book by index. */
+/* Gets an element of the List by index. */
 template<LST_A>
 TATypeValue<ISZ, DT> TListTypeValue(const LST* list, ISY index) {
-  if (index < 0 || index >= list->map.count) return { _NIL, nullptr };
+  if (index < 0 || index >= list->map.count) return { _NIL, NILP };
   auto type_ptr = *TPtr<DT>(list, sizeof(LST) +
     list->map.total * sizeof(ISZ) + index * sizeof(DT));
-  return { *type_ptr, *TStackStart<LST_P>(&list->map)[index] };
+  return { *type_ptr, *TStackBegin<LST_P>(&list->map)[index] };
 }
 
-/* Gets an element of the Book by index. */
+/* Gets an element of the List by index. */
 template<LST_A>
-ATypeValue TListTypeValuePtr(const LST* list, ISY index) {
-  if (index < 0 || index >= list->map.count) return { _NIL, nullptr };
+ATypePtr TListTypeValuePtr(const LST* list, ISY index) {
+  if (index < 0 || index >= list->map.count) return { _NIL, NILP };
   DTW type = DTW(*TPtr<DT>(list, sizeof(LST) +
     list->map.total * sizeof(ISZ) + index * sizeof(DT)));
-  return { type, TPtr<void>(list, TStackStart<LST_P>(&list->map)[index]) };
+  return { type, TPtr<void>(list, TStackBegin<LST_P>(&list->map)[index]) };
 }
 
-/* Gets a points to the element of the Book by index. */
+/* Gets a points to the element of the List by index. */
 template<typename T = void, LST_A>
 const T* TListValuePtr(const LST* list, ISY index) {
-  if (index < 0 || index >= list->map.count) return nullptr;
-  return TPtr<T>(list, TStackStart<ISA, ISZ>(&list->map)[index]);
+  if (index < 0 || index >= list->map.count) return NILP;
+  return TPtr<T>(list, TStackBegin<ISA, ISZ>(&list->map)[index]);
 }
 
-/* Gets a points to the element of the Book by index. */
+/* Gets a points to the element of the List by index. */
 template<typename T = void, LST_A>
 T* TListValuePtr(LST* list, ISY index) {
   return CPtr<T>(TListValuePtr<T, LST_P>(CPtr<LST>(list), index));
@@ -359,22 +372,22 @@ template<typename T, LST_A>
 CHA* TListContains(const LST* list, ISZ sizeof_value,
                    ISZ align_mask = sizeof(T) - 1) {
   ISZ size = list->map.total, count = list->map.count;
-  if (count >= size) return nullptr;
-  ISZ *offsets = TListValuesMap<LST_P>(list, size),  //
-      *offsets_end = offsets + size;
-  DT* types = TPtr<DT>(offsets_end);
-  if (offsets == offsets_end) return nullptr;
+  if (count >= size) return NILP;
+  ISZ *vmap = TListValuesMap<LST_P>(list, size),  //
+      *vmap_end = vmap + size;
+  DT* types = TPtr<DT>(vmap_end);
+  if (vmap == vmap_end) return NILP;
   CHA* previous_begin = 0;
 
-  CHA* origin = TPtr<CHA>(list, *offsets++);
+  CHA* origin = TPtr<CHA>(list, *vmap++);
   DT type = *types++;
   origin =
       PtrUp(origin, ATypeAlignMask(type)) + TSizeOf<ISZ>(origin, type);
   CHA* end = origin;
   ISY index = 0;
-  while (++offsets < offsets_end) {
+  while (++vmap < vmap_end) {
     end = PtrUp(end, align_mask);
-    CHA* origin = TPtr<CHA>(list, *offsets++);
+    CHA* origin = TPtr<CHA>(list, *vmap++);
     if (TDelta<>(end, origin)) return index;
     ++index;
     DT type = *types++;
@@ -398,12 +411,11 @@ template<LST_A>
 ISY TListFind(const LST* list, void* address) {
   CHA* adr = TPtr<CHA>(address);
   ISZ size = list->map->size;
-  ISZ* data_offsets = TListValuesMap<LST_P>(list, size);
-
-  ISZ *offsets = TListValuesMap<LST_P>(list), *offset_end = offsets + list->count;
+  ISZ* vmap = TListValuesMap<LST_P>(list, size),
+     * voffset_end = vmap + list->count;
   ISZ offset = TDelta<ISZ>(list, address), index = 0;
-  while (offsets < offset_end) {
-    if (*data_offsets++ == offset) return index;
+  while (vmap < voffset_end) {
+    if (*vmap++ == offset) return index;
     ++index;
   }
   return -ErrorInvalidIndex;
@@ -414,7 +426,7 @@ template<LST_A>
 struct TList {
   ISZ bytes,       //< Size of the List in bytes.
       top;              //< Offset to the top of the data.
-  TStack<SCK_P> offsets;  //< Stack of offsets to the list items.
+  SCK offsets;  //< Stack of offsets to the list items.
 };
       List Memory Layout
 +============================+
@@ -438,19 +450,19 @@ struct TList {
 template <typename T, LST_A>
 LST* TListCopy(const LST* origin, LST* destination) {
   ISZ bytes = origin->bytes;
-  if (destination->bytes < bytes) return nullptr;
+  if (destination->bytes < bytes) return NILP;
   ISZ origin_count = origin->map.count,
       delta = TDelta<ISZ>(origin, destination);
   // 1. Copy Offsets.
-  RAMCopy(destination, bytes, origin, TStackTop<T, ISZ>(origin->map));
+  ArrayCopy(destination, bytes, origin, TStackTop<T, ISZ>(origin->map));
   // 2. Copy Types.
   ISZ r_start = TDelta<ISZ>(origin, TListTypes<LST_P>(origin)),
       size = origin_count * sizeof(DT);
-  RAMCopy(TPtr<>(destination, r_start), size, TPtr<>(origin, r_start), size);
+  ArrayCopy(TPtr<>(destination, r_start), size, TPtr<>(origin, r_start), size);
   // 3. Copy Values.
   r_start = TDelta<ISZ>(origin, TListValues<LST_P>(origin)),
   size = TDelta<ISZ>(origin, destination->top);
-  RAMCopy(TPtr<>(destination, r_start), size, TPtr<>(origin, r_start), size);
+  ArrayCopy(TPtr<>(destination, r_start), size, TPtr<>(origin, r_start), size);
   return destination;
 }
 
@@ -459,310 +471,198 @@ template<typename T, LST_A>
 T* TListValueEnd(LST* list, ISY index) {
 }
 
-/* Adds a given type-value tuple at the given index and values_begin.
-index Codes:
-SCKPush: -1  Pushes the value onto the top of the type-value stacks.
-SCKPack: -2  Insert-packs the type-value into the first free memory slot.
-@todo    Delete this function and use one insert function using the stack.
-@return  ErrorInvalidIndex upon failure upon receiving an invalid index.
-        ErrorBooferOverflow upon values boofer overflow/out of memory.
-@warning Does not check for invalid types! */
-template<typename T, LST_A>
-ISY TListInsert(LST* list, T value, DT type, ISZ align_mask,
-                ISY index, CHA* vbuf_begin, CHA* vbuf_end) {
-  ISY count = ISY(list->map.count),
-      total = ISY(list->map.total);
-  ISZ top   = list->top;
-  if (count < 0 || count > total || vbuf_begin > vbuf_end || 
-      index >= total)
-    return -ErrorInvalidHeader;
-  if (count >= total ) return -ErrorStackOverflow;
-  D_COUT("\nInserting " << TATypePODs<>(type) << ':' << value <<
-         " into index:" << index << " count: " << count);
-  ISZ* voffsets = TListValuesMap<LST_P>(list);
-  DT* types = (DT*)(voffsets + total);
-  const BOL IsNotInserting = (index == count) && (index < count);
-  ISZ bytes = list->bytes;
-  if (index == PSH || index == count || count == 0) {
-    D_COUT("\nSCKPush...");
-    top = TAlignUp<ISZ>(top, align_mask);
-    ISZ top_new = top + ISZ(sizeof(T));
-    if (top_new > bytes) return -ErrorBooferOverflow;
-    list->top = top_new;
-    *(voffsets + index) = top;
-    *TPtr<T>(list, top) = value;
-    *(types + index) = type;
-    list->map.count = ++count;
-    return --count;
-  } else if (index == PCK) {
-    D_COUT("\nSCKPack...");
-    ISZ offset_previous = *voffsets++;
-    ++types;
-    for (index = 1; index < count; ++index) {
-      // @todo Do I need to point to the end of the value?
-      ISZ offset = TATypeSizeOf<ISZ>(list, *voffsets++, *types++);
-      ISZ offset_prev_aligned = TAlignUp<ISZ>(offset_previous, align_mask);
-      if (offset - offset_prev_aligned <= sizeof(T)) break;
-      offset_previous = offset;
-    }
-    *(voffsets + index) = top;
-    *TPtr<T>(list, offset_previous) = value;
-    TArrayInsert_NC<DT>(types + index, total, type);
-    list->map.count = ++index;
-    return --index;
-  } else if(index <= ERR) {
-    return -ErrorInvalidIndex;
-  }
-  D_COUT("\nInserting into into index:" << index);
-  auto vbuf_stop = (index == count) ? bytes : voffsets[index];
-  auto vbuf_start  = TPtrUp<CHA>(vbuf_begin, align_mask);
-  if ((vbuf_start + sizeof(T)) > vbuf_end) return -ErrorBooferOverflow;
-  *TPtr<T>(vbuf_start) = value;
-  *(voffsets + index) = top;
-  TArrayInsert_NC<DT>(types + index, total, type);
-  list->map.count = count + 1;
-  list->top = top + sizeof(T);
+// Allocates memory for an ASCII Object of the given size.
+// @return The index of the allocated type-value.
+template<LST_A>
+inline ISY TListAlloc(LST* list, DT type, ISZ bytes,
+  ISY index = PSH) {
+  ISA  align_mask = ATypeAlignMask(DTB(type));
+  auto top = TAlignUp<ISZ>(list->top, align_mask);
+  ISY  count = ISY(list->map.count),
+    total = ISY(list->map.total);
+  if (top + bytes > list->bytes || count >= total) return -1;
+  *TPtr<ISZ>(list, top) = bytes;
+  auto vmap = TListValuesMap<LST_P>(list);
+  vmap[count] = top;
+  auto types = TPtr<DT>(vmap + total);
+  types[count++] = type;
+  list->top = top + bytes;
+  list->map.count = count--;
   return count;
+}
+
+/* Copies the source to the destination.
+This function is different in that it
+@return NILP if the destination does not have enough space. */
+template<typename IS = ISR>
+void* TATypeClone(void* destination, const void* source) {
+  auto dst = static_cast<IS*>(destination);
+  auto src = static_cast<const IS*>(source);
+  auto dst_count = *dst;
+  auto src_count = *src;
+  if (dst_count < src_count) return NILP;
+  auto result = ArrayCopy(dst, dst_count, src, src_count);
+  if (result <= 0) return NILP;
+  return static_cast<void*>(dst);
+}
+/* Writes the given value to the socket. */
+template<typename IS = ISR>
+void* TBSeqWriteCustom(void* begin, void* end, DTB type) {
+  return begin;
+}
+
+/* Inserts the item into the list at the given index. */
+template<LST_A>
+inline ISY TListInsert_NC(LST* list, ISZ bytes, ISZ top, ISY total, ISY count, 
+    DT type, IUW value, ISY index = PSH, IUW value_msb = 0) {
+  ISZ align_mask = ATypeAlignMask(type);
+  top = AlignUp(top, align_mask);
+  if (index == count) {
+    //value = AlignUp(value, align_mask); // @todo Should this be aligned?
+    auto result = TBSeqWrite_NC<ISZ>(TPtr<IUA>(list, top),
+      TPtrDown<IUA>(list, bytes, align_mask), type, value, value_msb);
+    D_CHECK_PTR_TRETURN(ISY, -ErrorBooferOverflow);
+    TListValuesMap<LST_P>(list)[count] = top;
+    TListTypes<LST_P>(list)[count++] = ATypeMDDeassert(type);
+    list->map.count = count;
+    list->top = TDelta<ISZ>(list, result);
+    return index;
+  }
+  D_COUT("\nInserting into index:" << index << " of count:" << count);
+  A_ASSERT(false); // @todo Fix me!
+  return -1;
+}
+template<LST_A>
+inline ISY TListInsert(LST* list, DT type, IUW value, ISY index = PSH,
+                       IUW value_msb = 0) {
+  ISZ bytes = list->bytes,
+      top   = list->top;
+  ISY total = ISY(list->map.total),
+      count = ISY(list->map.count);
+  A_ASSERT(top > 0);
+  if (index == PSH) index = count;
+  if (index >= total)
+    return -ErrorStackOverflow;
+  if (index < 0 || index > count)
+    return -ErrorInvalidIndex;
+  D_COUT("\n  Inserting " << ATypef(type) << ":0d" << type << ":0x" <<
+         Hexf(type) << " count:" << count << " index:" << index <<
+         " top(aligned):" << top);
+  list->map.count = count + 1;
+  return TListInsert_NC<LST_P>(list, bytes, top, total, count, type, value,
+                               index, value_msb);
+}
+template<LST_A>
+inline ISY TListInsert(LST* list, DT type, const void* value, ISY index = PSH) {
+  return TListInsert<LST_P>(list, type, IUW(value), index);
 }
 
 /* Searches for the first empty spot in the list that can fit the item and
 inserts the item to the list at the given index.
 @return An invalid index upon failure or the index of the index upon success. */
-template<LST_A>
-inline ISY TListInsert(LST* list, IUA item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUA, LST_P>(list, item, _IUA, 0, index,
-                                 values_begin, values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, CHA item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUA, LST_P>(list, ToUnsigned(item), _CHA,
-                                 0, index, values_begin,
-                                 values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, ISA item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUA, LST_P>(list, ToUnsigned(item), _ISA,
-                                 0, index, values_begin,
-                                 values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, IUB item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUB, LST_P>(list, item, _IUB, sizeof(IUB) - 1, index,
-                                 values_begin, values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, ISB item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUB, LST_P>(list, ToUnsigned(item), _ISB,
-                                 sizeof(ISB) - 1, index, values_begin,
-                                 values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, CHB item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUB, ISZ>(list, ToUnsigned(item), _CHB, sizeof(CHB) - 1,
-                               index, values_begin, values_end);
-}
-//template<LST_A>
-//inline ISY TListInsert(LST* list, BOL item, ISY index, CHA* values_begin,
-//                       CHA* values_end) {
-//  return TListInsert<IUB, LST_P>(list, ToUnsigned(item), _BOL,
-//                                 sizeof(BOL) - 1, index, values_begin,
-//                                 values_end);
-//}
-template<LST_A>
-inline ISY TListInsert(LST* list, IUC item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUC, LST_P>(list, item, _IUC, sizeof(IUC) - 1, index,
-                                 values_begin, values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, ISC item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUC, LST_P>(list, ToUnsigned(item), _ISC,
-                                 sizeof(IUC) - 1, index, values_begin,
-                                 values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, CHC item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUC, LST_P>(list, ToUnsigned(item), _CHC,
-                                 sizeof(CHC) - 1, index, values_begin,
-                                 values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, FPC item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUC, LST_P>(list, ToUnsigned(item), _FPC,
-                                sizeof(FPC) - 1, index, values_begin,
-                                 values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, IUD item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUD, LST_P>(list, item, _IUD, ALUWordMask, index,
-                                 values_begin, values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, ISD item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUD, LST_P>(list, ToUnsigned(item), _ISD, ALUWordMask,
-                                 index, values_begin, values_end);
-}
-template<LST_A>
-inline ISY TListInsert(LST* list, FPD item, ISY index, CHA* values_begin,
-                       CHA* values_end) {
-  return TListInsert<IUD, LST_P>(list, ToUnsigned(item), _FPD, ALUWordMask,
-                                 index, values_begin, values_end);
-}
 
 /* Inserts the item into the list at the given index. */
 template<LST_A>
 inline ISY TListInsert(LST* list, IUA item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _IUA, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, ISA item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _ISA, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, CHA item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-    TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _CHA, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, IUB item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _IUB, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, ISB item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _ISB, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, CHB item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _CHB, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, IUC item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _IUC, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, ISC item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _ISC, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, CHC item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _CHC, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, FPC item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _FPC, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, IUD item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _IUD, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, ISD item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _ISD, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, FPD item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _FPD, IUW(item), index);
 }
 template<LST_A>
 inline ISY TListInsert(LST* list, BOL item, ISY index = PSH) {
-  return TListInsert<LST_P>(list, item, index, TListValuesTop<LST_P>(list),
-                            TListValuesEnd<LST_P>(list));
+  return TListInsert<LST_P>(list, _BOL, IUW(item), index);
 }
 
-/* Inserts the item into the list at the given index. */
+/* Adds all of the items from the source to the list. */
 template<LST_A>
-inline ISY TListInsert(LST* list, DT type, const void* value, 
-    ISY index = PSH) {
-  auto bytes = list->bytes;
-  auto top   = list->top;
-  ISY  total = ISY(list->map.total),
-       count = ISY(list->map.count);
-  A_ASSERT(top > 0);
-  if (index == PSH) index = count;
-  if (index < 0 || index > count) return -ErrorInvalidIndex;
-  D_COUT("\n\nInserting type:" << ATypef(type) << ":0d" << type << ":0x" << 
-         Hexf(type));
-  if (index == count) {
-    IUA* top_ptr = TPtr<IUA>(list, top),
-       * end_ptr = TPtr<IUA>(list, bytes);
-    ISW delta_top_end = ISW(end_ptr) - ISW(top_ptr);
-    //StdOut() << "\n\nvalue_ptr:0x" << Hexf(value)
-    //         << "\nalign_ptr:0x" << Hexf(TATypePtrUp<>(value, type))
-    //         << " delta:" << TDelta<>(value, TATypePtrUp<>(value, type));
-    A_ASSERT(top_ptr < end_ptr);
-    auto result = TATypeWrite_NC<ISZ>(top_ptr, end_ptr, type, value);
-    if (result == 0) return -ErrorBooferOverflow;
-    TListValuesMap<LST_P>(list)[count] = top;
-    TListTypes<LST_P>(list)[count] = type;
-    list->map.count = ++count;
-    list->top = TDelta<ISZ>(list, result);
-    return index;
+LST* TListAppend(LST* list, const LST* source) {
+  D_CHECK_PTR_RETURN(list);
+  D_CHECK_CPTR_RETURN(LST, source);
+  ISZ src_bytes = source->bytes,
+      src_top   = source->top;
+  ISY src_total = ISY(source->map.total),
+      src_count = ISY(source->map.count);
+  D_COUT("\nAdding " << src_count << " of " << src_total <<
+         " max items...\nsource:\n");
+  D_COUT_LIST(source);
+  D_ASSERT(TListIsValid<LST_P>(src_bytes, src_top, src_total, src_count));
+  const ISZ* src_vmap = TListValuesMap<LST_P>(source);
+  const DT * src_types    = TListTypes<LST_P>(source, src_total);
+  D_COUT("\nlist:0x" << Hexf(list));
+  for (ISY i = 0; i < src_count; ++i) {
+    ISZ voffset = *src_vmap++;
+    DT  vtype   = *src_types++;
+
+    D_COUT("\n\ni:" << i << " type:" << ATypef(vtype) << " voffset:" <<
+           voffset);
+    ISY result = TListInsert<LST_P>(list, ATypeMDP(vtype),
+                                    IUW(ISW(source) + voffset));
+    D_COUT(" result:" << result << ' ' << 
+           (result < 0 ? TAErrors<CHA, ISY>(result) : " "));
+    D_ASSERT(result >= 0);
   }
-  D_ASSERT(false); // @todo Fix me!
-  //ISZ stop = TListValueOffset_NC<LST_P>(list, index + 1);
-  //auto value_bytes = ATypeBytes(value, type);
-  //if (value_bytes <= 0) {
-  //  value_bytes *= -1;
-  //  if (bytes - top) return -ErrorStackOverflow;
-  //  return index;
-  //}
-  //top = TAlignUp<ISZ>(top, align_mask);
-  //if (stop - top >= bytes) return -ErrorStackOverflow;
-  //// @todo finish me.
-  return -1;
-}
-
-// Allocates memory for an ASCII Object of the given size.
-// @return The index of the allocated type-value.
-template<LST_A>
-inline ISY TListAlloc(LST* list, DT type, ISZ bytes,
-    ISY index = PSH) {
-  ISA  align_mask = ATypeAlignMask(DTB(type));
-  auto top        = TAlignUp<ISZ>(list->top, align_mask);
-  ISY  count      = ISY(list->map.count),
-       total      = ISY(list->map.total);
-  if (top + bytes > list->bytes || count >= total) return -1;
-  *TPtr<ISZ>(list, top) = bytes;
-  auto voffsets   = TListValuesMap<LST_P>(list);
-  voffsets[count] = top;
-  auto types      = TPtr<DT>(voffsets + total);
-  types[count++]  = type;
-  list->top       = top + bytes;
-  list->map.count = count--;
-  return count;
+  return list;
 }
 
 /* Removes the item at the given address from the list. */
 template<LST_A>
 inline void* TListRemove(LST* list, ISY index) {
-  ISY count = ISY(list->map.count);
-  ISZ* offsets = TListValuesMap<LST_P>(list);
-  TArrayRemove<ISZ, ISY>(offsets, count, index);
-  TArrayRemove<DT, ISY>(TListTypes<LST_P>(list), count, index);
-  return offsets + index;
+  ISY total = ISY(list->map.total),
+      count = ISY(list->map.count);
+  if (index == PSH) index = count - 1;
+  if (index < 0 || index >= count) return NILP;
+  ISZ* vmap = TListValuesMap<LST_P>(list);
+  ISZ voffset = *(vmap + index);
+  TArrayRemove<ISZ, ISY>(vmap, count, index);
+  TArrayRemove<DT , ISY>(TListTypes<LST_P>(list, total), count--, index);
+  list->map.count = count;
+  return TPtr<void>(list, voffset);
 }
 
 /* Removes the item at the given address from the list. */
@@ -777,54 +677,37 @@ inline void* TListPop(LST* list) {
   return TListRemove<LST_P>(list, ISY(list->map.count) - 1);
 }
 
-/* Creates an Autoject boofer large enough to fit a List with the given. */
-template<LST_A>
-IUW* TListNew(ISZ size_data, ISY total, RAMFactory ram) {
-  ISY total_align_lsb_mask = (sizeof(ISZ) / sizeof(DT)) - 1;
-  total = AlignUp(total, total_align_lsb_mask);
-  ISZ bytes = sizeof(LST) + total * (sizeof(ISZ) + sizeof(DT)) +
-                   AlignUp(size_data);
-  IUW* boofer = ram(nullptr, ISW(bytes));
-  LST* list = TPtr<LST>(boofer);
-  return TPtr<IUW>(TListInit<LST_P>(list, bytes, total));
-}
-
-/* ASCII List that uses dynamic memory. */
-template<typename ISZ = ISR, typename ISY = ISQ, ISZ SizeBytes_ = 512, ISY Total_ = 32,
-          typename BUF = TBUF<SizeBytes_, IUA, ISZ, Nil>, typename DT = DTB>
+/* ASCII Auto List that uses dynamic memory. */
+template<LST_A, ISZ BytesInit_ = 512,
+         typename BOF = TBOF<BytesInit_, IUA, ISZ, Nil>> 
 class AList {
-  AArray<IUA, ISZ, BUF> obj_;  //< An Auto-array.
+  AArray<IUA, ISZ, BytesInit_, BOF> obj_;  //< An Auto-array.
  public:
-  static constexpr DT Type() { return CTypeMap<DT>(CATypeSize<ISZ>()); }
+  static constexpr DT Type() { return CListType<LST_P>(); }
 
   /* Constructs a list with a given total with estimated bytes. */
-  AList(ISY total = Total_)
-      : obj_(TListNew<LST_P>(SizeBytes_, total,
-             TRAMFactory<Type()>().Init<BUF>()),
-             TRAMFactory<Type()>().Init<BUF>()) {}
-
-  /* Constructs a List with the given bytes and total. */
-  AList(ISY total, ISZ bytes)
-      : obj_(TListNew<LST_P>(bytes, total,
-             TRAMFactory<Type()>().Init<BUF>()),
-             TRAMFactory<Type()>().Init<BUF>()) {}
-
-  /* Inserts the given type-value tuple in the list at the given index. */
-  inline ISY Insert(IUA type, void* value, ISY index) {
-    return TListInsert<LST_P>(This(), type, value, index);
+  AList(ISY total)
+      : obj_(BytesInit_, TObjectFactory<ISZ>().Init<BOF>()) {
+    TListInit<LST_P>(This(), total);
   }
 
+  /* Constructs a List with the given bytes and total. */
+  //AList(ISY total, ISZ bytes)
+  //    : obj_(TListNew<LST_P>(bytes, total,
+  //           TObjectFactory<ISZ>().Init<BOF>()),
+  //           TObjectFactory<ISZ>().Init<BOF>()) {}
+
   /* Maximum count of the item in the List. */
-  inline ISZ Size() { return TListSize<LST_P>(); }
+  inline ISY Total() { return ISY(This()->map.total); }
 
   /* Count of the item in the List. */
-  inline ISY Count() { return TListSize<LST_P>(); }
+  inline ISY Count() { return ISY(This()->map.count); }
 
   /* Count of the item in the List. */
-  inline ISZ SizeBytes() { return This()->bytes; }
+  inline ISZ Bytes() { return This()->bytes; }
 
   /* Count of the item in the List. */
-  inline ISZ SizeWords() { return TSizeWords<ISZ>(SizeBytes()); }
+  inline ISZ BytesWords() { return TSizeWords<ISZ>(Bytes()); }
 
   /* Count of the item in the List. */
   inline ISZ Top() { return This()->top; }
@@ -851,51 +734,57 @@ class AList {
   inserts the item to the list at the given index.
   @return An invalid index upon failure or the index of the index upon success.
   */
-  ISY Insert(IUA item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(IUA value, ISY index = PSH) {
+    return InsertTV(AJT(), _IUA, value, index);
   }
-  ISY Insert(ISA item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(ISA value, ISY index = PSH) {
+    return InsertTV(AJT(), _ISA, IUW(value), index);
   }
-  ISY Insert(CHA item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(CHA value, ISY index = PSH) {
+    return InsertTV(AJT(), _CHA, IUW(value), index);
   }
-  ISY Insert(IUB item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(IUB value, ISY index = PSH) {
+    return InsertTV(AJT(), _IUB, IUW(value), index);
   }
-  ISY Insert(ISB item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(ISB value, ISY index = PSH) {
+    return InsertTV(AJT(), _ISB, IUW(value), index);
   }
-  ISY Insert(CHB item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(CHB value, ISY index = PSH) {
+    return InsertTV(AJT(), _CHB, IUW(value), index);
   }
-  ISY Insert(BOL item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(BOL value, ISY index = PSH) {
+    return InsertTV(AJT(), _BOL, IUW(value), index);
   }
-  ISY Insert(IUC item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(IUC value, ISY index = PSH) {
+    return InsertTV(AJT(), _IUC, IUW(value), index);
   }
-  ISY Insert(ISC item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(ISC value, ISY index = PSH) {
+    return InsertTV(AJT(), _ISC, IUW(value), index);
   }
-  ISY Insert(CHC item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(CHC value, ISY index = PSH) {
+    return InsertTV(AJT(), _CHC, IUW(value), index);
   }
-  ISY Insert(FPC item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(FPC value, ISY index = PSH) {
+    return InsertTV(AJT(), _FPC, IUW(value), index);
   }
-  ISY Insert(IUD item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(IUD value, ISY index = PSH) {
+    return InsertTV(AJT(), _IUD, IUW(value), index);
   }
-  ISY Insert(ISD item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(ISD value, ISY index = PSH) {
+    #if CPU_SIZE == CPU_8_BYTE
+    return InsertTV(AJT(), _ISD, IUW(value), index);
+    #elif CPU_SIZE == 4_BYTE
+    return InsertTV(AJT(), _ISD, IUW(value), index, IUW(value >> 32));
+    #else
+    return InsertTV(AJT(), _ISD, &value, index);
+    #endif
   }
-  ISY Insert(FPD item, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), item, index);
+  inline ISY Insert(FPD value, ISY index = PSH) {
+    return InsertTV(_FPD, IUW(value), index);
   }
 
-  inline ISY Insert(DT type, const void* value, ISY index = PSH) {
-    return TListInsert<LST_P>(This(), type, value, index);
+  inline ISY InsertTV(DT type, const void* value, ISY index = PSH) {
+    return InsertTV(AJT(), type, IUW(value), index);
   }
 
   /* Removes the last item from the list.
@@ -903,7 +792,7 @@ class AList {
   inline void* Pop() { return TListPop<LST_P>(This()); }
 
   /* Gets the obj_'s Autoject. */
-  inline Autoject AJT() { return obj_.AJT(); }
+  inline Autoject& AJT() { return obj_.AJT(); }
 
   /* Gets the Auto-Array. */
   inline AArray<IUA, ISZ>& AJT_ARY() { return obj_; }
@@ -916,6 +805,74 @@ class AList {
   Printer& PrintTo(Printer& o) {
     return TListPrint<Printer, ISZ>(o, This());
   }
+
+ private:
+
+   /* Doubles the size and total of the list.
+   @return Returns nil if the size is greater than the amount of memory that
+   can fit in type ISW, the unaltered socket pointer if the Stack has grown to the
+   size upper bounds, or a new dynamically allocated socket upon failure. */
+   static BOL Grow(Autoject& obj) {
+     D_COUT("\n\nGrowing List...");
+     /* Grow Algoirhm.
+     1. Check if we can grow and if so, create a new block of memory.
+     2. Copy the Loom.
+     3. Copy the List. */
+     auto origin = obj.origin;
+     D_ASSERT(origin);
+     auto source = TPtr<LST>(origin);
+     ISZ  bytes  = source->bytes,
+          top    = source->top;
+     ISY  total  = ISY(source->map.total),
+          count  = ISY(source->map.count);
+     D_COUT("\nsize:" << bytes << " top:" << top << " total:" << total <<
+            " count:" << count);
+     auto bytes_new = AutojectGrowBytes(bytes);
+     if (!AutojectCanGrow(bytes, bytes_new)) {
+       D_COUT("\n\nError: bytes cannot grow! bytes:" << bytes <<
+         " bytes_new:" << bytes_new);
+       return false;
+     }
+     auto total_new = AutojectGrowTotal(total);
+     if (!AutojectCanGrow(total, total_new)) {
+       D_COUT("\n\nError: total cannot grow! total:" << total <<
+         " total_new:" << total_new);
+       return false;
+     }
+     IUW* origin_new = obj.ram(NILP, bytes_new);
+     D_COUT("\n\n*TPtr<ISZ>(origin_new):" << *TPtr<ISZ>(origin_new) <<
+       " size_new:" << bytes_new);
+     auto destination = TPtr<LST>(origin_new);
+     TListInit<LST_P>(destination, total_new);
+     TListAppend<LST_P>(destination, source);
+     obj.origin = origin_new;
+     D_COUT("\n\nFinished growing. :-)\n\n");
+     D_COUT(Charsf(origin_new, *TPtr<ISZ>(origin_new)));
+     D_COUT_LIST(TPtr<LST>(obj.origin));
+     return true;
+   }
+
+   /* Adds a string to the end of the List, auto-growing if neccissary.
+   @return The index upon success or -1 if the obj can't grow anymore.
+   @todo Verify copmile size of this function isolated and in the AArray class. */
+   static ISY InsertTV(Autoject& obj, DT type, IUW value, ISY index = PSH, 
+                       IUW value_msb = 0) {
+     ISY result = TListInsert<LST_P>(TPtr<LST>(obj.origin), type, IUW(value), 
+                                     index);
+     while (result < 0) {
+       if (!Grow(obj)) {
+         return -ErrorBooferOverflow;
+       }
+       result = TListInsert<LST_P>(TPtr<LST>(obj.origin), type, IUW(value), 
+                                   index);
+       if (result < 0) {
+         D_COUT("\n\n\nFailed to insert into list:" << result << ' ' <<
+           ASCIIErrorSTR(result));
+         return result;
+       }
+     }
+     return result;
+   }
 };
 
 }  //< namespace _
@@ -949,7 +906,7 @@ inline ::_::LST& operator<<(::_::LST& list, BOL item) {
   list.Add(item);
 }
 template<LST_A>
-inline ::_::LST& operator<<(::_::LST& list, CHC item) {
+inline ::_::LST& operator<<(::_::LST& list, FPC item) {
   list.Add(item);
 }
 template<LST_A>
@@ -961,7 +918,7 @@ inline ::_::LST& operator<<(::_::LST& list, ISC item) {
   list.Add(item);
 }
 template<LST_A>
-inline ::_::LST& operator<<(::_::LST& list, FPC item) {
+inline ::_::LST& operator<<(::_::LST& list, CHC item) {
   list.Add(item);
 }
 template<LST_A>

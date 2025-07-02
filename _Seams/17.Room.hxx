@@ -2,12 +2,12 @@
 #if SEAM >= SCRIPT2_ROOM
 #include "../Room.hpp"
 #if SEAM == SCRIPT2_ROOM
-#include "../_Debug.hxx"
+#include "../_Debug.h"
 #else
-#include "../_Release.hxx"
+#include "../_Release.h"
 #endif
 #endif
-using namespace _;
+using namespace ::_;
 namespace Script2 {
 
 static const CHA* Room(const CHA* args) {
@@ -16,7 +16,7 @@ static const CHA* Room(const CHA* args) {
   //Room room_a, //
   //     room_b;
 #endif
-  return nullptr;
+  return NILP;
 }
 
 }  //< namespace Script2

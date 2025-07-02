@@ -7,11 +7,11 @@ assignees: ''
 ---
 ## Problem
 
-The problem I am tackling on this mission is...
+The problem is 
 
 ## Solution
 
-The solution is...
+The solution is 
 
 ### File Affected
 
@@ -31,7 +31,7 @@ Mission
 
 ### Sessions
 
-* CookingWithCale/.github#9
+* AStarCale/.github#9
 
 ## License
 
