@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "COut.h"
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
 //
@@ -473,4 +473,4 @@ inline ::_::COut& operator<<(::_::COut& printer, ::_::TSizeCodef<T, CHA> item) {
   return o;
 }
 #endif
-#endif  //< #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
+#endif

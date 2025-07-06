@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef INCLUDED_SCRIPT2_OP_DECL
-#define INCLUDED_SCRIPT2_OP_DECL 1
+#ifndef SCRIPT2_OP_DECL
+#define SCRIPT2_OP_DECL
 #include <_Config.h>
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {
@@ -40,7 +40,7 @@ struct LIB_MEMBER Op {
   const BOut* evaluation;   //< Evaluated expression Slot.
 };
 
-inline const Op* OpError(ERC error) { return (const Op*)ISW(error); }
+const Op* OpError(ERC error);
 
 }  //< namespace _
 

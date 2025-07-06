@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_TYPES_DECL
-#define SCRIPT2_TYPES_DECL 1
+#define SCRIPT2_TYPES_DECL
 #include <_Config.h>
 
 /* Function that remaps a Standard Data Type to an Extended Plain or Extended

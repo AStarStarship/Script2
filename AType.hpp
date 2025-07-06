@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef INCLUDED_TYPES_INLINE_CODE
-#define INCLUDED_TYPES_INLINE_CODE 1
+#ifndef SCRIPT2_ATYPE_HPP
+#define SCRIPT2_ATYPE_HPP
 #include "AType.h"
 #if SEAM >= SCRIPT2_COUT
 namespace _ {
@@ -213,6 +213,8 @@ const CH* TATypeMaps() {
   static const CH Strings[5][4] = {
       {'M', 'A', 'C', NIL},  //< 00
       {'M', 'A', 'D', NIL},  //< 01
+      {'I', 'N', 'V', NIL},  //< 02
+      {'I', 'N', 'V', NIL},  //< 03
       {'I', 'N', 'V', NIL},  //< 04
   };
   return &Strings[0][0];
@@ -652,6 +654,10 @@ inline DTW TypeOf(IUD item) { return _IUD; }
 inline DTW TypeOf(FPD item) { return _FPD; }
 inline DTW TypeOf(CHA* item) { return _STA; }
 inline DTW TypeOf(const CHA* item) { return _CNS_STA; }
+inline DTW TypeOf(CHB* item) { return _STB; }
+inline DTW TypeOf(const CHB* item) { return _CNS_STB; }
+inline DTW TypeOf(CHC* item) { return _STC; }
+inline DTW TypeOf(const CHC* item) { return _CNS_STC; }
 inline DTW TypeOf(void* item) { return _PTR; }
 inline DTW TypeOf(const void* item) { return _CNS_PTR; }
 
@@ -690,5 +696,5 @@ inline BOL ATypeIsPOD(DTW type) {
 }
 
 }  //< namespace _
-#endif  //< #if SEAM >= SCRIPT2_COUT
-#endif  //< #ifndef INCLUDED_TYPES_INLINE_CODE
+#endif
+#endif

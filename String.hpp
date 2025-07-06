@@ -1,8 +1,8 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #include <_Config.h>
-#ifndef SCRIPT2_STRING_INLINE_CODE
-#define SCRIPT2_STRING_INLINE_CODE 1
+#ifndef SCRIPT2_STRING_HPP
+#define SCRIPT2_STRING_HPP 1
 #include "Stack.hpp"
 #if SEAM >= SCRIPT2_STRING
 #include "Uniprinter.hpp"
@@ -14,7 +14,7 @@
 #define D_COUT_STRING(s)
 #endif
 
-#define STR_A typename T=CHR, typename ISZ=ISC, typename ISY=ISZ
+#define STR_A typename T=CHR, typename ISZ=ISW, typename ISY=ISZ
 #define STR_P T, ISZ, ISY
 #define STR TString<STR_P>
 

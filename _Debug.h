@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "_Undef.h"
 //
 #include "Test.h"

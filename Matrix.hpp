@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef INCLUDED_SCRIPT2_MATRIX
-#define INCLUDED_SCRIPT2_MATRIX 1
+#ifndef SCRIPT2_MATRIX_HPP
+#define SCRIPT2_MATRIX_HPP 1
 #include <_Config.h>
 #if SEAM >= 1 //SCRIPT2_MATRIX
 #include "Stack.hpp"

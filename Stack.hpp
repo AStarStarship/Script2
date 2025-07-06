@@ -1,8 +1,8 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once 
 #include <_Config.h>
-#ifndef SCRIPT2_STACK_INLINE_CODE
-#define SCRIPT2_STACK_INLINE_CODE 1
+#ifndef SCRIPT2_STACK_HPP
+#define SCRIPT2_STACK_HPP 1
 #if SEAM >= SCRIPT2_STACK
 #include "Array.hpp"
 #if SEAM == SCRIPT2_STACK

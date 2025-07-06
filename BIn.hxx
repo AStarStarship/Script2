@@ -1,25 +1,19 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "BIn.hpp"
 #if SEAM >= SCRIPT2_CRABS
-#include "Error.hpp"
 #include "Op.h"
-#include "Slot.hpp"
-#include "Varint.hpp"
-#include "BOut.hpp"
 #include "BSeq.hpp"
 #include "Hash.hpp"
-//#include "Slot.hpp"
+#include "Slot.hpp"
+#include "Varint.hpp"
 #if SEAM == SCRIPT2_CRABS
 #include "_Debug.h"
-#define CLEAR(origin, stop) \
-  while (origin <= stop) *origin++ = ' ';
 #else
 #include "_Release.h"
-#define CLEAR(origin, stop)
 #endif
 namespace _ {
 
-  IUA* BInEnd(BIn* bin) { return TPtr<IUA>(bin) + bin->size; }
+IUA* BInEnd(BIn* bin) { return TPtr<IUA>(bin) + bin->size; }
 
 ISW SlotLength(IUA* origin, IUA* stop, IUW size) {
   return stop - origin;
@@ -35,7 +29,7 @@ ISN BInSpace(BIn* bin) {
 }
 
 ISN BinBooferLength(BIn* bin) {
-  IUA* origin = BInBegin(bin);
+  IUA* origin = BInOrigin(bin);
   return ISN(SlotLength(origin + bin->origin, origin + bin->stop, bin->size));
 }
 
@@ -43,7 +37,7 @@ ISN BinBooferLength(BIn* bin) {
 @param error The error type.
 @return Returns a Static Error Op Result. */
 inline const Op* BInError(BIn* bin, ERC error) {
-  D_COUT("\nBIn " << TAErrors<>(error) << " error!");
+  //D_COUT("\nBIn " << TAErrors<>(error) << " error!");
   return OpError(error);
 }
 
@@ -55,7 +49,7 @@ inline const Op* BInError(BIn* bin, ERC error) {
 @param address The address of the IUA in error.
 @return         Returns a Static Error Op Result. */
 inline const Op* BInError(BIn* bin, ERC error, const ISN* header) {
-  D_COUT("\nBIn %s error!" << TAErrors<>(error));
+  //D_COUT("\nBIn %s error!" << TAErrors<>(error));
   return OpError(error);
 }
 
@@ -68,7 +62,7 @@ inline const Op* BInError(BIn* bin, ERC error, const ISN* header) {
 @return         Returns a Static Error Op Result. */
 inline const Op* BInError(BIn* bin, ERC error, const ISN* header,
                           ISN offset) {
-  D_COUT("\nBIn " << TAErrors<>(error) << " error!");
+  //D_COUT("\nBIn " << TAErrors<>(error) << " error!");
   return OpError(error);
 }
 
@@ -81,8 +75,8 @@ inline const Op* BInError(BIn* bin, ERC error, const ISN* header,
 @return Returns a Static Error Op Result. */
 inline const Op* BInError(BIn* bin, ERC error, const ISN* header, ISN bsq_error,
                           IUA* error_byte) {
-  D_COUT("\nBIn " << TAErrors<>(error) << " error at " <<
-         TDelta<>(BInBegin(bin), error_byte));
+  //D_COUT("\nBIn " << TAErrors<>(error) << " error at " <<
+  //       TDelta<>(BInOrigin(bin), error_byte));
   return OpError(error);
 }
 
@@ -94,12 +88,12 @@ BIn* BInInit(IUW* socket, ISN size) {
   bin->origin = 0;
   bin->stop = 0;
   bin->read = 0;
-  D_RAM_WIPE(BInBegin(bin), size);
+  D_RAM_WIPE(BInOrigin(bin), size);
   return bin;
 }
 
 ISN BInStreamByte(BIn* bin) {
-  IUA* begin  = BInBegin(bin),
+  IUA* begin  = BInOrigin(bin),
      * end    = begin + bin->size - 1,
      * read   = begin + bin->read, 
      * origin = begin + bin->origin;
@@ -119,10 +113,10 @@ ISN BInStreamByte(BIn* bin) {
 BOL BInIsReadable(BIn* bin) { return BinBooferLength(bin) > 0; }
 
 const Op* BInRead(BIn* bin, const ISN* params, void** args) {
-  D_COUT("\nReading ");
-  D_COUT_BSQ(params);
-  D_COUT(" from B-Input:");
-  D_COUT_BIN(bin);
+  //D_COUT("\nReading ");
+  //D_COUT_BSQ(params);
+  //D_COUT(" from B-Input:");
+  //D_COUT_BIN(bin);
 
   if (!bin) {
     return BInError(bin, ErrorImplementation);
@@ -133,29 +127,29 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
   if (!args) {
     return BInError(bin, ErrorImplementation);
   }
-  IUA  iua;                   //< Temp variable.
-  IUB  iub;                   //< Temp variable.
-  IUC  iuc;                   //< Temp variable.
-  IUD  iud;                   //< Temp variable.
-  CHA* iua_ptr;               //< Pointer to a _IUA.
-  IUB* iub_ptr;               //< Pointer to a _IUB.
-  IUC* iuc_ptr;               //< Pointer to a _IUC.
-  IUD* iud_ptr;               //< Pointer to a _IUA.
-  DTB  type;                  //< The current type being read.
-  ISN  size,                  //< Size of the ring socket.
-       length,                //< Length of the data in the socket.
-       count,                 //< Argument length.
-       index,                 //< Index in the params.
+  IUA  iua = 0;               //< Temp variable.
+  IUB  iub = 0;               //< Temp variable.
+  IUC  iuc = 0;               //< Temp variable.
+  IUD  iud = 0;               //< Temp variable.
+  CHA* iua_ptr = 0;           //< Pointer to a _IUA.
+  IUB* iub_ptr = 0;           //< Pointer to a _IUB.
+  IUC* iuc_ptr = 0;           //< Pointer to a _IUC.
+  IUD* iud_ptr = 0;           //< Pointer to a _IUA.
+  DTB  type = 0;              //< The current type being read.
+  ISN  size = 0,              //< Size of the ring socket.
+       length = 0,            //< Length of the data in the socket.
+       count = 0,             //< Argument length.
+       index = 0,             //< Index in the params.
        arg_index = 0,         //< Index in the args.
        num_params = *params;  //< Number of params.
-  IUB  hash;                  //< Hash of the incoming data.
+  IUB  hash = 0;              //< Hash of the incoming data.
 
   if (num_params == 0) return 0;  //< Nothing to do.
 
   hash = PRIME_LARGEST_IUB;
   size = bin->size;
 
-  IUA* begin  = BInBegin(bin),        //< The beginning of the socket.
+  IUA* begin  = BInOrigin(bin),        //< The beginning of the socket.
      * end    = begin + size - 1,     //< The end of the socket.
      * origin = begin + bin->origin,  //< The origin of the data.
      * stop   = begin + bin->stop;    //< The stop of the data.
@@ -169,9 +163,9 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
 
   for (index = 1; index <= num_params; ++index) {
     type = params[index];
-    D_COUT("\nparam:" << arg_index + 1 << " type:" << ATypef(type) <<
-           " origin:" << TDelta<>(origin, origin) << " stop:" <<
-           TDelta<>(origin, stop) << " length:" << length);
+    //D_COUT("\nparam:" << arg_index + 1 << " type:" << ATypef(type) <<
+    //       " origin:" << TDelta<>(origin, origin) << " stop:" <<
+    //       TDelta<>(origin, stop) << " length:" << length);
     switch (type) {
       case _NIL:
         return BInError(bin, ErrorInvalidType, params, index, origin);
@@ -189,7 +183,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
 
         // Byte 1
         iua = *origin;  //< Read
-        D_COUT(" '" << iua << "', ");
+        //D_COUT(" '" << iua << "', ");
         hash = THash<IUB>(iua, hash);         //< Hash
         if (++origin >= stop) origin -= size; //< Increment
         *iua_ptr = iua;                       //< Write
@@ -286,15 +280,15 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
         iua_ptr = TPtr<CHA>(args[arg_index]);
         if (iua_ptr == NILP)
           return BInError(bin, ErrorImplementation, params, index, origin);
-        D_COUT("\nReading STR_:0x" << Hexf(iua_ptr) << " with length:" << 
-               count);
+        //D_COUT("\nReading STR_:0x" << Hexf(iua_ptr) << " with length:" << 
+        //       count);
         // Read CHA.
         iua = *origin;
         hash = HashIUB(iua, hash);
         if (++origin >= stop) origin -= size;
         *iua_ptr = iua;
         ++iua_ptr;
-        D_COUT(iua);
+        //D_COUT(iua);
         while ((iua != 0) && (count != 0)) {
           --count;
           if (count == 0)  //< Reached count:0 before nil-term CHA.
@@ -303,9 +297,9 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
           hash = HashIUB(iua, hash);
           if (++origin >= stop) origin -= size;
           *iua_ptr++ = iua;  // Write IUA to destination.
-          D_COUT(iua);
+          //D_COUT(iua);
         }
-        D_COUT("\" success!\n");
+        //D_COUT("\" success!\n");
         if (type != _ADR) {
           *iua_ptr = 0;
           // No need to hash 0.
@@ -423,7 +417,7 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
         iua = *origin;
 #endif
       default: {
-        D_COUT("\nIt's an array!\n");
+        //D_COUT("\nIt's an array!\n");
 #if USING_SCRIPT2_ARRAY
         switch (type & 0x60) {
           case 0: {
@@ -549,9 +543,9 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
       }
     }
     ++arg_index;
-    D_COUT(" |");
+    //D_COUT(" |");
   }
-  D_COUT("\nHash expected:0x" << Hexf(hash));
+  //D_COUT("\nHash expected:0x" << Hexf(hash));
   if (length < 2)
     return BInError(bin, ErrorBooferUnderflow, params, index, origin);
   iub = *origin;
@@ -559,12 +553,12 @@ const Op* BInRead(BIn* bin, const ISN* params, void** args) {
   iua = *origin;
   if (++origin >= stop) origin -= size;
   iub |= (((IUB)iua) << 8);
-  D_COUT("found:0x" << Hexf(iub));
+  //D_COUT("found:0x" << Hexf(iub));
   if (hash != iub)
     return BInError(bin, ErrorInvalidHash, params, index, origin);
 
-  D_COUT("\nDone reading\n");
-  CLEAR(origin, stop)
+  //D_COUT("\nDone reading\n");
+  D_RAM_WIPE(origin, stop);
 
   // Convert pointer back to offset
   bin->origin = TDelta<ISN>(origin, origin);
@@ -577,5 +571,4 @@ const Op* BInRead(BOut* bout, const ISN* params, void** args) {
 }
 
 }  //< namespace _
-
 #endif

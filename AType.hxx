@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "AType.hpp"
 //
 #include "Array.h"
@@ -375,8 +375,8 @@ BOL ATypeIsCTX(DTW type) {
 }
 
 DTW ATypeToCTX_NC(DTW sw_vt, DTW pod) {
-  if(pod >= _PCa) return ATypeCTXStart + 8 +
-    (((sw_vt - 5) << (ATypeVTBit0 - 2)) | (pod - 24));  //< C
+  if(pod >= _PCa) return DTW(ATypeCTXStart) + 8 +
+    (((sw_vt - 5) << DTW(ATypeVTBit0 - 2)) | (pod - 24));  //< C
   if (sw_vt <= 7)
     return ATypeCTXStart + (((sw_vt - 5) << ATypeVTBit0) | (pod - 16)); //< D
   return ATypeCTXStart + (((sw_vt - 9) << ATypeVTBit0) | (pod - 20));  //< E

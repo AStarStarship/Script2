@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_MAP_INLINE_CODE
-#define SCRIPT2_MAP_INLINE_CODE 1
+#ifndef SCRIPT2_MAP_HPP
+#define SCRIPT2_MAP_HPP 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_MAP
 #include "Stack.hpp"
@@ -12,11 +12,11 @@
 #endif
 namespace _ {
 
-#undef  MAP_P
-#define MAP_P D, ISZ
 #undef  MAP_A
 #define MAP_A typename D = ISR, typename ISZ = ISQ
-#define MAP TMap<D, ISZ>
+#undef  MAP_P
+#define MAP_P D, ISZ
+#define MAP TMap<MAP_P>
 
 /* A sparse array map of Sorted Domain Values to Codomain Mappings (i.e. pointer
 offsets).
@@ -225,8 +225,8 @@ ISZ TMapAdd(MAP* map, D domain_value, ISZ codomain_mapping) {
     ++mid;
   }
   D_COUT(" mid:" << mid);
-  TArrayInsert_NC<D, SCK_P>(domain, count, mid, domain_value);
-  TArrayInsert_NC<ISZ, SCK_P>(codomain, count, mid, codomain_mapping);
+  TArrayInsert_NC<D, ISZ>(domain, count, mid, domain_value);
+  TArrayInsert_NC<ISZ, ISZ>(codomain, count, mid, codomain_mapping);
   D_COUT("\n      Inserted domain[mid-1], mid, mid+1]: = [" << 
          *(domain + mid - 1) << ", " << *(domain + mid) << ", " << 
          *(domain + mid + 1) << ']');
@@ -258,9 +258,8 @@ ISZ TMapFind(const MAP* map, const D& domain_member) {
   while (low <= high) {
     mid = (low + high) >> 1;
     D x_i = domain[mid];
-    D_COUT("\n   low:" << low << " mid:" << mid << " high:" << high
-                       << " x_i:" << x_i);
-
+    D_COUT("\n   low:" << low << " mid:" << mid << " high:" << high << 
+           " x_i:" << x_i);
     if (x_i > domain_member) {
       high = mid - 1;
     } else if (x_i < domain_member) {
@@ -311,16 +310,17 @@ ISZ TMapRemove(MAP* map, ISZ index) {
 /* Inline wrapper for the TMap for stack-to-heap growth.
 CMapSizeBytes<MAP_P>(Size_)
 */
-template<MAP_A, ISZ Size_ = 16,
-          typename BOF = TBOF<Size_, TMapBuf<MAP_P>, ISZ, MAP>>
+template<MAP_A, ISZ Total_ = 16,
+          typename BOF = TBOF<Total_, TMapBuf<MAP_P>, ISZ, MAP>>
 class AMap {
-  AArray<TMapBuf<MAP_P>, ISZ, BOF> array_;
+  enum { BytesInit_ = Total_ * 32 };
+  AArray<IUA, ISZ, BytesInit_, BOF> array_;
 
  public:
   /* Constructs a Map with the given size.
   If size is less than 0 it will be set to the default value. If the
   */
-  AMap() : array_() { TMapInit<MAP_P>(This(), Size_); }
+  AMap() : array_() { TMapInit<MAP_P>(This(), Total_); }
 
   /* Destructs the dynamically allocated socket. */
   ~AMap() {}
@@ -394,11 +394,10 @@ class AMap {
   inline COut& CPrint() { return PrintTo<COut>(StdOut()); }
 
   /* Gets the aarray_. */
-  inline AArray<TMapBuf<MAP_P>, ISZ, BOF>& AJT() { return array_; }
+  inline AArray<IUA, ISZ, BytesInit_, BOF>& AJT() { return array_; }
 
   /* Gets a pointer to the object at the origin of the aarray_. */
-  inline MAP* This() { return TPtr<MAP>(AJT().Origin());
-  }
+  inline MAP* This() { return TPtr<MAP>(AJT().Origin()); }
 };
 }  //< namespace _
 #undef TARGS

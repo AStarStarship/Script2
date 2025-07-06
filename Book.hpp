@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_BOOK_CODE
 #define SCRIPT2_BOOK_CODE 1
@@ -768,52 +768,52 @@ class ABook {
   /* Inserts the key and item on into the Loom and List at the given index.
   @return The index of the string in the Book. */
   inline ISY Insert(const CHT* key, ISA value, ISY index = PSH) {
-    return InsertTV(AJT(), key, _ISA, IUW(value), index);
+    return InsertTV(key, _ISA, IUW(value), index);
   }
   inline ISY Insert(const CHT* key, IUA value, ISY index = PSH) {
-    return InsertTV(AJT(), key, _IUA, IUW(value), index);
+    return InsertTV(key, _IUA, IUW(value), index);
   }
   inline ISY Insert(const CHT* key, ISB value, ISY index = PSH) {
-    return InsertTV(AJT(), key, _ISB, IUW(value), index);
+    return InsertTV(key, _ISB, IUW(value), index);
   }
   inline ISY Insert(const CHT* key, IUB value, ISY index = PSH) {
-    return InsertTV(AJT(), key, _IUB, IUW(value), index);
+    return InsertTV(key, _IUB, IUW(value), index);
   }
   inline ISY Insert(const CHT* key, ISC value, ISY index = PSH) {
-    return InsertTV(AJT(), key, _ISC, IUW(value), index);
+    return InsertTV(key, _ISC, IUW(value), index);
   }
   inline ISY Insert(const CHT* key, IUC value, ISY index = PSH) {
-    return InsertTV(AJT(), key, _IUC, IUW(value), index);
+    return InsertTV(key, _IUC, IUW(value), index);
   }
   inline ISY Insert(const CHT* key, ISD value, ISY index = PSH) {
-    return InsertTV(AJT(), key, _ISD, IUW(value), index);
+    return InsertTV(key, _ISD, IUW(value), index);
   }
   inline ISY Insert(const CHT* key, IUD value, ISY index = PSH) {
-    return InsertTV(AJT(), key, _IUD, IUW(value), index);
+    return InsertTV(key, _IUD, IUW(value), index);
   }
 #if USING_FPC == YES_0
   inline ISY Insert(const CHT* key, FPC item, ISY index = PSH) {
-    return InsertTV(AJT(), key, _FPC, &item, index);
+    return InsertTV(key, _FPC, &item, index);
   }
 #endif
 #if USING_FPD == YES_0
   inline ISY Insert(const CHT* key, FPD item, ISY index = PSH) {
-    return InsertTV(AJT(), key, _FPD, &item, index);
+    return InsertTV(key, _FPD, &item, index);
   }
 #endif
 #if USING_STA == YES_0
   inline ISY Insert(const CHT* key, const CHA* item, ISY index = PSH) {
-    return InsertTV(AJT(), key, _STA, item, index);
+    return InsertTV(key, _STA, item, index);
   }
 #endif
 #if USING_STB == YES_0
   inline ISY Insert(const CHT* key, const CHB* item, ISY index = PSH) {
-    return InsertTV(AJT(), key, _STB, item, index);
+    return InsertTV(key, _STB, item, index);
   }
 #endif
 #if USING_STC == YES_0
   inline ISY Insert(const CHT* key, const CHC* item, ISY index = PSH) {
-    return InsertTV(AJT(), key, _STC, item, index);
+    return InsertTV(key, _STC, item, index);
   }
 #endif
   /* Removes the string at the given index from the Book. */
@@ -860,8 +860,9 @@ class ABook {
   @return Returns nil if the size is greater than the amount of memory that
   can fit in type ISW, the unaltered socket pointer if the Stack has grown to the
   size upper bounds, or a new dynamically allocated socket upon failure. */
-  static BOL Grow(Autoject& obj) {
+  BOL Grow() {
     D_COUT("\n\nGrowing Book...");
+    Autoject& obj = AJT();
     /* Grow Algoirhm.
     1. Check if we can grow and if so, create a new block of memory.
     2. Copy the Loom.
@@ -908,14 +909,16 @@ class ABook {
 
   /* Adds a string to the end of the Book, auto-growing if neccissary.
   @return The index upon success or -1 if the obj can't grow anymore.
-  @todo Verify copmile size of this function isolated and in the AArray class. */
-  static ISY InsertTV(Autoject& obj, const CHT* key, DT type, IUW value, 
-    ISY index = PSH, IUW msb = 0) {
+  @todo Verify copmile size of this function isolated and in the AArray class.
+  @todo Why am I calling TBookInsert twice? */
+  ISY InsertTV(const CHT* key, DT type, IUW value, 
+      ISY index = PSH, IUW msb = 0) {
+    Autoject& obj = AJT();
     D_CHECK_PTR_TRETURN(ISY, key);
     ISY result = TBookInsert<BOK_P>(TPtr<BOK>(obj.origin), key, type, value, 
                                     index, msb);
     while (result < 0) {
-      if (!Grow(obj)) {
+      if (!Grow()) {
         return -ErrorBooferOverflow;
       }
       BOK* book = TPtr<BOK>(obj.origin);

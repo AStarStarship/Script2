@@ -1,9 +1,9 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #include "Clock.h"
 #if SEAM >= SCRIPT2_CLOCK
-#ifndef SCRIPT2_CLOCK_INLINE_CODE
-#define SCRIPT2_CLOCK_INLINE_CODE 1
+#ifndef SCRIPT2_CLOCK_HPP
+#define SCRIPT2_CLOCK_HPP 1
 //#include "Uniprinter.hpp"
 #if SEAM == SCRIPT2_COUT
 #include "_Debug.h"

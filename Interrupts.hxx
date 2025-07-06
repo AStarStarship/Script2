@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "Interrupts.h"
 #if SEAM >= SCRIPT2_CRABS && USING_SCRIPT2_INTERRUPTS
 #include <cassert>

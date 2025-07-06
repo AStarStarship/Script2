@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_TEST_INLINE_CODE
-#define SCRIPT2_TEST_INLINE_CODE 1
+#ifndef SCRIPT2_TEST_HPP
+#define SCRIPT2_TEST_HPP 1
 #include "Test.h"
 namespace _ {
 

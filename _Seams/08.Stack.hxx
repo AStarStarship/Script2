@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #if SEAM >= SCRIPT2_STACK
 #include "../Stack.hpp"
 using namespace ::_;

@@ -1,8 +1,8 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #if SEAM >= SCRIPT2_CRABS
-#include "../Crabs.h"
-#include "../BIn.hpp"
-#include "../BOut.hpp"
+//#include "../Crabs.h"
+//#include "../BIn.hpp"
+//#include "../BOut.hpp"
 #if SEAM == SCRIPT2_CRABS
 #include "../_Debug.h"
 #else
@@ -16,6 +16,7 @@ static const CHA* Crabs(const CHA* args) {
 #if SEAM == SCRIPT2_CRABS
   A_TEST_BEGIN;
 
+  D_COUT(Linef("\n\n---\n\nTesting Crabs...\n"));
   //enum {
   //  BooferSize = 2048,
   //  BooferWords = BooferSize / sizeof(IUW),
@@ -26,7 +27,6 @@ static const CHA* Crabs(const CHA* args) {
   //       << Hexf(&boofer[0]) << ":0x" << Hexf(&boofer[BooferWords - 1]));
 
   //This a;
-
   //Crabs* crabs = CrabsInit(boofer, BooferSize, StackHeight, /*&a*/NILP,
   //                         unpacked_expr, BooferSize);
   //CrabsPrint(crabs);

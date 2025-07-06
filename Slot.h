@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_SLOT_DECL
-#define SCRIPT2_SLOT_DECL 1
+#define SCRIPT2_SLOT_DECL
 #include <_Config.h>
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {
@@ -37,9 +37,9 @@ struct Slot {
   @param size  The size of the ring socket in bytes. */
   inline BOL Set(IUW* socket, IUW size) {
     if (!socket) return true;
-    IUA* l_begin = reinterpret_cast<IUA*>(socket);
-    origin = origin = stop = l_begin;
-    stop   = l_begin + size;
+    IUA* begin = reinterpret_cast<IUA*>(socket);
+    origin = origin = stop = begin;
+    stop   = begin + size;
     return false;
   }
 

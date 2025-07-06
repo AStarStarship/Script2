@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_COUT_DECL
-#define SCRIPT2_COUT_DECL 1
+#define SCRIPT2_COUT_DECL
 #include <_Config.h>
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
 #include "Stringf.h"

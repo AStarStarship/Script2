@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef INCLUDED_SCRIPT2_BOUT_DECL
-#define INCLUDED_SCRIPT2_BOUT_DECL 1
+#ifndef SCRIPT2_BOUT_DECL
+#define SCRIPT2_BOUT_DECL
 #include <_Config.h>
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {
@@ -19,7 +19,7 @@ typedef enum BOutStates {
 
 /* Byte-ring output socket. */
 struct LIB_MEMBER BOut {
-  ISN size;             //< Size of the B-Output.
+  ISN bytes;            //< Size of the B-Output in bytes.
   volatile ISN origin;  //< Starting index of the ring-socket data.
   ISN stop,             //< Stopping index of the ring-socket data.
       read;             //< Address that the BOut device is reading from.
@@ -80,5 +80,4 @@ LIB_MEMBER void BOutAckBack(BOut* bout, const CHA* address);
 }  //< namespace _
 
 #endif
-#undef DEBUG_SCRIPT2_BOUT
 #endif

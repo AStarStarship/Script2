@@ -1,14 +1,10 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_SLOT_INLINE_CODE
-#define SCRIPT2_SLOT_INLINE_CODE 1
+#ifndef SCRIPT2_SLOT_HPP
+#define SCRIPT2_SLOT_HPP
 #include "Slot.h"
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {
-
-enum {
-  SlotBytesMin = 32  //< Minimum size of a slot in bytes.
-};
 
 /* Calculates the used ring socket space.
 @param Start The origin of the data.
@@ -25,7 +21,9 @@ inline T TSlotLength(IUA* origin, IUA* stop, ISW size) {
 @param Size  The size of the socket. */
 template<typename T>
 inline T TSlotSpace(IUA* start, IUA* stop, ISW size) {
-  return T(size - (stop - start));
+  T delta = T(stop - start);
+  if (start < stop) return T(size - delta);
+  return T(start + size - stop);
 }
 
 }  //< namespace _

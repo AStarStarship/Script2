@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_LOOM_INLINE_CODE
-#define SCRIPT2_LOOM_INLINE_CODE 1
+#ifndef SCRIPT2_LOOM_HPP
+#define SCRIPT2_LOOM_HPP 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_LOOM
 #include "Array.h"
@@ -183,39 +183,39 @@ inline ISZ TLoomSpace(const TLoom<LOM_P>* loom) {
 }
 
 /* Points to the string offsets array. */
-template <LOM_A>
+template<LOM_A>
 ISZ* TLoomKeysMap(TLoom<LOM_P>* loom) {
   return TPtr<ISZ>(loom, sizeof(TLoom<LOM_P>));
 }
-template <LOM_A>
+template<LOM_A>
 const ISZ* TLoomKeysMap(const TLoom<LOM_P>* loom) {
   return CPtr<ISZ>(TLoomKeysMap<LOM_P>(CPtr<TLoom<LOM_P>>(loom)));
 }
 
 /* Gets the element at the given index. */
-template <LOM_A>
+template<LOM_A>
 CHT* TLoomGet(TLoom<LOM_P>* loom, ISY index) {
   D_ASSERT(loom);
   if (index < 0 || index >= loom->map.count) return NILP;
   return TPtr<CHT>(loom, TStackBegin<ISZ, ISZ>(&loom->map)[index]);
 }
-template <LOM_A>
+template<LOM_A>
 const CHT* TLoomGet(const TLoom<LOM_P>* loom, ISY index) {
   return CPtr<CHT>(TLoomGet<LOM_P>(CPtr<TLoom<LOM_P>>(loom), index));
 }
 
 /* Gets the element at the given index. */
-template <LOM_A>
+template<LOM_A>
 const CHT* TLoomGet_NC(const TLoom<LOM_P>* loom, ISY index) {
   return TPtr<CHT>(loom, TLoomKeysMap<LOM_P>(loom)[index]);
 }
-template <LOM_A>
+template<LOM_A>
 CHT* TLoomGet_NC(TLoom<LOM_P>* loom, ISY index) {
   return CPtr<CHT>(TLoomGet_NC<LOM_P>(CPtr<TLoom<LOM_P>>(loom), index));
 }
 
 /* Prints the Loom to the stream. */
-template <typename Printer, LOM_A>
+template<typename Printer, LOM_A>
 Printer& TLoomPrint(Printer& o, const TLoom<LOM_P>* loom) {
   ISY count = ISY(loom->map.count);
   o << Linef("\n+---\nLoom<CH") << CSizeCodef<CHT>() << ", IS" 

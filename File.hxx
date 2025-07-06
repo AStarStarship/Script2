@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "File.h"
 #if SEAM >= SCRIPT2_FILE
 #include <sys/stat.h>

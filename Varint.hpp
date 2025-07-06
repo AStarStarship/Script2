@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>; all rights reserved.
+// Copyright AStarship <https://astarship.net>; all rights reserved.
 #pragma once
-#ifndef SCRIPT2_VARINT_INLINE_CODE
-#define SCRIPT2_VARINT_INLINE_CODE 1
+#ifndef SCRIPT2_VARINT_HPP
+#define SCRIPT2_VARINT_HPP
 #include <_Config.h>
 #if SEAM >= SCRIPT2_DIC
 namespace _ {
@@ -63,19 +63,6 @@ inline IS TVarintPack(IS value) {
   }
   return value;
 }
-//#endif
-
-//template<typename IS = ISW>
-//inline IS TVarintUnpack(IS value) {
-//  return (value >= 0) ? value : result | ;
-//}
-
-// template<typename T>
-// T UnpackSVI (T value) {
-//    T temp = value << sizeof (T) * 8 - 1;
-//    temp |= value;
-//    return temp;
-//}
 
 }  //< namespace _
 #endif

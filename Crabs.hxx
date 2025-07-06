@@ -1,7 +1,11 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "Crabs.h"
 #if SEAM >= SCRIPT2_CRABS
+#include "Args.h"
 #include "Slot.h"
+#include "Op.hpp"
+#include "Hash.hpp"
+#include "BSeq.hpp"
 #if SEAM == SCRIPT2_CRABS
 #include "_Debug.h"
 #else
@@ -101,7 +105,7 @@ Crabs* CrabsInit(IUW* socket, ISC boofer_size, ISC stack_size, Operand* root,
 
   Crabs* crabs = TPtr<Crabs>(socket);
 
-  ISC total_stack_size = (stack_size - 1) * (2 * sizeof(Operand*));
+  ISC total_stack_size = (stack_size - 1) * ISC(2 * sizeof(Operand*));
   // Calculate the size of the Slot and Stack.
   ISC size = (boofer_size - sizeof(Crabs) - total_stack_size + 1) >> 1;
 
@@ -218,31 +222,31 @@ const Op* CrabsScanBIn(Crabs* crabs) {
     return ASCIIError(crabs, ErrorImplementation);
   }
 
-  DTB type;          //< Current type.
-  ISC size,          //< Size of the ring socket.
-      space,         //< Space left in the right socket.
-      length,        //< Length of the ring socket data.
-      bytes_left,    //< Number of bytes left to scan.
-      array_type,    //< The type of array.
-      shift_bits,    //< Number of bytes left to scan.
-      bytes_shift;   //< Number of bits to shift to scan the current AArray.
-  IUA bin_state,     //< Current bin FSM state.
-      b;             //< Current IUA being verified.
-  IUB hash,          //< Expected hash of the B-Sequence.
-      found_hash;    //< Found B-Sequence hash.
-  ISD timestamp,     //< Last time when the expression ran.
-      delta_t;       //< Time delta between the last timestamp.
-  const Op* op;      //< Current operation.
-  Operand* operand;  //< The operand.
-  BIn* bin;          //< BIn.
-  IUA *bin_begin,    //< Beginning of the ring socket.
-      *bin_start,    //< Start of the ring socket data.
-      *bin_stop,     //< Stop of the ring socket data.
-      *bin_end,      //< End of the ring socket.
-      *slot_begin,   //< The first byte in the Slot.
-      *slot_start,   //< Pointer to the write cursor.
-      *slot_stop,    //< The last byte of data in the Slot.
-      *slot_end;     //< The byte after the last byte ein the Slot
+  DTB type = 0;          //< Current type.
+  ISC size = 0,          //< Size of the ring socket.
+      space = 0,         //< Space left in the right socket.
+      length = 0,        //< Length of the ring socket data.
+      bytes_left = 0,    //< Number of bytes left to scan.
+      array_type = 0,    //< The type of array.
+      shift_bits = 0,    //< Number of bytes left to scan.
+      bytes_shift = 0;   //< Number of bits to shift to scan the current AArray.
+  IUA bin_state = 0,     //< Current bin FSM state.
+      b = 0;             //< Current IUA being verified.
+  IUB hash = 0,          //< Expected hash of the B-Sequence.
+      found_hash = 0;    //< Found B-Sequence hash.
+  ISD timestamp = 0,     //< Last time when the expression ran.
+      delta_t = 0;       //< Time delta between the last timestamp.
+  const Op* op = 0;      //< Current operation.
+  Operand* operand = 0;  //< The operand.
+  BIn* bin = 0;          //< BIn.
+  IUA *bin_begin = 0,    //< Beginning of the ring socket.
+      *bin_start = 0,    //< Start of the ring socket data.
+      *bin_stop = 0,     //< Stop of the ring socket data.
+      *bin_end = 0,      //< End of the ring socket.
+      *slot_begin = 0,   //< The first byte in the Slot.
+      *slot_start = 0,   //< Pointer to the write cursor.
+      *slot_stop = 0,    //< The last byte of data in the Slot.
+      *slot_end = 0;     //< The byte after the last byte ein the Slot
 
   slot_begin = crabs->slot.origin;
   slot_start = crabs->slot.origin;
@@ -273,7 +277,7 @@ const Op* CrabsScanBIn(Crabs* crabs) {
       delta_t *= -1;
   }
 
-  bin_begin = BInBegin(bin);
+  bin_begin = BInOrigin(bin);
   bin_end = bin_begin + size;
   bin_start = bin_begin + bin->origin;
   bin_stop = bin_begin + bin->stop;
@@ -707,7 +711,7 @@ void CrabsClear(Crabs* crabs) {
 
   BIn* bin = CrabsBIn(crabs);
 
-  IUA *begin = BInBegin(bin),
+  IUA *begin = BInOrigin(bin),
       *end = begin + bin->size,
       *origin = begin + bin->origin,
       *stop = begin + bin->stop;

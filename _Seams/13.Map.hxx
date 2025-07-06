@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #if SEAM >= SCRIPT2_MAP
 #include "../Map.hpp"
 //
@@ -27,7 +27,7 @@ void TestMap() {
                      << "\n domain:" << TDelta<>(map.This(), map.Domain())
                      << " codomain:" << TDelta<>(map.This(), map.Codomain()));
 
-  D domain[Size_];
+  D domain[Size_] = { 0 };
 
   D_COUT(Headingf("Generating random domain values..."));
 
@@ -46,7 +46,7 @@ void TestMap() {
 
   D_COUT(Headingf("Remapping the codomain to random numbers..."));
 
-  ISZ codomain[Size_];
+  ISZ codomain[Size_] = { 0 };
 
   for (ISZ i = 0; i < Size_; ++i) {
     ISZ c = Random(CodomainMin_, CodomainMax_);

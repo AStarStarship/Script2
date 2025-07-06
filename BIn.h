@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_BIN_DECL
-#define SCRIPT2_BIN_DECL 1
+#define SCRIPT2_BIN_DECL
 #include <_Config.h>
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {
@@ -39,7 +39,8 @@ struct LIB_MEMBER BIn {
 };
 
 /* Get's the B-Input's socket. */
-LIB_MEMBER inline IUA* BInBegin(BIn* bin);
+LIB_MEMBER inline const IUA* BInOrigin(const BIn* bin);
+LIB_MEMBER inline IUA* BInOrigin(BIn* bin);
 
 LIB_MEMBER inline IUA* BInEnd(BIn* bin);
 

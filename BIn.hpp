@@ -1,21 +1,28 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_BIN_INLINE_CODE
-#define SCRIPT2_BIN_INLINE_CODE 1
+#ifndef SCRIPT2_BIN_HPP
+#define SCRIPT2_BIN_HPP
 #include "BIn.h"
 #if SEAM >= SCRIPT2_CRABS
 namespace _ {
 
 #if USING_SCRIPT2_TEXT == YES_0
+inline const IUA* BInOrigin(const BIn* bin) { 
+  return TPtr<IUA>(bin, sizeof(BIn));
+}
+
+inline IUA* BInOrigin(BIn* bin) {
+    return TPtr<IUA>(bin, sizeof(BIn));
+}
 
 /* Print the BIn to the printer. */
 template<typename Printer>
-Printer& TBInPrint(Printer& printer, BIn* bin) {
-  ISN size = bin->size;
+Printer& TBInPrint(Printer& printer, const BIn* bin) {
+  ISW size = bin->size;
   return printer << Linef('_', 80) << " size:" << bin->size
                  << " start:" << bin->origin << " stop:" << bin->stop
                  << " read:" << bin->read;
-  printer << Hexf(BInBegin(bin), size + sizeof(BIn));
+  printer << Hexf(BInOrigin(bin), size + sizeof(BIn));
 }
 
 template<typename CHT=CHR>
@@ -44,8 +51,6 @@ inline const CHT* TBInStates(IS state) {
   return &TBInStates<CHT>()[BInStateInvalid * 32];
 }
 #endif
-
-inline IUA* BInBegin(BIn* bin) { return TPtr<IUA>(bin, sizeof(BIn)); }
 
 }  //< namespace _
 

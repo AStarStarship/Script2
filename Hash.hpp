@@ -1,18 +1,20 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_HASH_HEADER_IMPL
-#define SCRIPT2_HASH_HEADER_IMPL 1
+#define SCRIPT2_HASH_HEADER_IMPL
 #include <_Config.h>
+#if SEAM >= SCRIPT2_TABLE
+
 namespace _ {
 /* Returns the highest signed prime that can fit in type IS.
 @return 0 if the sizeof (IS) is not 1, 2, 4, or 8.  */
 template<typename IS>
 inline IS PrimeMaxSigned() {
-  IS prime = (sizeof(IS) == 1)   ? 127
-             : (sizeof(IS) == 2) ? 32767
-             : (sizeof(IS) == 4) ? 2147483647
-             : (sizeof(IS) == 8) ? 9223372036854775783
-                                 : 0;
+  IS prime = (sizeof(IS) == 1) ? 127
+           : (sizeof(IS) == 2) ? 32767
+           : (sizeof(IS) == 4) ? 2147483647
+           : (sizeof(IS) == 8) ? 9223372036854775783
+                               : 0;
   return prime;
 }
 
@@ -111,5 +113,7 @@ ISY THashFindFirstUnsorted(const HSH* start, const HSH* stop) {
   }
   return -1;
 }
+
 }  // namespace _
+#endif
 #endif

@@ -1,13 +1,13 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_UNIPRINTER_INLINE_CODE
-#define SCRIPT2_UNIPRINTER_INLINE_CODE 1
+#ifndef SCRIPT2_UNIPRINTER_HPP
+#define SCRIPT2_UNIPRINTER_HPP
 #include "Stringf.hpp"
 #if SEAM >= SCRIPT2_COUT
 namespace _ {
 
 /* Prints the given string to the Printer. */
-template <typename Printer, typename CH = CHR>
+template<typename Printer, typename CH = CHR>
 Printer& TSPrintString(Printer& p, const CH* string) {
   if (!string) return p;
   CHL c = 0;
@@ -21,7 +21,7 @@ Printer& TSPrintString(Printer& p, const CH* string) {
 
 /* Prints the given string to the Printer and returns the count of characters
 printed. */
-template <typename Printer, typename CH = CHR>
+template<typename Printer, typename CH = CHR>
 ISN TPrintAndCount(Printer& p, const CH* string) {
   if (!string) return 0;
   ISN print_count = 0;
@@ -36,7 +36,7 @@ ISN TPrintAndCount(Printer& p, const CH* string) {
 }
 
 /* Prints the following value to the console in Hex. */
-template <typename Printer, typename IU>
+template<typename Printer, typename IU>
 Printer& TPrintHex(Printer& p, IU value) {
   enum { HexStringLengthSizeMax = sizeof(IU) * 2 + 3 };
   auto ui = ToUnsigned(value);
@@ -48,23 +48,23 @@ Printer& TPrintHex(Printer& p, IU value) {
 }
 
 /* Prints the following value to the console in Hex. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintHex(Printer& p, const void* value) {
   IUW ptr = IUW(value);
   return TPrintHex<Printer, IUW>(p, ptr);
 }
-template <typename Printer, typename IS, typename IU>
+template<typename Printer, typename IS, typename IU>
 Printer& TPrintHex(Printer& p, IS value) {
   return TPrintHex<Printer, IU>(p, IU(value));
 }
 #if USING_FPC == YES_0
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintHex(Printer& p, FPC value) {
   return TPrintHex<Printer, IUC>(p, *TPtr<IUC>(&value));
 }
 #endif
 #if USING_FPD == YES_0
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintHex(Printer& p, FPD value) {
   return TPrintHex<Printer, IUD>(p, *TPtr<IUD>(&value));
 }
@@ -78,7 +78,7 @@ little endian is that it's easier to read the hex values when you print them,
 which is frutrating because of how simple the conversion code is. If the
 byte_count is greater than zero then the memory will be printed sequentially
 one byte at a time. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintHex(Printer& p, const void* origin, ISW byte_count) {
   if (!origin) return p;
   ISW delta;
@@ -107,18 +107,18 @@ Printer& TPrintHex(Printer& p, const void* origin, ISW byte_count) {
   return p;
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintHex(Printer& p, const void* start, const void* stop) {
   ISW delta = ISW(stop) - ISW(start);
   return TPrintHex<Printer>(p, start, delta);
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, Hexf& value) {
   return TPrintHex<Printer>(p, value.element.Value(), value.element.count);
 }
 /* Prints the memory beginning at start to the Printer. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintBinary(Printer& p, const void* start, ISW byte_count) {
   if (!start) return p;
   const IUA* cursor = TPtr<const IUA>(start);
@@ -143,13 +143,13 @@ Printer& TPrintBinary(Printer& p, const void* start, ISW byte_count) {
   return p;
 }
 
-template <typename Printer>
+template<typename Printer>
 inline Printer& TPrintBinary(Printer& p, const void* start, const void* stop) {
   ISW delta = ISW(stop) - ISW(start);
   return TPrintBinary<Printer>(p, start, TPtr<const void>(delta));
 }
 
-template <typename Printer, typename IU>
+template<typename Printer, typename IU>
 Printer& TPrintBinary(Printer& p, IU value) {
   enum { Size = sizeof(IU) * 8 };
   auto ui = ToUnsigned(value);
@@ -161,29 +161,29 @@ Printer& TPrintBinary(Printer& p, IU value) {
   return p;
 }
 
-template <typename Printer, typename IS, typename IU>
+template<typename Printer, typename IS, typename IU>
 Printer& TPrintBinary(Printer& p, IS value) {
   return TPrintBinary<Printer, IU>(p, (IU)value);
 }
 #if USING_FPC == YES_0
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintBinary(Printer& p, FPC value) {
   return TPrintBinary<Printer, IUC>(p, *TPtr<IUC>(&value));
 }
 #endif
 #if USING_FPC == YES_0
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintBinary(Printer& p, FPD value) {
   return TPrintBinary<Printer, IUD>(p, *TPtr<IUD>(&value));
 }
 #endif
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, Binaryf& value) {
   return TPrintBinary<Printer>(p, value.element.Value(), value.element.count);
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintAligned(Printer& p, const CHA* string, ISW char_count,
                        ISW left_count, ISW dot_count, ISW right_count) {
   while (--left_count > 0) p << ' ';
@@ -202,7 +202,7 @@ Printer& TPrintAligned(Printer& p, const CHA* string, ISW char_count,
   return p;
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintAlignedHex(Printer& p, const void* origin, ISW byte_count,
                           ISW left_count, ISW dot_count, ISW right_count) {
   const CHA* cursor = TPtr<const CHA>(origin);
@@ -214,7 +214,7 @@ Printer& TPrintAlignedHex(Printer& p, const void* origin, ISW byte_count,
   return p;
 }
 
-template <typename Printer, typename T, typename CH>
+template<typename Printer, typename T, typename CH>
 inline Printer& TPrint(Printer& p, TSizeCodef<T, CH>& value) {
   return TPrintSizeCodef<Printer>(p, value);
 }
@@ -224,7 +224,7 @@ inline Printer& TPrint(Printer& p, TSizeCodef<T, CH>& value) {
 pointer to the nil-term CHA upon success.
 @param token  The token to utf.
 @param column_count The number_ of columns to align right to. */
-template <typename Printer, typename CHT = CHR>
+template<typename Printer, typename CHT = CHR>
 Printer& TPrintCenter(Printer& p, const CHT* value, ISW column_count = 80) {
   if (!value || column_count < 1) return p;
 
@@ -254,7 +254,7 @@ Printer& TPrintCenter(Printer& p, const CHT* value, ISW column_count = 80) {
 
 /* Prints th given value centered unless it's count is less then 0, in which
 case it will print the POD value stored in the first Word of the string. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintCenter(Printer& p, Stringf& value) {
   ISW column_count = value.Count();
   if (column_count < 0) {  // Print hex.
@@ -295,7 +295,7 @@ Printer& TPrintCenter(Printer& p, Stringf& value) {
 }
 
 /* Prints the given cursor center aligned to the given column_count. */
-template <typename Printer>
+template<typename Printer>
 inline Printer& TPrint(Printer& p, Centerf& value) {
   return TPrintCenter<Printer>(p, value.element);
 }
@@ -305,7 +305,7 @@ inline Printer& TPrint(Printer& p, Centerf& value) {
 pointer to the nil-term CHA upon success.
 @param token  The token to utf.
 @param column_count The number_ of columns to align right to. */
-template <typename Printer, typename CHT = CHR>
+template<typename Printer, typename CHT = CHR>
 Printer& TPrintRight(Printer& p, const CHT* value, ISW column_count = 80) {
   if (!value || column_count < 1) return p;
 
@@ -339,7 +339,7 @@ Printer& TPrintRight(Printer& p, const CHT* value, ISW column_count = 80) {
 
 /* Prints the given value centered, printing it as hex if the value.Count() is
 less than 0. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintRight(Printer& p, Stringf& value) {
   ISW column_count = value.Count();
   if (column_count < 0) {  // Print hex.
@@ -385,18 +385,18 @@ Printer& TPrintRight(Printer& p, Stringf& value) {
   return p;
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, Rightf& value) {
   return TPrintRight<Printer>(p, value.element);
 }
 
-template <typename Printer, typename CH>
+template<typename Printer, typename CH>
 Printer& TPrintRepeat(Printer& p, CH c, ISW count) {
   while (--count >= 0) p << c;
   return p;
 }
 
-template <typename Printer, typename CH = CHR>
+template<typename Printer, typename CH = CHR>
 Printer& TPrintLine(Printer& p, CH token = '-', ISW column_count = 80) {
   p << '\n';
   TPrintRepeat<Printer, CH>(p, token, column_count);
@@ -428,7 +428,7 @@ TPrintBreak<CHA> ("- \n---\n---\n\n   Foo\n\n---\n---", 10);
 //>>> -----------
 @endcode
 */
-template <typename Printer, typename CHT = CHR>
+template<typename Printer, typename CHT = CHR>
 const CHT* TPrintLinef(Printer& p, const CHT* style = NILP,
                        ISW column_count = 80) {
   enum {
@@ -474,7 +474,7 @@ const CHT* TPrintLinef(Printer& p, const CHT* style = NILP,
   return style;
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, Linef& value) {
   ISW type = value.element.value.Type(),  //
       utf_format = ATypeTextFormat(type);
@@ -527,7 +527,7 @@ Printer& TPrint(Printer& p, Linef& value) {
   return p;
 }
 
-template <typename CH>
+template<typename CH>
 const CH* TStringHeadingf() {
   static const CH String[] = {'\n', '\n', '+', '-', '-', '-', '\n', '|', ' ',
                               NIL,  '\n', '+', '-', '-', '-', '\n', NIL};
@@ -535,7 +535,7 @@ const CH* TStringHeadingf() {
 }
 
 /* Prints a heading with the */
-template <typename Printer, typename CH>
+template<typename Printer, typename CH>
 Printer& TPrintHeading(Printer& p, const CH* element, const CHA* style = NILP,
                        ISW column_count = 80, const CHA* caption2 = NILP,
                        const CHA* caption3 = NILP) {
@@ -550,7 +550,7 @@ Printer& TPrintHeading(Printer& p, const CH* element, const CHA* style = NILP,
 }
 
 /* Prints the a formatted header. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, Headingf& value) {
   switch (ATypeTextFormat(value.element.Type())) {
 #if USING_STA == YES_0
@@ -578,7 +578,7 @@ Printer& TPrint(Printer& p, Headingf& value) {
   return p;
 }
 
-template <typename Printer, typename CH = CHR>
+template<typename Printer, typename CH = CHR>
 Printer& TPrintChars(Printer& p, const CH* start, const CH* stop) {
   if (!start || start >= stop) return p;
 
@@ -606,12 +606,12 @@ Printer& TPrintChars(Printer& p, const CH* start, const CH* stop) {
   return p << STAPrintCharsBorder() << "Bytes printed:" << bytes;
 }
 
-template <typename Printer, typename CH = CHR>
+template<typename Printer, typename CH = CHR>
 inline Printer& TPrintChars(Printer& p, const CH* start, ISW count) {
   return TPrintChars<Printer, CH>(p, start, start + count - 1);
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, Charsf& value) {
   auto element = value.element;
   ISW count = element.Count();
@@ -636,26 +636,26 @@ Printer& TPrint(Printer& p, Charsf& value) {
 }
 
 /* Prints the given cursor repeated to make a line. */
-template <typename CH>
+template<typename CH>
 CH* TPrintHeading(CH* start, CH* stop, CH value, ISW count = AConsoleWidth) {
   return TPrintLinef<CH>(start, stop, value, count, NILP, NILP);
 }
 
 /* Prints the given cursor repeated to make a line. */
-template <typename CH>
+template<typename CH>
 CH* TPrintHeading(CH* start, CH* stop, const CH* value,
                   ISW count = AConsoleWidth) {
   return TPrintLinef<CH>(start, stop, value, count, NILP, NILP);
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintIndent(Printer& p, ISW indent_count) {
   p << '\n';
   while (--indent_count >= 0) p << ' ';
   return p;
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, const Indentf& value) {
   return TPrintIndent<Printer>(p, value.indent_count);
 }
@@ -669,7 +669,7 @@ Printer& TPrint(Printer& p, const Indentf& value) {
 namespace _ {
 
 /* Prints the given sizef to the printer. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, Sizef& value) {
   auto v = value.size;
   if (v < 0) return p << CHA('@' + (-v));
@@ -677,7 +677,7 @@ Printer& TPrint(Printer& p, Sizef& value) {
 }
 
 // Prints an ASCII POD type to the printer.
-template <typename Printer, typename DT = DTB>
+template<typename Printer, typename DT = DTB>
 Printer& TPrintATypePOD(Printer& p, DT type) {
   DT pod_type = type & ATypePODMask,        //
       vector_type = TTypeVector<DT>(type),  //
@@ -689,7 +689,7 @@ Printer& TPrintATypePOD(Printer& p, DT type) {
 | b15 | b14:b13 | b12:b9 | b8:b7 | b6:b5 | b4:b0 |
 |:---:|:-------:|:------:|:-----:|:-----:|:-----:|
 | CNS |    MD   |   MT   |  SW   |  VT   |  POD  | */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintAType(Printer& p, DTB type) {
   DTB cns_bit = DTB(type >> ATypeCNSBit);
   type |= cns_bit << ATypeCNSBit;
@@ -738,7 +738,7 @@ Printer& TPrintAType(Printer& p, DTB type) {
 // 0x31E0 -> 5 LSb are 0 -> Shift over 5 bits to get number bytes.
 // 16-bits - 5-bits = 11 => 2^11 = 2048
 /**/
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintAType(Printer& p, DTC type) {
   BOL first_time = true;
   ISN count = sizeof(DTC) / sizeof(DTB);
@@ -753,7 +753,7 @@ Printer& TPrintAType(Printer& p, DTC type) {
   }
   return p;
 }
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintAType(Printer& p, DTD type) {
   BOL first_time = true;
   ISN count = sizeof(DTD) / sizeof(DTB);
@@ -769,7 +769,7 @@ Printer& TPrintAType(Printer& p, DTD type) {
   return p;
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintAError(Printer& p, ISW error, const CHR* message = NILP) {
   if (error >= 0) {
     if (message) return p << message;
@@ -779,7 +779,7 @@ Printer& TPrintAError(Printer& p, ISW error, const CHR* message = NILP) {
   return p << "Error " << TAErrors<CHR, ISW>(error) << ": " << message;
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintFP(Printer& p, IUW value, IUW vmsb) {
   if (vmsb != 0) {
     return p << "0d" << ISW(value) << '_' << ISW(vmsb);
@@ -787,7 +787,7 @@ Printer& TPrintFP(Printer& p, IUW value, IUW vmsb) {
   return p << FPD(value);
 }
 
-template <typename Printer>
+template<typename Printer>
 inline Printer& TPrintIU(Printer& p, IUW value, IUW vmsb) {
   if (vmsb != 0) return p << "0d" << ISW(value) << '_' << ISW(vmsb);
 #if CPU_SIZE == CPU_8_BYTE
@@ -796,7 +796,7 @@ inline Printer& TPrintIU(Printer& p, IUW value, IUW vmsb) {
   return p << value;
 }
 
-template <typename Printer>
+template<typename Printer>
 inline Printer& TPrintIS(Printer& p, IUW value, IUW vmsb) {
   if (vmsb != 0) return p << "0d" << value << '_' << vmsb;
 #if CPU_SIZE == CPU_8_BYTE
@@ -805,24 +805,24 @@ inline Printer& TPrintIS(Printer& p, IUW value, IUW vmsb) {
   return p << value;
 }
 
-template <typename Printer>
+template<typename Printer>
 inline Printer& TPrintCH(Printer& p, IUW value) {
   return p << CHC(value);
 }
 
-template <typename Printer>
+template<typename Printer>
 inline Printer& TPrintTMD(Printer& p, IUW value) {
   return p << "time:" << value;
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintTME(Printer& p, IUW value, IUW vmsb) {
   return p << "time:" << value << '_' << vmsb;
 }
 
 /* Prints the value of the given type-value tuple
 @pre Type must be less than _EPa. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintPOD_NC(Printer& p, DTW type, IUW value, IUW vmsb = 0) {
   switch (type & 3) {
     case 0:
@@ -846,7 +846,7 @@ Printer& TPrintPOD_NC(Printer& p, DTW type, IUW value, IUW vmsb = 0) {
 | b15 | b14:b13 | b12:b9 | b8:b7 | b6:b5 | b4:b0 |
 |:---:|:-------:|:------:|:-----:|:-----:|:-----:|
 | CNS |    MD   |   MT   |  SW   |  VT   |  POD  |*/
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintValue(Printer& p, DTW type, IUW value, IUW vmsb = 0) {
   type &= DTB(-1) >> 1;  //< Don't care if it's const.
   DTW MD = (type >> ATypeMDBit0) & 0x3;
@@ -966,13 +966,13 @@ Printer& TPrintValue(Printer& p, DTW type, IUW value, IUW vmsb = 0) {
   }
   return p;
 }
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintValue(Printer& p, DTW type, const void* value, ISW vbytes) {
   return TPrintValue<Printer>(p, type, IUW(ISW(value) + vbytes));
 }
 
 // Prints ASCII type and the value tuple.
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintATypeValue(Printer& p, DTB type, IUW value, IUW value_msb = 0) {
   p << TPrintAType<Printer>(p, type);
   p << ':';
@@ -980,27 +980,27 @@ Printer& TPrintATypeValue(Printer& p, DTB type, IUW value, IUW value_msb = 0) {
 }
 
 // Prints ASCII type and the value tuple.
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintATypeValue(Printer& p, DTB type, const void* value) {
   return TPrintATypeValue<Printer>(p, type, IUW(value));
 }
 
 // Prints ASCII type and the value tuple.
-template <typename Printer, typename IS = ISW>
+template<typename Printer, typename IS = ISW>
 Printer& TPrintATypeValue(Printer& p, DTB type, const void* base_ptr,
                           IS offset) {
   return TPrintATypeValue<Printer>(p, type, IUW(ISW(base_ptr) + offset));
 }
 
 // Prints ASCII type and the value tuple.
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintATypeValue(Printer& p, DTC type, const void* value) {
   p << TPrintATypeValue<Printer>(p, DTB(type >> 16), IUW(value));
   return p << TPrintATypeValue<Printer>(p, DTB(type), IUW(value));
 }
 
 // Prints ASCII type and the value tuple.
-template <typename Printer, typename IS = ISW>
+template<typename Printer, typename IS = ISW>
 Printer& TPrintATypeValue(Printer& p, DTC type, const void* base_ptr,
                           IS offset) {
   const void* value = TPtr<void>(base_ptr, offset);
@@ -1009,7 +1009,7 @@ Printer& TPrintATypeValue(Printer& p, DTC type, const void* base_ptr,
 }
 
 // Prints ASCII type and the value tuple.
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintATypeValue(Printer& p, DTD type, const void* value) {
   p << TPrintATypeValue<Printer>(p, DTB(type >> 48), IUW(value));
   p << TPrintATypeValue<Printer>(p, DTB(type >> 32), IUW(value));
@@ -1018,7 +1018,7 @@ Printer& TPrintATypeValue(Printer& p, DTD type, const void* value) {
 }
 
 // Prints ASCII type and the value tuple.
-template <typename Printer, typename IS = ISW>
+template<typename Printer, typename IS = ISW>
 Printer& TPrintATypeValue(Printer& p, DTD type, const void* base_ptr,
                           IS offset) {
   const void* value = TPtr<void>(base_ptr, offset);
@@ -1028,7 +1028,7 @@ Printer& TPrintATypeValue(Printer& p, DTD type, const void* base_ptr,
   return p << TPrintATypeValue<Printer>(p, DTB(type), IUW(value));
 }
 
-template <typename Printer, typename CHT = CHR>
+template<typename Printer, typename CHT = CHR>
 Printer& TPrintATypeCSV(Printer& o, const CHT* types) {
   CHC c = 0;
   const CHT* token_start = types;
@@ -1040,7 +1040,7 @@ Printer& TPrintATypeCSV(Printer& o, const CHT* types) {
 
 /* A dumb fast templated String Printer.
 Dumb means that it does not count up the number of Unicode characters. */
-template <typename CH = CHR, typename IS = ISW>
+template<typename CH = CHR, typename IS = ISW>
 struct TSPrinter {
   CH* start,  //< Start address.
     * stop;   //< Stop address.
@@ -1251,7 +1251,7 @@ struct TSPrinter {
   /*
   inline TSPrinter<CH, IS>& Star() {} */
 
-  template <typename Printer>
+  template<typename Printer>
   inline Printer& PrintTo(Printer& p) {
     p << "\nTSPrinter<CH" << sizeof(CH) << ", IS" << sizeof(IS) << ">{ start:";
     TPrintHex<Printer>(p, start);
@@ -1268,99 +1268,95 @@ struct TSPrinter {
 
 }  //< namespace _
 
-/* Prints the given value to the SPrinter.
-@return The printer.
-@param p    The printer.
-@param value The value to printer. */
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           CHA value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           const CHA* value) {
   return p.Print(value);
 }
 
 #if USING_STB == YES_0
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           CHB value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           const CHB* value) {
   return p.Print(value);
 }
 #endif
 #if USING_STC == YES_0
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           CHC value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           const CHC* value) {
   return p.Print(value);
 }
 #endif
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ISA value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           IUA value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ISB value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           IUB value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ISC value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           IUC value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ISD value) {
   return p.Print(value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           IUD value) {
   return p.Print(value);
 }
 
 #if USING_FPC == YES_0
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           FPC value) {
   return p.Print(value);
@@ -1368,14 +1364,14 @@ inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
 #endif
 
 #if USING_FPD == YES_0
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           FPD value) {
   return p.Print(value);
 }
 #endif
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::Binaryf value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
@@ -1384,31 +1380,31 @@ inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
 namespace _ {
 
 /* Prints a summary of the type-value tuple with word-sized Data Type. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, ATypeValue value) {
   return TPrintATypeValue<Printer>(p, DTB(value.Type()), value.Value(),
                                    value.MSB());
 }
 
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, ATypePtr value) {
   return TPrintATypeValue<Printer>(p, DTB(value.type), IUW(value.value));
 }
 
 /* Prints an ASCII Type to the Printer. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, AErrorf value) {
   return TPrintAError<Printer>(p, value.error);
 }
 
 /* Prints an ASCII Type to the Printer. */
-template <typename Printer>
+template<typename Printer>
 Printer& TPrint(Printer& p, ATypef value) {
   return TPrintAType<Printer>(p, value.type);
 }
 
 // Prints a type and the binary with bit labels.
-template <typename Printer>
+template<typename Printer>
 Printer& TPrintATypeDebug(Printer& p, DTB type) {
   return p << "\nAType:" << ATypef(type) << "\n      0d" << type << "\n      0x"
            << Hexf(type) << "\n      0b" << Binaryf(type)
@@ -1417,70 +1413,70 @@ Printer& TPrintATypeDebug(Printer& p, DTB type) {
 
 }  //< namespace _
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::Centerf value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::Rightf value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::Linef value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::Hexf value) {
   return ::_::TSPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::Charsf value) {
   return ::_::TSPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::Sizef value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS> p,
                                           ::_::ATypef value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::ATypef value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::ATypePtr value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::ATypeValue value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
-template <typename CH, typename IS>
+template<typename CH, typename IS>
 inline ::_::TSPrinter<CH, IS>& operator<<(::_::TSPrinter<CH, IS>& p,
                                           ::_::Headingf value) {
   return ::_::TPrint<::_::TSPrinter<CH, IS>>(p, value);
 }
 
 #endif  //< #if SEAM >= SCRIPT2_UNIPRINTER
-#endif  //< #ifndef SCRIPT2_UNIPRINTER_INLINE_CODE
+#endif  //< #ifndef SCRIPT2_UNIPRINTER_HPP

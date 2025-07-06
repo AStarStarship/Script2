@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_ERROR_INLINE_CODE
-#define SCRIPT2_ERROR_INLINE_CODE 1
+#ifndef SCRIPT2_ERROR_HPP
+#define SCRIPT2_ERROR_HPP 1
 #include "Error.h"
 #if SEAM >= SCRIPT2_CORE
 namespace _ {

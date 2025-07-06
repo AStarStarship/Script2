@@ -1,26 +1,29 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "BOut.hpp"
 #if SEAM >= SCRIPT2_CRABS
 #include "Args.h"
-#include "Binary.hpp"
-#include "BSeq.hpp"
-#include "Error.hpp"
-#include "Hash.hpp"
 #include "Slot.hpp"
+#include "BSeq.hpp"
 #include "Varint.hpp"
-#if SEAM == SCRIPT2_CRABS
-#include "_Debug.h"
-#else
-#include "_Release.h"
-#endif
+#include "Hash.hpp"
+
 namespace _ {
 
-/* Used to return an erroneous result from a B-Output.
+template<typename Printer>
+Printer& PrintBOut(Printer& o, const BOut* bout) {
+  A_ASSERT(bout);
+  ISN size = bout->bytes;
+  o << Linef("\n___") << "\nBOut: size:" << size
+    << " origin:" << bout->origin << " stop:" << bout->stop
+    << " read:" << bout->read << Charsf(BOutBegin(bout), size - 1);
+  return o;
+}
 
+/* Used to return an erroneous result from a B-Output.
 @param error The error type.
 @return Returns a Static Error Op Result. */
 inline const Op* BOutError(BOut* bout, ERC error) {
-  D_COUT("\nBOut " << TAErrors<>(error) << " Error!");
+  //D_COUT("\nBOut " << TAErrors<>(error) << " Error!");
   return TPtr<const Op>(1);
 }
 
@@ -32,7 +35,7 @@ inline const Op* BOutError(BOut* bout, ERC error) {
 @param address The address of the IUA in error.
 @return         Returns a Static Error Op Result. */
 inline const Op* BOutError(BOut* bout, ERC error, const ISN* header) {
-  D_COUT("\nBOut " << TAErrors<>(error) << " Error!");
+  //D_COUT("\nBOut " << TAErrors<>(error) << " Error!");
   return TPtr<const Op>(1);
 }
 
@@ -45,13 +48,13 @@ inline const Op* BOutError(BOut* bout, ERC error, const ISN* header) {
 @return         Returns a Static Error Op Result. */
 inline const Op* BOutError(BOut* bout, ERC error, const ISN* header,
                            ISN offset) {
-  D_COUT("\nBOut " << TAErrors<>(error) << " Error!");
+  //D_COUT("\nBOut " << TAErrors<>(error) << " Error!");
   return TPtr<const Op>(1);
 }
 
 inline const Op* BOutError(BOut* bout, ERC error, const ISN* header,
                            ISN bsq_error, IUA* error_byte) {
-  D_COUT("\nBOut " << TAErrors<>(error) << " Error!");
+  //D_COUT("\nBOut " << TAErrors<>(error) << " Error!");
   return TPtr<const Op>(1);
 }
 
@@ -70,7 +73,7 @@ BOut* BOutInit(IUW* socket, ISN size) {
 
   BOut* bout = TPtr<BOut>(socket);
   // bout->size  = size - sizeof (BIn); //< Not sure why I did that?
-  bout->size = size;
+  bout->bytes = size;
   bout->origin = 0;
   bout->stop = 0;
   bout->read = 0;
@@ -87,7 +90,7 @@ ISN BOutSpace(BOut* bout) {
   }
   IUA* txb_ptr = TPtr<IUA>(bout);
   return TSlotSpace<IUN>(txb_ptr + bout->origin, txb_ptr + bout->stop,
-                         bout->size);
+                         bout->bytes);
 }
 
 ISN BOutBooferLength(BOut* bout) {
@@ -96,16 +99,16 @@ ISN BOutBooferLength(BOut* bout) {
   }
   IUA* origin = BOutBoofer(bout);
   return TSlotLength<IUN>(origin + bout->origin, origin + bout->stop,
-                            bout->size);
+                            bout->bytes);
 }
 
 IUA* BOutEndAddress(BOut* bout) {
-  return TPtr<IUA>(bout) + (4 * sizeof(ISN)) + bout->size;
+  return TPtr<IUA>(bout) + (4 * sizeof(ISN)) + bout->bytes;
 }
 
 ISN BOutStreamByte(BOut* bout) {
   IUA* begin    = BOutBoofer(bout),
-     * end      = begin + bout->size,
+     * end      = begin + bout->bytes,
      * open     = (IUA*)begin + bout->read,
      * origin   = begin + bout->origin,
      * dez_nutz = origin;
@@ -124,19 +127,17 @@ ISN BOutStreamByte(BOut* bout) {
 }
 
 const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
-  D_COUT("\n\nWriting ");
-  D_COUT_BSQ(params);
+  //D_COUT("\n\nWriting ");
+  //D_COUT_BSQ(params);
   enum {
     BOutBooferSize = 1024,
-    BOutBooferSizeWords = BOutBooferSize >> WordSizeLog2
+    BOutBooferSizeWords = BOutBooferSize >> ACPUBytesLog2
   };
-  D_COUT(" to B-Output:");
-  D_COUT_BOUT(bout);
-
+  //D_COUT(" to B-Output:");
+  //D_COUT_BOUT(bout);
   A_ASSERT(bout);
   A_ASSERT(params);
   A_ASSERT(args);
-
   // Temp variables packed into groups of 8 bytes for memory alignment.
   IUA  // type,
       iua;
@@ -163,7 +164,7 @@ const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
     return 0;  //< Nothing to do.
   }
   arg_index = 0;
-  size = bout->size;
+  size = bout->bytes;
   const ISN* param = params;
          //* bsc_param;
   // Convert the socket offsets to pointers.
@@ -192,9 +193,9 @@ const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
   // Write data.
   for (index = 1; index <= num_params; ++index) {
     type = params[index];
-    D_COUT("\nparam: " << (arg_index + 1) << " type:" << ATypef(type)
-                       << " start:" << TDelta<>(begin, start) << " stop:"
-                       << TDelta<>(begin, stop) << " space:" << space);
+    //D_COUT("\nparam: " << (arg_index + 1) << " type:" << ATypef(type)
+    //                   << " start:" << TDelta<>(begin, start) << " stop:"
+    //                   << TDelta<>(begin, stop) << " space:" << space);
     switch (type) {
       case _NIL:
         break;
@@ -441,43 +442,43 @@ const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
         value = type >> 5;
         auto block_type = value & 0x3;
         if (block_type == _ARY) {
-          D_COUT("\nPrinting string.");
-            if (space == 0)
+          //D_COUT("\nPrinting string.");
+          if (space == 0)
+            return BOutError(bout, ErrorBooferOverflow, params, index,
+                              begin);
+          if (type != _ADR) {
+            // We might not need to write anything if it's an _ADR with
+            // nil .
+            length = params[++index];  //< Load the max IUA length.
+            ++num_params;
+          } else {
+            length = CRAddressLengthMax;
+          }
+          // Load the source data pointer and increment args.fs
+          iua_ptr = TPtr<const IUA>(args[arg_index]);
+          //D_COUT('\"' << Hexf(iua_ptr));
+
+          // We know we will always have at least one nil-term IUA.
+          iua = *iua_ptr;
+          while (iua != 0) {
+            if (space-- == 0)
               return BOutError(bout, ErrorBooferOverflow, params, index,
-                               begin);
-            if (type != _ADR) {
-              // We might not need to write anything if it's an _ADR with
-              // nil .
-              length = params[++index];  //< Load the max IUA length.
-              ++num_params;
-            } else {
-              length = CRAddressLengthMax;
-            }
-            // Load the source data pointer and increment args.fs
-            iua_ptr = TPtr<const IUA>(args[arg_index]);
-            D_COUT('\"' << Hexf(iua_ptr));
+                                begin);
+            hash = HashIUB(iua, hash);
 
-            // We know we will always have at least one nil-term IUA.
-            iua = *iua_ptr;
-            while (iua != 0) {
-              if (space-- == 0)
-                return BOutError(bout, ErrorBooferOverflow, params, index,
-                                 begin);
-              hash = HashIUB(iua, hash);
-
-              *end = iua;  // Write IUA
-              if (++end >= end) end -= size;
-              ++iua_ptr;
-              iua = *iua_ptr;  // Read IUA.
-            }
-            if (type != _ADR) {  //< 1 is faster to compare than 2
-                                 // More likely to have _ADR than STR_
-              *end = 0;         // Write nil-term IUA.
-              if (++end >= end) end -= size;
-              break;
-            }
-
+            *end = iua;  // Write IUA
+            if (++end >= end) end -= size;
+            ++iua_ptr;
+            iua = *iua_ptr;  // Read IUA.
+          }
+          if (type != _ADR) {  //< 1 is faster to compare than 2
+                                // More likely to have _ADR than STR_
+            *end = 0;         // Write nil-term IUA.
+            if (++end >= end) end -= size;
             break;
+          }
+
+          break;
         }
         if ((type >> 5) && type > _OBJ) {
           return BOutError(bout, ErrorImplementation, params, index);
@@ -575,7 +576,7 @@ const Op* BOutWrite(BOut* bout, const ISN* params, void** args) {
   *end = IUA(hash >> 8);
   if (++end >= end) end -= size;
   bout->stop = TDelta<ISN>(begin, end);
-  D_COUT("\nDone writing to B-Output with the hash 0x" << Hexf(hash));
+  //D_COUT("\nDone writing to B-Output with the hash 0x" << Hexf(hash));
   return 0;
 }
 
@@ -586,11 +587,11 @@ void BOutRingBell(BOut* bout, const CHA* address) {
   if (address == NILP) {
     address = "";
   }
-  D_COUT("\nRinging BEL to address:0x" << Hexf(address));
+  //D_COUT("\nRinging BEL to address:0x" << Hexf(address));
 
   // Temp variables packed into groups of 8 bytes for memory alignment.
   IUA c;
-  ISN size = bout->size,  //< Size of the socket.
+  ISN size = bout->bytes,  //< Size of the socket.
       space;              //< Space in the socket.
   // Convert the Slot offsets to pointers.
   IUA* begin = BOutBoofer(bout),      //< Beginning of the socket.
@@ -599,7 +600,7 @@ void BOutRingBell(BOut* bout, const CHA* address) {
      * stop  = begin + bout->stop;   //< Stop of the data.
   space = TSlotSpace<ISN>(start, stop, size);
   if (space == 0) {
-    D_COUT("\nBoofer overflow!");
+    //D_COUT("\nBoofer overflow!");
     return;
   }
   *stop = 0;
@@ -608,7 +609,7 @@ void BOutRingBell(BOut* bout, const CHA* address) {
   c = *address;
   while (c) {
     if (space == 0) {
-      D_COUT("\nBoofer overflow!");
+      //D_COUT("\nBoofer overflow!");
       return;
     }
     *stop = c;
@@ -626,12 +627,12 @@ void BOutAckBack(BOut* bout, const CHA* address) {
   if (address == NILP) {
     address = "";
   }
-  D_COUT("\n\nRinging BEL to address:0x" << Hexf(address));
+  //D_COUT("\n\nRinging BEL to address:0x" << Hexf(address));
 
   // Temp variables packed into groups of 8 bytes for memory alignment.
   IUA c;
 
-  ISN size = bout->size,  //< Size of the socket.
+  ISN size = bout->bytes,  //< Size of the socket.
       space;              //< Space in the socket.
   // Convert the Slot offsets to pointers.
   IUA *begin = BOutBoofer(bout),           //< Beginning of the socket.
@@ -640,7 +641,7 @@ void BOutAckBack(BOut* bout, const CHA* address) {
       *stop  = begin + bout->stop;  //< Stop of the data.
   space = TSlotSpace<ISN>(start, stop, size);
   if (space == 0) {
-    D_COUT("\nBoofer overflow!");
+    //D_COUT("\nBoofer overflow!");
     return;
   }
   *stop = 0;
@@ -649,7 +650,7 @@ void BOutAckBack(BOut* bout, const CHA* address) {
   c = *address;
   while (c) {
     if (space == 0) {
-      D_COUT("\nBoofer overflow!");
+      //D_COUT("\nBoofer overflow!");
       return;
     }
     *stop = c;
@@ -664,41 +665,6 @@ const Op* BOutConnect(BOut* bout, const CHA* address) {
   void* args[2];
   return BOutWrite(bout, TParams<2, _ADR, _ADR>(), Args(args, address, 0));
 }
-
-#if USING_SCRIPT2_TEXT
-/*
-IUA* Print (BOut* bout, IUA* socket, IUA* boofer_end) {
-    BOL print_now = !socket;
-    if (!socket) {
-        return socket;
-    }
-    if (socket >= boofer_end) {
-        return NILP;
-    }
-    socket = TPrintLinef('_', 80, socket, boofer_end);
-    if (!bout) {
-        return NILP;
-    }
-    ISN size = bout->size;
-    UTF& utf (socket, boofer_end);
-    utf << "\nBOut:" << Hex<IUW> (bout)
-          << " size:" << size
-          << " origin:" << bout->origin << " stop:" << bout->stop
-          << " read:"  << bout->read
-          << Memory (BOutBoofer (bout), size + 64);
-    //< @todo remove the + 64.);
-    return utf.cursor;
-}*/
-
-UTF1& PrintBOut(UTF1& utf, BOut* bout) {
-  A_ASSERT(bout);
-  ISN size = bout->size;
-  utf << Line('_', 80) << "\nBOut:" << Hex<>(bout) << " size:" << size
-      << " start:" << bout->start << " stop:" << bout->stop
-      << " read:" << bout->read << Socket(BOutBoofer(bout), size - 1);
-  return utf;
-}
-#endif
 
 }  //< namespace _
 
