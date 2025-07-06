@@ -1,10 +1,10 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #include "Array.h"
 #include "Autoject.hpp"
 #include "Stringf.hpp"
-#ifndef SCRIPT2_ARRAY_INLINE_CODE
-#define SCRIPT2_ARRAY_INLINE_CODE 1
+#ifndef SCRIPT2_ARRAY_HPP
+#define SCRIPT2_ARRAY_HPP 1
 #if SEAM >= SCRIPT2_STACK
 #include "Array.h"
 #define ARY_A typename T = CHA, typename ISZ = ISN
@@ -461,8 +461,8 @@ inline ISW TObjectCopy(void* dest, void* dest_end, const void* src,
 
 /* Casts RAMCompare to type T. */
 template<typename T>
-inline const T* TArrayCompare(const void* a_begin, void* a_end, const void* b_begin,
-  ISW b_bytes) {
+inline const T* TArrayCompare(const void* a_begin, void* a_end, 
+  const void* b_begin, ISW b_bytes) {
   return TPtr<const T*>(RAMCompare(a_begin, a_end, b_begin, b_bytes));
 }
 

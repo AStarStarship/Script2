@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_DIC_INLINE_CODE
-#define SCRIPT2_DIC_INLINE_CODE 1
+#ifndef SCRIPT2_DIC_HPP
+#define SCRIPT2_DIC_HPP
 #include <_Config.h>
 #if SEAM >= SCRIPT2_DIC
 #include "Table.hpp"
@@ -586,7 +586,7 @@ DIC* TDicAppend(DIC* table, const DIC* source) {
   const ISZ* src_values_map = TDicValuesMap<DIC_P>(source) + 1;
   const DT* src_types = TDicTypes<DIC_P>(source, src_total) + 1;
   TBL* keys = TDicKeys<DIC_P>(table);
-#if SEAM == SCRIPT2_CRABS
+#if SEAM == SCRIPT2_DIC
   TDicPrint<COut, DIC_P>(StdOut(), source);
   StdOut() << "\nsrc_size:" << src_size;
 #endif
@@ -594,7 +594,7 @@ DIC* TDicAppend(DIC* table, const DIC* source) {
     D_COUT("\n\ni:" << i);
     const CHT* key = TPtr<CHT>(src_keys_map, *(src_keys_map + i));
     ISZ value_offset = *src_values_map++;
-#if SEAM == SCRIPT2_CRABS
+#if SEAM == SCRIPT2_DIC
     StdOut() << "\nvalue_offset:" << value_offset;
 #endif
     DT  type   = *src_types++;
@@ -677,10 +677,10 @@ ISY TDicFind(DIC* table, const CHT* string) {
 @code
 ADic<DIC_A, 1024, TBuf<>>
 @endcode */
-template<DIC_A, ISZ SizeInit = 512,
-  typename BOF = TBOF<SizeInit, CHT, ISZ, TString<ISN>>>
+template<DIC_A, ISZ BytesInit_ = 512,
+  typename BOF = TBOF<BytesInit_, CHT, ISZ, TString<ISN>>>
 class ADic {
-  AArray<IUA, ISZ, BOF> obj_;  //< An Auto-Array object.
+  AArray<IUA, ISZ, BytesInit_, BOF> aary_;  //< An Auto-Array object.
 public:
 
   static constexpr DTB Type() {
@@ -700,7 +700,7 @@ public:
 
   ADic(ISY total = DicDefaultTotalFractionShift,
     ISZ size_keys = DicDefaultKeysFractionShift)
-    : obj_(SizeInit, TObjectFactory<ISZ>().Init<BOF>()) {
+    : aary_(BytesInit_, TObjectFactory<ISZ>().Init<BOF>()) {
     TDicInit<DIC_P>(This(), total, size_keys);
   }
 
@@ -709,12 +709,12 @@ public:
   ADic(RAMFactory ram,
     ISY total = DicDefaultTotalFractionShift,
     ISZ size_keys = DicDefaultKeysFractionShift)
-    : obj_(ram) {
+    : aary_(ram) {
     TDicInit<DIC_P>(This(), total);
   }
 
   /* Returns the size in elements. */
-  inline ISZ Size() { return obj_.Size(); }
+  //inline ISZ Size() { return aary_.Total(); }
 
   /* Shorthand way to get the TDic->keys List. */
   inline TList<LST_P>* Values() { return &This()->values; }
@@ -726,7 +726,7 @@ public:
   inline ISZ Bytes() { return Values()->bytes; }
 
   /* Returns the size in words. */
-  inline ISZ BytesWords() { return obj_.SizeWords() >> ACPUBytesLog2; }
+  inline ISZ BytesWords() { return aary_.SizeWords() >> ACPUBytesLog2; }
 
   /* Returns the number of keys. */
   inline ISZ Count() { return Values()->map.count; }
@@ -737,47 +737,47 @@ public:
   /* Inserts the key and value on into the Table and List at the given index.
   @return The index of the string in the Dic. */
   inline ISY Insert(const CHT* key, ISA value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _ISA, value, index);
+    return InvertTV(key, _ISA, value, index);
   }
   inline ISY Insert(const CHT* key, IUA value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _IUA, value, index);
+    return InvertTV(key, _IUA, value, index);
   }
   inline ISY Insert(const CHT* key, ISB value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _ISB, value, index);
+    return InvertTV(key, _ISB, value, index);
   }
   inline ISY Insert(const CHT* key, IUB value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _IUB, value, index);
+    return InvertTV(key, _IUB, value, index);
   }
   inline ISY Insert(const CHT* key, ISC value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _ISC, value, index);
+    return InvertTV(key, _ISC, value, index);
   }
   inline ISY Insert(const CHT* key, IUC value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _IUC, value, index);
+    return InvertTV(key, _IUC, value, index);
   }
   inline ISY Insert(const CHT* key, ISD value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _ISD, value, index);
+    return InvertTV(key, _ISD, value, index);
   }
   inline ISY Insert(const CHT* key, IUD value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _IUD, value, index);
+    return InvertTV(key, _IUD, value, index);
   }
 #if USING_FPC == YES_0
   inline ISY Insert(const CHT* key, FPC value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _FPC, value, index);
+    return InvertTV(key, _FPC, value, index);
   }
 #endif
 #if USING_FPD == YES_0
   inline ISY Insert(const CHT* key, FPD value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _FPD, value, index);
+    return InvertTV(key, _FPD, value, index);
   }
 #endif
   inline ISY Insert(const CHT* key, const CHA* value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _STA, value, index);
+    return InvertTV(key, _STA, value, index);
   }
   inline ISY Insert(const CHT* key, const CHB* value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _STB, value, index);
+    return InvertTV(key, _STB, value, index);
   }
   inline ISY Insert(const CHT* key, const CHC* value, ISY index = PSH) {
-    return InvertTV(AJT(), key, _STC, value, index);
+    return InvertTV(key, _STC, value, index);
   }
 
   /* Removes the string at the given index from the Dic. */
@@ -801,13 +801,13 @@ public:
   }
 
   /* Gets the Autoject. */
-  inline Autoject& AJT() { return obj_.AJT(); }
+  inline Autoject& AJT() { return aary_.AJT(); }
 
   /* Gets the Auto-Array. */
-  inline AArray<IUA, ISZ, BOF>& AJT_ARY() { return obj_; }
+  inline AArray<IUA, ISZ, BytesInit_, BOF>& AJT_ARY() { return aary_; }
 
   /* Gets the ASCII Object. */
-  inline DIC* This() { return obj_.As<DIC*>(); }
+  inline DIC* This() { return aary_.As<DIC>(); }
 
   /* Prints this object to the Printer. */
   template<typename Printer>
@@ -824,12 +824,13 @@ public:
   @return Returns nil if the size is greater than the amount of memory that
   can fit in type ISW, the unaltered socket pointer if the Stack has grown to the
   size upper bounds, or a new dynamically allocated socket upon failure. */
-  BOL Grow(Autoject& obj) {
+  BOL Grow() {
     D_COUT("\n\nGrowing Dic...");
     /* Grow Algoirhm.
     1. Check if we can grow and if so, create a new block of memory.
     2. Copy the Table.
     3. Copy the List. */
+    Autoject& obj = AJT();
     auto origin = obj.origin;
     D_ASSERT(origin);
     auto source = TPtr<DIC>(origin);
@@ -875,13 +876,14 @@ public:
   /* Adds a string to the end of the Dic, auto-growing if neccissary.
   @return The index upon success or -1 if the obj can't grow anymore.
   @todo Verify copmile size of this function isolated and in the AArray class. */
-  ISY InvertTV(Autoject& obj, const CHT* key, DT type, IUW value, ISY index = PSH, 
+  ISY InvertTV(const CHT* key, DT type, IUW value, ISY index = PSH, 
                IUW value_msb = 0) {
+    Autoject& obj = AJT();
     D_CHECK_PTR_TRETURN(ISY, key);
     DIC* dic = TPtr<DIC>(obj.origin);
     ISY result = TDicInsert<DIC_P>(dic, key, type, value, index, value_msb);
     while (result < 0) {
-      if (!Grow(obj)) {
+      if (!Grow()) {
         D_RETURNT(ISY, -ErrorBooferOverflow);
       }
       dic = TPtr<DIC>(obj.origin);

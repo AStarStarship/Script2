@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "Operand.h"
 #if SEAM >= SCRIPT2_CRABS
 #include "Op.hpp"

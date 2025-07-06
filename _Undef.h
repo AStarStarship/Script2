@@ -1,7 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
-
-#undef ARY
-#undef SCK
+// Copyright AStarship <https://astarship.net>.
 
 #undef D_
 #undef R_
@@ -80,37 +77,4 @@
 #undef D_CHECK_CPTR_RETURN
 #undef D_CHECK_TPTR_RETURN
 #undef D_CHECK_PTR_RETURN_NIL
-//
 #undef SCRIPT2_FAIL
-
-//@todo Delete me!
-//enum
-//{
-//  plain = 0,
-//  bold = 1,
-//  italic = 2
-//};
-//
-//void PrintString(const char* message, int size, int style)
-//{
-//}
-//
-//#define PRINT_STRING_1_ARGS(message)              PrintString(message, 0, 0)
-//#define PRINT_STRING_2_ARGS(message, size)        PrintString(message, size, 0)
-//#define PRINT_STRING_3_ARGS(message, size, style) PrintString(message, size, style)
-//
-//#define GET_4TH_ARG(arg1, arg2, arg3, arg4, ...) arg4
-//#define PRINT_STRING_MACRO_CHOOSER(...) \
-//    GET_4TH_ARG(__VA_ARGS__, PRINT_STRING_3_ARGS, \
-//                PRINT_STRING_2_ARGS, PRINT_STRING_1_ARGS, )
-//
-//#define PRINT_STRING(...) PRINT_STRING_MACRO_CHOOSER(__VA_ARGS__)(__VA_ARGS__)
-//
-//int main(int argc, char* const argv[])
-//{
-//  PRINT_STRING("Hello, World!");
-//  PRINT_STRING("Hello, World!", 18);
-//  PRINT_STRING("Hello, World!", 18, bold);
-//
-//  return 0;
-//}

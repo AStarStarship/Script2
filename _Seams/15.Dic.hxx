@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #if SEAM >= SCRIPT2_DIC
 #include "../Dic.hpp"
 #if SEAM == SCRIPT2_DIC
@@ -23,15 +23,15 @@ static void TestDic() {
 
   ADic<DIC_P, Size> dic(TotalInit);
 
-  D_COUT("\n\nAfter init size:" << dic.Size() << " bytes:" << dic.Bytes() << 
+  D_COUT("\n\nAfter init total:" << dic.Total() << " bytes:" << dic.Bytes() << 
          " size_words:" << dic.BytesWords() <<
          "\nPrinting empty dictionary:\n");
   D_COUT_DIC(dic.This());
   A_AVOW(ISY(0), dic.Find(TStringEmpty<CHT>()));
   D_COUT("\nPopulating " << TotalInit << " test words...");
 
-  const CHT *words = TTestWords<CHT>::Words(),
-            *key   = words;
+  const CHT* words = TTestWords<CHT>::Words(),
+           * key   = words;
   ISY i = 0;
   A_AVOW(ISY(++i), dic.Insert(key += 16, ISA('!' + i)));
   A_AVOW(ISY(++i), dic.Insert(key += 16, IUA('!' + i)));

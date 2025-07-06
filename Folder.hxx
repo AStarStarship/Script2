@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "Folder.h"
 #if SEAM >= SCRIPT2_FILE
 namespace _ {

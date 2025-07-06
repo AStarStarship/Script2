@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "Slot.hpp"
 #if SEAM >= SCRIPT2_CRABS
 //#include "String.hpp"
@@ -56,7 +56,7 @@ Slot::Slot(BOut* bout) {
   origin = begin;
   start  = begin + bout->origin;
   stop   = begin + bout->stop;
-  end    = begin + bout->size;
+  end    = begin + bout->bytes;
 }
 
 void* Slot::Contains(void* address) {

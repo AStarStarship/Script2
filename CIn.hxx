@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "CIn.h"
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
 #include "Stringf.hpp"

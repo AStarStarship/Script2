@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>; all rights reserved.
+// Copyright AStarship <https://astarship.net>; all rights reserved.
 #pragma once
-#ifndef SCRIPT2_WALL_INLINE_CODE
-#define SCRIPT2_WALL_INLINE_CODE 1
+#ifndef SCRIPT2_WALL_HPP
+#define SCRIPT2_WALL_HPP 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_DIC
 #include "Door.hpp"

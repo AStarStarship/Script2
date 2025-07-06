@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include <_Config.h>
-#ifndef SCRIPT2_FILE_INLINE_CODE
-#define SCRIPT2_FILE_INLINE_CODE 1
+#ifndef SCRIPT2_FILE_HPP
+#define SCRIPT2_FILE_HPP 1
 #if SEAM >= SCRIPT2_FILE
 #include "Uniprinter.hpp"
 //

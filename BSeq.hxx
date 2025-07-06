@@ -1,6 +1,6 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "BSeq.h"
-#if SEAM >= SCRIPT2_LIST
+#if SEAM >= SCRIPT2_CRABS
 namespace _ {
 
 ISN BSeqParamNumber(const ISN* params, ISN param_number) {
@@ -27,7 +27,5 @@ ISN BSeqParamNumber(const ISN* params, ISN param_number) {
   }
   return params[i];
 }
-
 }  //< namespace _
-
 #endif

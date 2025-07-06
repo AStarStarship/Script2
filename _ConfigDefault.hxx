@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 
 #define ASSEMBLY_TYPE ASSEMBLE_EXE 1
 #define SCRIPT2_RUN_TESTS YES_0

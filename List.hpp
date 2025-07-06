@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT_LIST_INLINE_CODE
-#define SCRIPT_LIST_INLINE_CODE 1
+#ifndef SCRIPT2_LIST_HPP
+#define SCRIPT2_LIST_HPP 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_LIST
 #include "Binary.hpp"
@@ -447,7 +447,7 @@ struct TList {
 
 @todo research if it's faster to just copy the Boofer.
 */
-template <typename T, LST_A>
+template<typename T, LST_A>
 LST* TListCopy(const LST* origin, LST* destination) {
   ISZ bytes = origin->bytes;
   if (destination->bytes < bytes) return NILP;

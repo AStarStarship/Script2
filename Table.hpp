@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPTT2_TABLE_INLINE_CODE
-#define SCRIPTT2_TABLE_INLINE_CODE 1
+#ifndef SCRIPTT2_TABLE_HPP
+#define SCRIPTT2_TABLE_HPP 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_TABLE
 #include "Array.hpp"
@@ -61,7 +61,7 @@ template<TBL_A>
 struct TTable {
   ISZ bytes,          //< Size of this object in bytes.
       stop;           //< Keys boofer stop offset or start if count == total.
-  SCK map;  //< A Stack of offset mappings to strings.
+  TStack<ISZ, ISZ, ISY> map;  //< A Stack of offset mappings to strings.
 };
 
 enum {
@@ -174,26 +174,26 @@ const void* TTableEnd(const TBL* table) {
 }
 
 // The offset from the keys_map to the keys boofer start.
-template <TBL_A>
+template<TBL_A>
 inline ISZ TTableKeysMapOffset(ISY total) {
   return (sizeof(HSH) + sizeof(ISZ)) * ISZ(total) +
     sizeof(TBL);
 }
 
 /* Points to the string offsets array. */
-template <TBL_A>
+template<TBL_A>
 ISZ* TTableKeysMap(TBL* table, ISY total) {
   return TPtr<ISZ>(table,  sizeof(HSH) * total + sizeof(TBL));
 }
-template <TBL_A>
+template<TBL_A>
 const ISZ* TTableKeysMap(const TBL* table, ISY total) {
   return CPtr<ISZ>(TTableKeysMap<TBL_P>(CPtr<TBL>(table), total));
 }
-template <TBL_A>
+template<TBL_A>
 ISZ* TTableKeysMap(TBL* table) {
   return TTableKeysMap<TBL_P>(table, ISY(table->map.total));
 }
-template <TBL_A>
+template<TBL_A>
 const ISZ* TTableKeysMap(const TBL* table) {
   return TTableKeysMap<TBL_P>(table, ISY(table->map.total));
 }
@@ -206,11 +206,11 @@ template<TBL_A>
 inline const CHT* TTableKey(const ISZ* keys_map, ISZ offset) {
   return CPtr<CHT>(TTableKey<TBL_P>(CPtr<ISZ>(keys_map), offset));
 }
-template <TBL_A>
+template<TBL_A>
 CHT* TTableKey(TBL* table, ISY total, ISY count) {
   return TTableKey<TBL_P>(table, table)[count];
 }
-template <TBL_A>
+template<TBL_A>
 const ISZ* TTableKey(const TBL* table, ISY total, ISY count) {
   return CPtr<ISZ>(TTableKey<TBL_P>(CPtr<TBL>(table), total, count));
 }
@@ -848,20 +848,20 @@ ISY TTableRemove(TBL* table, const CHT* key) {
 }
 
 /* An ASCII Table Autoject. */
-template<TBL_A, ISY Total = 32, 
-  typename BOF = TBOF<CTableSize<TBL_P, Total>(), ISA, ISZ, TBL>>
+template<TBL_A, ISY Total_ = 32, 
+  typename BOF = TBOF<CTableSize<TBL_P, Total_>(), ISA, ISZ, TBL>>
 class ATable {
-  AArray<CHT, ISZ, BOF> obj_;  //< Auto-Array of CHT(s).
+  AArray<CHT, ISZ, Total_ * 32, BOF> obj_;  //< Auto-Array of CHT(s).
  public:
   /* Constructs a Table. */
   ATable() {
     D_OBJ_WIPE(obj_.Origin(), ISZ);
-    TTableInit<TBL_P>(obj_.Origin(), Total);
+    TTableInit<TBL_P>(obj_.Origin(), Total_);
   }
 
   /* Constructs a Table. */
   ATable(ISY total) {
-    D_OBJ_WIPE(obj_.Origin());
+    D_OBJ_WIPE(obj_.Origin(), ISZ);
     TTableInit<TBL_P>(obj_.Origin(), total);
   }
 
@@ -893,7 +893,7 @@ class ATable {
   }
 
   /* Gets the ASCII Object. */
-  inline TBL* This() { return obj_.As<TBL*>(); }
+  inline TBL* This() { return obj_.As<TBL>(); }
 
   /* Gets the Autoject. */
   inline Autoject AJT() { return obj_.AJT(); }

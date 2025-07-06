@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_PUFF_INLINE_CODE
-#define SCRIPT2_PUFF_INLINE_CODE 1
+#ifndef SCRIPT2_PUFF_HPP
+#define SCRIPT2_PUFF_HPP 1
 #include "Puff.h"
 #if SEAM >= SCRIPT2_ITOS
 #include "Binary.hpp"

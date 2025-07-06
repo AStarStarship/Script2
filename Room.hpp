@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_ROOM_INLINE_CODE
-#define SCRIPT2_ROOM_INLINE_CODE 1
+#ifndef SCRIPT2_ROOM_HPP
+#define SCRIPT2_ROOM_HPP 1
 #include <_Config.h>
 #if SEAM >= SCRIPT2_ROOM
 #include "Interrupts.h"

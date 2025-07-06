@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_EXCEPTIONS_DECL
 #define SCRIPT2_EXCEPTIONS_DECL 1

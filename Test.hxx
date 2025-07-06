@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "Test.hpp"
 #include "COut.h"
 #include "Stringf.hpp"
@@ -69,7 +69,7 @@ ISN SeamResult(const CHA* result) {
     return APP_EXIT_FAILURE;
   }
   #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
-  COut("\n\nUnit tests completed successfully! (:-)+==<\n");
+  COut("\n\nUnit tests completed successfully! (:-)+=<\n");
   #endif
   return APP_EXIT_SUCCESS;
 }

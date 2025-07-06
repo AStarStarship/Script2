@@ -1,9 +1,9 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #include <_Config.h>
 #if SEAM >= SCRIPT2_BOOK
-#ifndef SCRIPT2_BOOK_INLINE_CODE
-#define SCRIPT2_BOOK_INLINE_CODE 1
+#ifndef SCRIPT2_BOOK_HPP
+#define SCRIPT2_BOOK_HPP 1
 #include "AType.h"
 namespace _ {
 

@@ -1,16 +1,17 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "Op.h"
-#if SEAM >= SCRIPT2_DIC
+#if SEAM >= SCRIPT2_CRABS
 #include "BSeq.hpp"
 #include "Slot.h"
 #include "Test.h"
-#if SEAM == SCRIPT2_DIC
+#if SEAM == SCRIPT2_CRABS
 #include "_Debug.h"
 #else
 #include "_Release.h"
 #endif
 namespace _ {
 
+inline const Op* OpError(ERC error) { return (const Op*)ISW(error); }
 /*
 #if USING_SCRIPT2_TEXT
 Op OpInit (IUW* socket, ISC boofer_size) {
@@ -121,4 +122,4 @@ void Print (Op& log) {
 
 }  //< namespace _
 
-#endif  //> #if SEAM >= SCRIPT2_DIC
+#endif

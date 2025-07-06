@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #include "Stringf.hpp"
 #include "Binary.hpp"
 namespace _ {
@@ -305,7 +305,7 @@ Rightf ATypef::Right(ISW count) {
   return result;
 }
 
-AErrorf::AErrorf(ISW error, const STR* message) :
+AErrorf::AErrorf(ISW error, const CHA* message) :
   error(error),
   message(message) {}
 

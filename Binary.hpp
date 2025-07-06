@@ -1,7 +1,7 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
-#ifndef SCRIPT2_BINARY_INLINE_CODE
-#define SCRIPT2_BINARY_INLINE_CODE 1
+#ifndef SCRIPT2_BINARY_HPP
+#define SCRIPT2_BINARY_HPP 1
 #include <_Config.h>
 namespace _ {
 

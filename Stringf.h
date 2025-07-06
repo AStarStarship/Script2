@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #include <_Config.h>
 #ifndef SCRIPT2_STRINGF_DECL
@@ -531,12 +531,10 @@ struct LIB_MEMBER AValuef {
 
 // Utility class for printing an ASCII Error Code.
 struct LIB_MEMBER AErrorf {
-  ISW error;          //< Error code.
-  const STR* message; //< Error message.
+  ISW error;                //< Error code.
+  const CHA* message; //< Error message.
 
-  AErrorf(ISW error, const STR* message = NILP);
+  AErrorf(ISW error, const CHA* message = NILP);
 };
-
 }  //< namespace _
-
-#endif  //< #ifndef SCRIPT2_STRINGF_DECL
+#endif

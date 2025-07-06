@@ -1,4 +1,4 @@
-// Copyright Kabuki Starship <kabukistarship.com>.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_RNG_DECL
 #define SCRIPT2_RNG_DECL 1
@@ -84,4 +84,4 @@ LIB_MEMBER void RandomNumber(IUD& result);
 LIB_MEMBER void RandomNumber(ISD& result);
 
 }  //< namespace _
-#endif  //< INCLUDED_SCRIPTCRNG
+#endif
