@@ -245,7 +245,7 @@ Printer& TBookPrint(Printer& o, const BOK* book) {
     auto type    = *types++;
     auto voffset = *vmap++;
     o << ATypef(type) << " voffset:" << voffset << " value:"; // << " voffset:" << voffset;
-    TPrintValue<Printer>(o, ATypeMDP(type), book, voffset);
+    TPrintValue<Printer>(o, ATypeMakePtr(type), book, voffset);
   }
   o << Linef("\n+---");
   //D_COUT(Charsf(book, book->values.bytes));
@@ -569,21 +569,21 @@ inline ISY TBookInsert(BOK* book, const CHT* key, FPD item, ISY index = PSH) {
 template<BOK_A>
 inline ISY TBookInsert(BOK* book, TLoom<LOM_P>* keys, const CHA* key,
   const CHA* item, ISY index = PSH) {
-  return TBookInsert<BOK_P>(book, keys, key, _STA, item, index);
+  return TBookInsert<BOK_P>(book, keys, key, _SWA, item, index);
 }
 #endif
 #if USING_STB == YES_0
 template<BOK_A>
 inline ISY TBookInsert(BOK* book, TLoom<LOM_P>* keys, const CHB* key,
   const CHB* item, ISY index = PSH) {
-  return TBookInsert<BOK_P>(book, keys, key, _STB, item, index);
+  return TBookInsert<BOK_P>(book, keys, key, _SWB, item, index);
 }
 #endif
 #if USING_STC == YES_0
 template<BOK_A>
 inline ISY TBookInsert(BOK* book, TLoom<LOM_P>* keys, const CHC* key,
   const CHC* item, ISY index = PSH) {
-  return TBookInsert<BOK_P>(book, keys, key, _STC, item, index);
+  return TBookInsert<BOK_P>(book, keys, key, _SWC, item, index);
 }
 #endif
 
@@ -637,7 +637,7 @@ BOK* TBookAppend(BOK* book, const BOK* source) {
     const CHT* key = TPtr<CHT>(src_keys, *src_kmap++);
     ISZ voffset    = *src_vmap++;
     DT  vtype      = *src_types++;
-    ISY result     = TBookInsert<BOK_P>(book, keys, key, ATypeMDP
+    ISY result     = TBookInsert<BOK_P>(book, keys, key, ATypeMakePtr
     (vtype),
                                         IUW(ISW(src_values) + voffset));
     D_COUT("\nInsert result: " << result << ' ' << AErrorf(result));
@@ -803,17 +803,17 @@ class ABook {
 #endif
 #if USING_STA == YES_0
   inline ISY Insert(const CHT* key, const CHA* item, ISY index = PSH) {
-    return InsertTV(key, _STA, item, index);
+    return InsertTV(key, _SWA, item, index);
   }
 #endif
 #if USING_STB == YES_0
   inline ISY Insert(const CHT* key, const CHB* item, ISY index = PSH) {
-    return InsertTV(key, _STB, item, index);
+    return InsertTV(key, _SWB, item, index);
   }
 #endif
 #if USING_STC == YES_0
   inline ISY Insert(const CHT* key, const CHC* item, ISY index = PSH) {
-    return InsertTV(key, _STC, item, index);
+    return InsertTV(key, _SWC, item, index);
   }
 #endif
   /* Removes the string at the given index from the Book. */

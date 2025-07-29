@@ -409,9 +409,9 @@ It's easiest to show with the examples below. Like their names implies, the
 corner char is for the edges and the margin is for inside of a header block.
 
 @code
-TPrintBreak<CHA> ("\n+---\n\n| Foo\n\n+---\n", 10);
+TPrintBreak<CHA>("\n+---\n\n| Foo\n\n+---\n", 10);
 
-TPrintBreak<CHA> ("\n+---\n\n| Foo\n\n+---\n", 10);
+TPrintBreak<CHA>("\n+---\n\n| Foo\n\n+---\n", 10);
 //>>>
 //>>> +----------
 //>>> | Foo *****
@@ -477,28 +477,27 @@ const CHT* TPrintLinef(Printer& p, const CHT* style = NILP,
 template<typename Printer>
 Printer& TPrint(Printer& p, Linef& value) {
   ISW type = value.element.value.Type(),  //
-      utf_format = ATypeTextFormat(type);
-  switch (utf_format) {
+      format = ATypeTextFormat(type);
+  switch (format) {
 #if USING_STA == YES_0
-    case _STA: {
+    case _SWA: {
       TPrintLinef<Printer, CHA>(p, value.element.ToSTA(), value.element.count);
       break;
     }
 #endif
 #if USING_STB == YES_0
-    case _STB: {
+    case _SWB: {
       TPrintLinef<Printer, CHB>(p, value.element.ToSTB(), value.element.count);
       break;
     }
 #endif
 #if USING_STC == YES_0
-    case _STC: {
-      const CHC* start = TPtr<const CHC>(value.element.value.ToPTR());
+    case _SWC: {
       TPrintLinef<Printer, CHC>(p, value.element.ToSTC(), value.element.count);
       break;
     }
 #endif
-    case -1: {
+    default: {
       switch (type & ATypePODMask) {
 #if USING_STA == YES_0
         case _CHA: {
@@ -552,23 +551,24 @@ Printer& TPrintHeading(Printer& p, const CH* element, const CHA* style = NILP,
 /* Prints the a formatted header. */
 template<typename Printer>
 Printer& TPrint(Printer& p, Headingf& value) {
-  switch (ATypeTextFormat(value.element.Type())) {
+  ISA encoding = ATypeTextFormat(value.Type());
+  switch (encoding) {
 #if USING_STA == YES_0
-    case 1: {
+    case _SWA: {
       return TPrintHeading<Printer, CHA>(p, value.element.STA(), value.style,
                                          value.element.Count(), value.caption2,
                                          value.caption3);
     }
 #endif
 #if USING_STB == YES_0
-    case 2: {
+    case _SWB: {
       return TPrintHeading<Printer, CHB>(p, value.element.STB(), value.style,
                                          value.element.Count(), value.caption2,
                                          value.caption3);
     }
 #endif
 #if USING_STC == YES_0
-    case 3: {
+    case _SWC: {
       return TPrintHeading<Printer, CHC>(p, value.element.STC(), value.style,
                                          value.element.Count(), value.caption2,
                                          value.caption3);

@@ -6,21 +6,34 @@
 #if SEAM >= SCRIPT2_COUT
 namespace _ {
 
+/* Utility class for givings names to params.
+```C++
+void Foo(TP<ISZ, "Bar">() bar) {}
+Foo(TP<ISZ, "Bar">(69));
+```
+
+or maybe it could look like:
+```C++
+#define TP(tag) struct tag {
+};
+```
+*/
+template<typename T, const CHA* name>
+struct TP {
+  T value;
+
+  TP(T v) : value(v) {}
+
+  const CHA* Name() { return name; }
+};
+
 /*
 inline IUA ValueBase2(IUC value) {
   // Example: 0b0000_0000_0000_0000_0111_0111_1001_1101
   return 0;
 } */
 
-/* Gets the log_2 of the sizeof(T).
-Naming Convension:
-ISN = Integer Signed N-Bit = int and A=8-bit, B=16-bit, ...
-O = 64-bits
-N = 32-bits
-M = 16-bits
-L = 8-bits
-SCRIPT Spec does not support 128-bit CPUs.
-*/
+// Gets the log_2 of the sizeof(T) where A=0 (8-bit), B=1 (16-bit), ..., L=11 (2048-bit).
 template<typename T>
 constexpr DTB CASizeCode() {
   switch (sizeof(T)) {
@@ -32,7 +45,7 @@ constexpr DTB CASizeCode() {
     case   32: return 5;  // F
     case   64: return 6;  // G
     case  128: return 7;  // H
-    case  256: return 8;  // I    2^8=256
+    case  256: return 8;  // I
     case  512: return 9;  // J
     case 1024: return 10; // K
     case 2048: return 11; // L
@@ -45,13 +58,13 @@ constexpr DT CASizeBits() {
   return DT(1) << ATypeSWBit0;
 }
 
-// Gets the ASCII Size Width letter A-K
+// Gets the ASCII Size Width letter A-L
 template<typename T>
 constexpr CHA CSizeCodef() {
   return 'A' + CHA(CASizeCode<T>());
 }
 
-// Gets the ASCII Size Width letter A-K
+// Gets the ASCII Size Width letter A-L
 inline CHA ASizeCodef(ISA sw) {
   return 'A' + CHA(sw);
 }
@@ -401,10 +414,10 @@ ISA ATypeAlignMask(DTB type) {
     goto DezNutz;
   }
   switch (sw) {
-  case 0: return 0;
-  case 1: return 1;
-  case 2: return ACPUAlignC;
-  case 3: return ACPUAlignD;
+    case 0: return 0;
+    case 1: return 1;
+    case 2: return ACPUAlignC;
+    case 3: return ACPUAlignD;
   }
   return ACPUMask;
 }
@@ -467,23 +480,25 @@ const T* TATypePtrDown(const void* pointer, DTD type) {
 
 /* Creates an ASCII Vector Data Type. */
 template<typename DT = DTB>
-inline DT TATypeVector(DTW pod_type, DTW vector_type, DTW width_bit_count = 0) {
-  return DT(pod_type | (vector_type << 5) | (width_bit_count << 7));
+inline DT TATypeVector(DTW pod, DTW vt, DTW sw = 0) {
+  return DT(pod | (vt << 5) | (sw << ATypeSWBit0));
 }
 template<typename DT = DTB>
-constexpr DT CATypeVector(DTW pod_type, DTW vector_type,
-                         DTW width_bit_count = 0) {
-  return DT(pod_type | (vector_type << 5) | (width_bit_count << 7));
+constexpr DT CATypeVector(DTW pod, DTW vt,
+                         DTW sw = 0) {
+  return DT(pod | (vt << 5) | (sw << ATypeSWBit0));
 }
 
 /* Creates an ASCII Map Type. */
 template<typename DT = DTB>
-constexpr DT CATypeMap(DTW pod_type, DTW map_type, DTW width_bit_count = 0) {
-  return DT(pod_type | (map_type << 9) | (width_bit_count << 14));
+constexpr DT CATypeMap(DTW pod, DTW mt, DTW sw = 0) {
+  return DT(pod | (mt << ATypeMTBit0) |
+            (sw << ATypeSWBit0));
 }
 template<typename DT = DTB>
-inline DT TATypeMap(DTW pod_type, DTW map_type, DTW width_bit_count = 0) {
-  return DT(pod_type | (map_type << 9) | (width_bit_count << 14));
+inline DT TATypeMap(DTW pod, DTW mt, DTW sw = 0) {
+  return DT(pod | (mt << ATypeMTBit0) | 
+            (sw << ATypeSWBit0));
 }
 
 template<typename CH = CHR, typename IS = ISN>
@@ -504,13 +519,13 @@ constexpr DT CATypeSW() {
 
 /* The ASCII Data Type mask for the SW (Size Width) bits. */
 template<typename T, typename DT = DTB>
-constexpr DT CATypeSW(DT pod_type) {
-  return pod_type | (CATypeSW<T, DT>() << ATypeSWBit0);
+constexpr DT CATypeSW(DT pod) {
+  return pod | (CATypeSW<T, DT>() << ATypeSWBit0);
 }
 
 template<typename T, typename DT = DTB>
-inline DT TATypeSW(DT pod_type) {
-  return pod_type | (CATypeSW<T, DT>() << ATypeSWBit0);
+inline DT TATypeSW(DT pod) {
+  return pod | (CATypeSW<T, DT>() << ATypeSWBit0);
 }
 
 template<typename IS = ISW>
@@ -604,20 +619,64 @@ constexpr DT CATypeCH() {
   return (CATypeSize<CH, DT>() << 2) | 3;
 } */
 
+// Returns the Modifier Bits.
+inline DTB ATypeMD(DTB type) {
+  return (type >> ATypeMDBit0) & 3;
+}
+inline DTC ATypeMD(DTC type) {
+  return ATypeMD(DTB(type));
+}
+inline DTD ATypeMD(DTD type) {
+  return ATypeMD(DTB(type));
+}
+
+// Returns the Extended Block Bits.
+inline DTB ATypeEB(DTB type) {
+  return (type >> ATypeEBBit0) & 3;
+}
+inline DTC ATypeEB(DTC type) {
+  return ATypeMD(DTB(type));
+}
+inline DTD ATypeEB(DTD type) {
+  return ATypeMD(DTB(type));
+}
+
+// Asserts if the type is an Extended Standard Type.
+inline BOL ATypeIsES(DTW type) {
+  //return ((ATypeMD(type) != 0) && ((type >> ATypeMDBit0) & 7) == EBES);
+  return ((type >> ATypeEBBit0) & 7) == EBES;
+}
+
 /* Extracts the UTF type.
 @return 0 if the type is not a stirng type or 1, 2, or 4 if it is. */
 inline ISA ATypeTextFormat(DTW type) {
-  DTW pod_type = type & ATypePODMask;
-  if (pod_type == type) return -1;  //< then core_type < 32
+  DTW pod = type & ATypePODMask;
+  // CHA: 3   0b0011
+  // CHB: 7   0b0111
+  // CHC: 11  0b1011
+  //if (pod > _CHC || type < ATypePODTotal || (pod & 3) != 3)
+  //  return -1;
+  if (pod > _CHC)
+    return -1;
+  if (type < ATypePODTotal)
+    return -1;
+  if ((pod & 3) != 3)
+    return -1;
   type >>= ATypePODBits;
   DTW vt = type & 3;
   type >>= 2;
   DTW sw = type & 3;
-  if (vt != _SCK) return -1;
-
-  if (pod_type == _CHA) return 1;
-  if (pod_type == _CHB) return 2;
-  if (pod_type <= _CHC) return 3;
+  type >>= 2;
+  DTW mt = type & 15;
+  mt >>= 4;
+  DTW md = type & 3;
+  if (md != 0) {
+    DTW extended_block = (md << 1) & (mt >> 3);
+    if (extended_block != EBES)
+      return -1;
+  }
+  if (vt == _SCK || type >> 3)
+    return ISA(pod >> 2);
   return -1;
 }
 
@@ -653,11 +712,20 @@ inline DTW TypeOf(ISD item) { return _ISD; }
 inline DTW TypeOf(IUD item) { return _IUD; }
 inline DTW TypeOf(FPD item) { return _FPD; }
 inline DTW TypeOf(CHA* item) { return _STA; }
-inline DTW TypeOf(const CHA* item) { return _CNS_STA; }
+inline DTW TypeOf(const CHA* item) { 
+  //return _CNS_STA;
+  return CATypeMap(_SWA, _CNS_PTR);
+}
 inline DTW TypeOf(CHB* item) { return _STB; }
-inline DTW TypeOf(const CHB* item) { return _CNS_STB; }
+inline DTW TypeOf(const CHB* item) {
+  //return _CNS_STA;
+  return CATypeMap(_SWB, _CNS_PTR);
+}
 inline DTW TypeOf(CHC* item) { return _STC; }
-inline DTW TypeOf(const CHC* item) { return _CNS_STC; }
+inline DTW TypeOf(const CHC* item) {
+  //return _CNS_STA;
+  return CATypeMap(_SWC, _CNS_PTR);
+}
 inline DTW TypeOf(void* item) { return _PTR; }
 inline DTW TypeOf(const void* item) { return _CNS_PTR; }
 
@@ -672,7 +740,8 @@ C++11 variadic templates ensure there is only one copy in of the given in ROM.
 template<CHA CharA, CHA CharB, CHA CharC>
 inline IUC T() {
   return ((IUC)CharA) & (((IUC)CharB) << 8) & (((IUC)CharC) << 16);
-}*/
+}
+*/
 
 /* Masks off the primary type. */
 inline ISA ATypeMaskPOD(DTW value) { return value & 0x1f; }
@@ -683,12 +752,12 @@ inline BOL ATypeIsArray(DTW type) { return type >= ATypePODTotal; }
 inline ISN ATypeSizeWidthCode(ISN type) { return type >> 6; }
 
 /* Extracts the Map Type. */
-inline DTW ATypeMap(DTW core_type, DTW map_type) {
-  return core_type | (map_type << (ATypePODBits + 2));
+inline DTW ATypeMap(DTW core_type, DTW mt) {
+  return core_type | (mt << (ATypePODBits + 2));
 }
 
-inline DTW ATypeMap(DTW core_type, DTW map_type, DTW size_width) {
-  return ATypeMap(core_type, map_type) | (size_width << ATypePODBits);
+inline DTW ATypeMap(DTW core_type, DTW mt, DTW size_width) {
+  return ATypeMap(core_type, mt) | (size_width << ATypePODBits);
 }
 
 inline BOL ATypeIsPOD(DTW type) {

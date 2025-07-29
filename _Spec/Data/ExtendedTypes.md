@@ -1,12 +1,11 @@
 # Extended Types
 
-There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Extended Standard) Types. In ES Types 0 through 511, there are a total of 52 Illegal Types that are not memory aligned on any system along with 15 NIL Vector types that are remapped to create EM Types. EM Types are created by setting MOD Bits `0b00`. Extended Standard Type 0 is the ANY wildcard type that can be any time.
+There are two sets of Extended Types, EM (Extended Mappable) Types and EB (Extended Block) Types, which contain the ES (Extended Standard) Types and Void Types. In Types 0 through 511, there are a total of 52 Illegal Types that are not memory aligned on any system plus with 15 NIL Vector types that are remapped to create EM Types. Extended Mappable Types are in the range 0-511. Extended Standard Types are types value in the range [512, 8192).
 
 ## Extended Mappable Types
 
 | ID |  Type   |    Name    | Description |
 |:--:|:-------:|:----------:|:------------|
-| 00 |   INV   |  Invalid   | Invalid.    |
 | 01 |   WLD   | Type-Value | A Wildcard type-value tuple. |
 | 02 |   PTC   |  Pointer   | 4-byte pointer. |
 | 03 |   PTD   |  Pointer   | 8-byte pointer. |
@@ -22,8 +21,9 @@ There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Exten
 | 13 |   TB1   |   Table    | TTable<ISD, ISC, IUC>. |
 | 14 |   TB2   |   Table    | TTable<ISC, ISB, IUD>. |
 | 15 |   TB3   |   Table    | TTable<ISD, ISC, IUD>. |
-| 16 |   FAL   |    False   | Boolean false. |
-| 17 |   TRU   |    True    | Boolean true. |
+| -- | ------- | ---------- | --------- |
+| 16 |   RES   |  Reserved  | Reserved. |
+| 17 |   RES   |  Reserved  | Reserved. |
 | 18 |   R02   |  Reserved  | Reserved. |
 | 19 |   R03   |  Reserved  | Reserved. |
 | 20 |   DTA   | Data Type  | 1-byte ASCII Data Type. |
@@ -39,6 +39,7 @@ There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Exten
 | 30 |   BOB   |  Boolean   | 2-byte BOL value. |
 | 31 |   BOC   |  Boolean   | 4-byte BOL value. |
 | 32 |   BO0   |    Book    | TBook<CHA, ISB, ISA, DTB>. |
+| -- | ------- | ---------- | --------- |
 | 33 |   BO1   |    Book    | TBook<CHA, ISC, ISB, DTB>. |
 | 34 |   BO2   |    Book    | TBook<CHA, ISD, ISC, DTB>. |
 | 35 |   BO3   |    Book    | TBook<CHB, ISB, ISA, DTB>. |
@@ -74,6 +75,8 @@ There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Exten
 | 66 |   R18   |  Reserved  | Reserved. |
 | 67 |   R19   |  Reserved  | Reserved. |
 
+### Old Table
+
 | ID |  Type   |    Name    | Description |
 |:--:|:-------:|:----------:|:------------|
 | 01 |   WLD   | Type-Value | A Wildcard type-value tuple. |
@@ -91,7 +94,7 @@ There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Exten
 | 13 |   DTB   | Data Type  | 2-byte ASCII Data Type. |
 | 14 |   DTC   | Data Type  | 4-byte ASCII Data Type. |
 | 15 |   DTD   | Data Type  | 8-byte ASCII Data Type. |
-
+| -- | ------- | ---------- | --------- |
 | 16 |   TB0   |   Table    | TTable<ISC, ISB, IUC>. |
 | 17 |   TB1   |   Table    | TTable<ISD, ISC, IUC>. |
 | 18 |   TB2   |   Table    | TTable<ISC, ISB, IUD>. |
@@ -116,7 +119,7 @@ There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Exten
 | 38 |   BO5   |    Book    | TBook<CHB, ISD, ISC, DTB>. |
 | 39 |   BO8   |    Book    | TBook<CHC, ISD, ISC, DTB>. |
 | 40 |   LS2   |    List    | TList<ISD, ISC, DTB>. |
-
+| -- | ------- | ---------- | --------- |
 | 41 |   BO0   |    Book    | TBook<CHA, ISB, ISA, DTC>. |
 | 21 |   BO3   |    Book    | TBook<CHB, ISB, ISA, DTC>. |
 | 22 |   BO6   |    Book    | TBook<CHC, ISB, ISA, DTC>. |
@@ -137,7 +140,7 @@ There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Exten
 | 38 |   BO5   |    Book    | TBook<CHB, ISD, ISC, DTC>. |
 | 39 |   BO8   |    Book    | TBook<CHC, ISD, ISC, DTC>. |
 | 27 |   R06   |  Reserved  | Reserved. |
-
+| -- | ------- | ---------- | --------- |
 | 20 |   BO0   |    Book    | TBook<CHA, ISB, ISA, DTD>. |
 | 21 |   BO3   |    Book    | TBook<CHB, ISB, ISA, DTD>. |
 | 22 |   BO6   |    Book    | TBook<CHC, ISB, ISA, DTD>. |
@@ -158,15 +161,17 @@ There are two sets of Extended Types, EM (Extended Mappable) Types and ES (Exten
 | 38 |   BO5   |    Book    | TBook<CHB, ISD, ISC, DTD>. |
 | 39 |   BO8   |    Book    | TBook<CHC, ISD, ISC, DTD>. |
 | 63 |   R06   |  Reserved  | Reserved. |
-
+| -- | ------- | ---------- | --------- |
 | 64 |   SQC   |  Big SInt  | A 32-bit n-bit signed bigint. |
 | 65 |   UQC   |  Big UInt  | A 32-bit n-bit unsigned bigint. |
 | 66 |   SQD   |  Big SInt  | A 64-bit n-bit signed bigint. |
 | 67 |   UQD   |  Big UInt  | A 64-bit n-bit unsigned bigint. |
 
+EB Types are created by setting the MOD bits to `0b00`.
+
 All ASCII Data Types **shall** be memory aligned on 32-bit systems, leaving 32 types that that are not aligned 64-bit systems, and these types are illegal on 64-bit systems. Due to memory space constraints, 16-bit memory space processors (i.e. 8-bit microcontrollers with only 64KB RAM or less) do not support Context and Extended Types.
 
-Remapping 14-bit ASCII Data Type bit pattern to the Extended Types **shall** be fast as possible. For this reason all Plain Context Types **shall** be sorted by memory alignment in descending order such that PCa is of the largest and PCl is of the smallest type. Plain Context Types PCa through PCl are not defined at this level, they may or may not be remapped to legal types depending on the Context. PC types remapped to illegal types are Extended Context Types.
+Remapping ASCII Data Type bit pattern to the Extended Types **shall** be fast as possible. For this reason all Plain Context Types **shall** be sorted by memory alignment in descending order such that PCa is of the largest and PCl is of the smallest type. Plain Context Types PCa through PCl are not defined at this level, they may or may not be remapped to legal types depending on the Context. PC types remapped to illegal types are Extended Context Types.
 
 ## Remapping
 
@@ -197,7 +202,7 @@ Remapping 14-bit ASCII Data Type bit pattern to the Extended Types **shall** be 
 |  512   |      Type 0-31      0 1 2 3 4 5  6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 |
 ```
 
-Types are remapped in blocks in order A through H in the table bellow. The columns of the blocks are grouped in powers of two, either four or eight wide. The upper left letter is then shifted to the origin (i.e. 0, 0) to convert the SW:VT and POD bits into contiguous integer values(i.e. by shifting the SW:VT bits to the left 5 bits and ORing it with the POD bits).
+Types are remapped in blocks in order A through I in the table bellow. The columns of the blocks are grouped in powers of two, either four or eight wide. The upper left letter is then shifted to the origin (i.e. 0, 0) to convert the SW:VT and POD bits into contiguous integer values(i.e. by shifting the SW:VT bits to the left 5 bits and ORing it with the POD bits).
 
 ```AsciiArt
 | Vector | POD 0-31  .=Valid A-H=Order to convert blocks, lower case:64-bit |
@@ -205,7 +210,7 @@ Types are remapped in blocks in order A through H in the table bellow. The colum
 | SW:VT  | I U I H P U S H P U S H P U S M  P U S M C C C C C C C C C C C C |
 | b8:b5  | L A A A B B B B C C C C D D D D  E E E E a b c d e f g h i j k l |
 +--------+------------------------------------------------------------------|
-|   0/A  | A . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
+|   0/A  | . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . |
 |   1/C  | A . . . I I I I H H H H G G G G  G G G G C C C C B B B B B B B B |
 |   2/C  | A . . . . . . . H H H H G G G G  G G G G C C C C B B B B B B B B |
 |   3/D  | A . . . . . . . H H H H G G G G  G G G G C C C C B B B B B B B B |
@@ -253,53 +258,52 @@ To convert the blocks above to contiguous Repacked Extended Mappable Types or Re
 
 ## Extended Block Types
 
-Because there are 12 Plain Context Types and only four 128-bit types, Extended Block Type are created by setting the MSb of the 16-bit data type pattern to `0b111...`, yielding eight Blocks of 511 Extended Block Types.
+Because there are 12 Plain Context Types and only four 128-bit types, Extended Block Type are created by setting the MSb of the 16-bit data type pattern to `0bx11...`, yielding eight Blocks of 511 Extended Block Types. Becasue when the Mod bits are set to `0b00` it's a Standard Type, EB0 and EB1 are invalid.
 
-### Extended Blocks Table
+### Extended Blocks
 
 The CNS, MD, and EB (Extended Block) bits take up 6 control bits, leaving 10 LSb.
 
 | Value | Code | Description |
 |:-----:|:----:|:------------|
-|  00   | CIX  | A 9-bit Scoped or 9-bit Global Crabs Index. |
-|  01   | EXT  | Extended Standard or Extended Context Types. |
-|  02   | I1K  | 0 is NIL and A block of 1-1024 bytes. |
-|  03   | I2K  | 0 is NIL and A block of 1025-2048 bytes. |
-|  04   | R00  | Reserved. |
-|  05   | R01  | Reserved. |
-|  06   | R02  | Reserved. |
-|  07   | BFA  | An 8-bit Void Signed Boolean or Void Minifloat. |
+|  00   | STD  | Standard Types. |
+|  01   | STD  | Standard Types. |
+|  02   | CIX  | A 9-bit Scoped or 9-bit Global Crabs Index. |
+|  03   | EXT  | Extended Standard or Extended Context Types. |
+|  04   | I1K  | A block of 1-1024 bytes. |
+|  05   | I2K  | A block of 1025-2048 bytes. |
+|  06   | RES  | Reserved. |
+|  07   | VOA  | 8-bit Void Types. |
 
 ### Extended Standard Types
 
 | ID  |  Type   |    Name    | Description |
 |:---:|:-------:|:----------:|:------------|
-| 00  |   FAL   |    False   | Boolean false. |
-| 01  |   TRU   |    True    | Boolean true. |
-| 02  |   VSB   |   Varint   | 16-bit signed MSb variant encoded integer. |
-| 03  |   VUB   |   Varint   | 16-bit unsigned MSb variant encoded integer. |
-| 04  |   VSC   |   Varint   | 32-bit signed MSb variant encoded integer. |
-| 05  |   VUC   |   Varint   | 32-bit unsigned MSb variant encoded integer. |
-| 06  |   VSD   |   Varint   | 64-bit signed MSb variant encoded integer. |
-| 07  |   VUD   |   Varint   | 64-bit unsigned MSb variant encoded integer. |
-| 08  |   STA   |   String   | Nil-terminated UTF-8 string. |
-| 09  |   STB   |   String   | Nil-terminated UTF-16 string. |
-| 10  |   STC   |   String   | Nil-terminated UTF-32 string. |
-| 11  |   R01   |  Reserved  | Reserved. |
-| 12  |   R02   |  Reserved  | Reserved. |
-| 13  |   R03   |  Reserved  | Reserved. |
-| 14  |   R04   |  Reserved  | Reserved. |
-| 15  |   RSe   |  Reserved  | Reserved. |
-| 16  |   ERA   |   Error    | 1-byte Error type. |
-| 17  |   ERB   |   Error    | 2-byte Error type. |
-| 18  |   ERC   |   Error    | 4-byte Error type. |
-| 19  |   ERD   |   Error    | 8-byte Error type. |
+| 00  |   ___   |  Reserved  | Reserved. |
+| 01  |   ___   |  Reserved  | Reserved. |
+| 02  |   ___   |  Reserved  | Reserved. |
+| 03  |   STA   |   String   | Nil-terminated UTF-8 string. |
+| 04  |   VSB   |   Varint   | 16-bit signed MSb variant encoded integer. |
+| 05  |   VUB   |   Varint   | 16-bit unsigned MSb variant encoded integer. |
+| 06  |   STB   |   String   | Nil-terminated UTF-16 string. |
+| 07  |   VSC   |   Varint   | 32-bit signed MSb variant encoded integer. |
+| 08  |   VUC   |   Varint   | 32-bit unsigned MSb variant encoded integer. |
+| 09  |   STC   |   String   | Nil-terminated UTF-32 string. |
+| 10  |   VSD   |   Varint   | 64-bit signed MSb variant encoded integer. |
+| 11  |   VUD   |   Varint   | 64-bit unsigned MSb variant encoded integer. |
+| 12  |   ___   |  Reserved  | Reserved. |
+| 13  |   ___   |  Reserved  | Reserved. |
+| 14  |   ___   |  Reserved  | Reserved. |
+| 15  |   ___   |  Reserved  | Reserved. |
+| 16  |   ERA   |   Error    | 1-byte Error integer type. |
+| 17  |   ERB   |   Error    | 2-byte Error integer type. |
+| 18  |   ERC   |   Error    | 4-byte Error integer type. |
+| 19  |   ERD   |   Error    | 8-byte Error integer type. |
 | 20  |   EOA   | Err Object | 1-byte size-width Error type. |
 | 21  |   EOB   | Err Object | 2-byte size-width Error type. |
 | 22  |   EOC   | Err Object | 4-byte size-width Error type. |
 | ..  |   ...   |     ...    | .... |
-| 254 |   Any   |  Wildcard  | Wildcard; can be any type. |
-| 255 |   INV   |   Invalid  | Marks an invalid type in a B-Sequence. |
+| 255 |   Any   |  Wildcard  | Wildcard; can be any type. |
 
 ## Extended 8-bit Types
 
@@ -312,8 +316,6 @@ There are two ways to make an ASCII Pointer, one is by setting the MD bits to MD
 When an ASCII Object's bytes is positive the type is a contiguous number of bytes, if the values is negative then it becomes a raw pointer from the origin of the Crabs machine.
 
 At the very origin of the Crabs machine is a word aligned block of memory, which does not apply to 16-bit address space CPUs, that is 256 bytes plus the width of the CPU's cache line plus size of variables, which is typically 64 bytes on all CPUs with DDR RAM. 8-bit Crabs pointers are mapped to this 256-byte Crabs origin.
-
-Pointer values between 257-65535
 
 **[<< Previous Section: Types](Types.md) | [Next Section: Numbers >>](Numbers.md)**
 

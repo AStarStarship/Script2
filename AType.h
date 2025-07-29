@@ -20,6 +20,15 @@ have a word, we only need 16-bits, so why not reserve the entire word?
 typedef DTW(*ACTXHandler)(void* begin, void* end, DTW type, IUW value,
                           IUW vmsb);
 
+#if USING_VISUAL_CPP_X64
+// A 128-bit unsigned integer.
+struct IUE {
+  IUD lsb,
+      msb;
+};
+#endif
+
+
 namespace _ {
 
 /* Remaps a Plain Context Type to another POD type 1-19.
@@ -58,25 +67,25 @@ inline DTW ACTXHandle(void* begin, void* end, DTW type, IUW value, IUW vmsb);
 inline DTB ATypeMDDeassert(DTW type);
 
 // Asserts the Pointer modifier bits.
-inline DTB ATypeMDP(DTW type);
+inline DTB ATypeMakePtr(DTW type);
 
 // Asserts the Crabs index modifier bits.
-inline DTB ATypeMDI(DTW type);
+inline DTB ATypeMakeCrabsIndex(DTW type);
 
 // Asserts the Context Modifier bits.
 inline DTB ATypeMDC(DTW type);
 
-// Asserts the Constant bit.
-inline DTB ATypeCNS(DTW type);
-
-// Asserts the Pointer modifier bits.
-inline DTB ATypeCNS_MDP(DTW type);
-
-// Asserts the Crabs index modifier bits.
-inline DTB ATypeCNS_MDI(DTW type);
-
 // Asserts the Context Modifier bits.
 inline DTB ATypeCNS_MDC(DTW type);
+
+// Asserts the Constant bit.
+inline DTB ATypeMakeCNS(DTW type);
+
+// Asserts the Pointer modifier bits.
+inline DTB ATypeMakePtrCNS(DTW type);
+
+// Asserts the Crabs index modifier bits.
+inline DTB ATypeCrabsIndexCNS(DTW type);
 
 // A 128-bit unsigned integer.
 struct LIB_MEMBER IUE {
