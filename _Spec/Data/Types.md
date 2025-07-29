@@ -141,7 +141,7 @@ The One-byte, Two-be, Three-four, and Eight-byte ASCII Data Type bit patterns al
 
 ### Two-byte Type Bit Pattern
 
-The two-byte type bit pattern uses r=13-bit FPr void float, void signed int, and void uchar.
+The two-byte type bit pattern uses r=13-bit.
 
 | b15 | b14:b13 | b12:b9 | b8:b7 | b6:b5 | b4:b0 |
 |:---:|:-------:|:------:|:-----:|:-----:|:-----:|

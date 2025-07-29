@@ -47,7 +47,7 @@ struct TList {
   TStack<ISZ, ISZ, ISY> map;  //< Stack of offset mappings to the list items.
 };
 
-/* Gets the ASCII Data Types. */
+/* Gets a ASCII List Data Type. */
 template<LST_A>
 constexpr DT CListType() {
   return -_LS0 + CASizeCode<ISZ>();
@@ -244,7 +244,7 @@ Printer& TListPrint(Printer& o, const LST* list) {
     o << "\n| " << index << " " << Centerf(index, STRLength(count) + 2);
     DT type = *types++;
     o << ATypef(type) << ' ';
-    TPrintValue<Printer>(o, ATypeMDP(type), list, *vmap++);
+    TPrintValue<Printer>(o, ATypeMakePtr(type), list, *vmap++);
   }
   return o << Linef("\n+---");
 }
@@ -641,7 +641,7 @@ LST* TListAppend(LST* list, const LST* source) {
 
     D_COUT("\n\ni:" << i << " type:" << ATypef(vtype) << " voffset:" <<
            voffset);
-    ISY result = TListInsert<LST_P>(list, ATypeMDP(vtype),
+    ISY result = TListInsert<LST_P>(list, ATypeMakePtr(vtype),
                                     IUW(ISW(source) + voffset));
     D_COUT(" result:" << result << ' ' << 
            (result < 0 ? TAErrors<CHA, ISY>(result) : " "));

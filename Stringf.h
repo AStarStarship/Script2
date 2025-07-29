@@ -186,13 +186,15 @@ struct LIB_MEMBER Charsf {
   Charsf(const CHC* start, const CHC* stop);
   Charsf(const CHC* start, ISW count);
 #endif
+
+  // Returns the element.Type();
+  DTW Type();
 };
 
 /* Utility class for formatting text with operator<<, most commonly right and
 center aligned.
 @warning Stringf cannot be const because we need to write to it on the stack 
-frame in chained operator overloads.
-*/
+frame in chained operator overloads. */
 class LIB_MEMBER Stringf {
  public:
   enum {
@@ -400,6 +402,9 @@ struct LIB_MEMBER Centerf {
 #if USING_FPD == YES_0
   Centerf& Hex(FPD item, ISW count = 80);
 #endif
+
+  // Returns the element.Type();
+  DTW Type();
 };
 
 /* Utility class for printing hex with operator<<. */
@@ -455,6 +460,9 @@ struct LIB_MEMBER Rightf {
 #if USING_FPD == YES_0
   Rightf& Hex(FPD item, ISW count = 80);
 #endif
+
+  // Returns the element.Type();
+  DTW Type();
 };
 
 /* Utility class for printing a horizontal line with operator<<. */
@@ -467,12 +475,23 @@ struct LIB_MEMBER Linef {
 
   /* Constructors a horizontal line of the given string. */
   Linef(const CHA* start = NILP, ISW count = AConsoleWidth);
+
+  /* Constructors a horizontal line of the given string. */
+  Linef(const CHB* start = NILP, ISW count = AConsoleWidth);
+
+  /* Constructors a horizontal line of the given string. */
+  Linef(const CHC* start = NILP, ISW count = AConsoleWidth);
+
+  // Returns the element.Type();
+  DTW Type();
 };
 
 /* Utility class for printing a Heading with formatting with operator<<. */
 struct LIB_MEMBER Headingf {
   Stringf element;
-  const CHA *style, *caption2, *caption3;
+  const CHA* style,     //< Printf-style string
+           * caption2,  //< Line under the style.
+           * caption3;  //< Line under the caption2.
 
   /* Saves the parameters to the corresponding data members. */
   Headingf(const CHA* caption);
@@ -484,6 +503,9 @@ struct LIB_MEMBER Headingf {
   Headingf(const CHA* caption, const CHA* caption2,
            const CHA* caption3 = NILP, const CHA* style = NILP,
            ISW count = AConsoleWidth);
+
+  // Returns the element.Type()
+  DTW Type();
 };
 
 /* Utility class for indenting text with operator<<. */

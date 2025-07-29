@@ -428,73 +428,73 @@ Binaryf::Binaryf(FPD item) : valuef(item, sizeof(FPD)) {}
 #endif
 
 // Stringf::Stringf () {}
-Stringf::Stringf() : type_(_NIL), count_(0), boofer_() {
+Stringf::Stringf() : count_(0), type_(_NIL), boofer_() {
   string_ = &boofer_[0];
   *boofer_ = 0;
 }
 //< Visual C++ is complaining about unitialized members. I think it's a bug.
 
-Stringf::Stringf(const CHA* item) : string_(item), count_(0) { Print(item); }
+Stringf::Stringf(const CHA* item) : string_(item), type_(_STA), count_(0) { Print(item); }
 #if USING_STB == YES_0
-Stringf::Stringf(const CHB* item) : string_(item), count_(0) { Print(item); }
+Stringf::Stringf(const CHB* item) : string_(item), type_(_STA), count_(0) { Print(item); }
 #endif
 #if USING_STC == YES_0
-Stringf::Stringf(const CHC* item) : string_(item), count_(0) { Print(item); }
+Stringf::Stringf(const CHC* item) : string_(item), type_(_STA), count_(0) { Print(item); }
 #endif
-Stringf::Stringf(CHA item) : string_(boofer_), count_(0) { Print(item); }
-Stringf::Stringf(CHB item) : string_(boofer_), count_(0) { Print(item); }
-Stringf::Stringf(CHC item) : string_(boofer_), count_(0) { Print(item); }
-Stringf::Stringf(ISC item) : string_(boofer_), count_(0) { Print(item); }
-Stringf::Stringf(IUC item) : string_(boofer_), count_(0) { Print(item); }
-Stringf::Stringf(ISD item) : string_(boofer_), count_(0) { Print(item); }
-Stringf::Stringf(IUD item) : string_(boofer_), count_(0) { Print(item); }
+Stringf::Stringf(CHA item) : string_(boofer_), type_(_CHA), count_(0) { Print(item); }
+Stringf::Stringf(CHB item) : string_(boofer_), type_(_CHB), count_(0) { Print(item); }
+Stringf::Stringf(CHC item) : string_(boofer_), type_(_CHC), count_(0) { Print(item); }
+Stringf::Stringf(ISC item) : string_(boofer_), type_(_ISC), count_(0) { Print(item); }
+Stringf::Stringf(IUC item) : string_(boofer_), type_(_IUC), count_(0) { Print(item); }
+Stringf::Stringf(ISD item) : string_(boofer_), type_(_ISD), count_(0) { Print(item); }
+Stringf::Stringf(IUD item) : string_(boofer_), type_(_IUD), count_(0) { Print(item); }
 #if USING_FPC == YES_0
-Stringf::Stringf(FPC item) : string_(boofer_), count_(0) { Print(item); }
+Stringf::Stringf(FPC item) : string_(boofer_), type_(_FPC), count_(0) { Print(item); }
 #endif
 #if USING_FPD == YES_0
-Stringf::Stringf(FPD item) : string_(boofer_), count_(0) { Print(item); }
+Stringf::Stringf(FPD item) : string_(boofer_), type_(_FPD), count_(0) { Print(item); }
 #endif
-Stringf::Stringf(const CHA* item, ISW count) : string_(item), count_(count) {
+Stringf::Stringf(const CHA* item, ISW count) : string_(item), type_(_STA), count_(count) {
   Print(item);
 }
 #if USING_STB == YES_0
-Stringf::Stringf(const CHB* item, ISW count) : string_(item), count_(count) {
+Stringf::Stringf(const CHB* item, ISW count) : string_(item), type_(_STB), count_(count) {
   Print(item);
 }
 #endif
 #if USING_STC == YES_0
-Stringf::Stringf(const CHC* item, ISW count) : string_(item), count_(count) {
+Stringf::Stringf(const CHC* item, ISW count) : string_(item), type_(_STC), count_(count) {
   Print(item);
 }
 #endif
-Stringf::Stringf(CHA item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(CHA item, ISW count) : string_(boofer_), type_(_CHA), count_(count) {
   Print(item);
 }
-Stringf::Stringf(CHB item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(CHB item, ISW count) : string_(boofer_), type_(_CHB), count_(count) {
   Print(item);
 }
-Stringf::Stringf(CHC item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(CHC item, ISW count) : string_(boofer_), type_(_CHC), count_(count) {
   Print(item);
 }
-Stringf::Stringf(ISC item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(ISC item, ISW count) : string_(boofer_), type_(_ISC), count_(count) {
   Print(item);
 }
-Stringf::Stringf(IUC item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(IUC item, ISW count) : string_(boofer_), type_(_IUC), count_(count) {
   Print(item);
 }
-Stringf::Stringf(ISD item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(ISD item, ISW count) : string_(boofer_), type_(_ISD), count_(count) {
   Print(item);
 }
-Stringf::Stringf(IUD item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(IUD item, ISW count) : string_(boofer_), type_(_IUD), count_(count) {
   Print(item);
 }
 #if USING_FPC == YES_0
-Stringf::Stringf(FPC item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(FPC item, ISW count) : string_(boofer_), type_(_FPC), count_(count) {
   Print(item);
 }
 #endif
 #if USING_FPD == YES_0
-Stringf::Stringf(FPD item, ISW count) : string_(boofer_), count_(count) {
+Stringf::Stringf(FPD item, ISW count) : string_(boofer_), type_(_FPD), count_(count) {
   Print(item);
 }
 #endif
@@ -533,7 +533,7 @@ void Stringf::Print(const CHC* item) {
 void Stringf::Print(CHA item) {
   CHA* boofer = TPtr<CHA>(boofer_);
   ::_::SPrint(boofer, boofer + LengthMax, item);
-  type_ = _STA;
+  type_ = _CHA;
   string_ = boofer_;
 }
 
@@ -541,7 +541,7 @@ void Stringf::Print(CHA item) {
 void Stringf::Print(CHB item) {
   CHA* boofer = TPtr<CHA>(boofer_);
   ::_::SPrint(boofer, boofer + LengthMax, item);
-  type_ = _STA;
+  type_ = _CHB;
   string_ = boofer_;
 }
 #endif
@@ -549,7 +549,7 @@ void Stringf::Print(CHB item) {
 void Stringf::Print(CHC item) {
   CHA* boofer = TPtr<CHA>(boofer_);
   ::_::SPrint(boofer, boofer + LengthMax, item);
-  type_ = _STA;
+  type_ = _CHC;
   string_ = boofer;
 }
 #endif
@@ -558,7 +558,7 @@ void Stringf::Print(ISC item) {
 #if SEAM >= SCRIPT2_ITOS
   ::_::TSPrint<CHA>(boofer, boofer + LengthMax, item);
 #endif
-  type_ = _STA;
+  type_ = _ISC;
   string_ = boofer;
 }
 
@@ -567,7 +567,7 @@ void Stringf::Print(IUC item) {
 #if SEAM >= SCRIPT2_ITOS
   ::_::TSPrint<CHA>(boofer, boofer + LengthMax, item);
 #endif
-  type_ = _STA;
+  type_ = _IUC;
   string_ = boofer;
 }
 
@@ -576,7 +576,7 @@ void Stringf::Print(ISD item) {
 #if SEAM >= SCRIPT2_ITOS
   ::_::TSPrint<CHA>(boofer, boofer + LengthMax, item);
 #endif
-  type_ = _STA;
+  type_ = _ISD;
   string_ = boofer;
 }
 
@@ -585,7 +585,7 @@ void Stringf::Print(IUD item) {
 #if SEAM >= SCRIPT2_ITOS
   ::_::TSPrint<CHA>(boofer, boofer + LengthMax, item);
 #endif
-  type_ = _STA;
+  type_ = _SWA;
   string_ = boofer;
 }
 
@@ -593,7 +593,7 @@ void Stringf::Print(IUD item) {
 void Stringf::Print(FPC item) {
   CHA* boofer = TPtr<CHA>(boofer_);
   ::_::TSPrint<CHA>(boofer, boofer + LengthMax, item);
-  type_ = _STA;
+  type_ = _FPC;
   string_ = boofer;
 }
 #endif
@@ -601,7 +601,7 @@ void Stringf::Print(FPC item) {
 void Stringf::Print(FPD item) {
   CHA* boofer = TPtr<CHA>(boofer_);
   ::_::TSPrint<CHA>(boofer, boofer + LengthMax, item);
-  type_ = _STA;
+  type_ = _FPD;
   string_ = boofer;
 }
 #endif
@@ -861,6 +861,8 @@ Centerf& Centerf::Hex(FPD item, ISW count) {
 }
 #endif
 
+DTW Centerf::Type() { return element.Type(); }
+
 Rightf::Rightf() {}
 Rightf::Rightf(CHA item, ISW count) : element(item, count) {}
 Rightf::Rightf(const CHA* item, ISW count) : element(item, count) {}
@@ -944,6 +946,8 @@ Rightf& Rightf::Hex(FPD item, ISW count) {
 }
 #endif
 
+DTW Rightf::Type() { return element.Type(); }
+
 Linef::Linef(CHA item, ISW count) : element(string, count), string("") {
   CHA* cursor = string;
   *cursor++ = '\n';
@@ -953,6 +957,12 @@ Linef::Linef(CHA item, ISW count) : element(string, count), string("") {
   *cursor = 0;
 }
 Linef::Linef(const CHA* item, ISW count) : element(item, count), string("") {}
+
+Linef::Linef(const CHB* item, ISW count) : element(item, count), string("") {}
+
+Linef::Linef(const CHC* item, ISW count) : element(item, count), string("") {}
+
+DTW Linef::Type() { return element.Type(); }
 
 Headingf::Headingf(const CHA* caption1)
     : element(caption1, AConsoleWidth),
@@ -973,6 +983,8 @@ Headingf::Headingf(const CHA* caption1, const CHA* caption2,
       caption2(caption2),
       caption3(caption3) {}
 
+DTW Headingf::Type() { return element.Type(); }
+
 Charsf::Charsf(const void* start, const void* stop)
     : element(TPtr<const CHA>(start),
               TPtr<const CHA>(stop) - TPtr<const CHA>(start)) {}
@@ -989,6 +1001,10 @@ Charsf::Charsf(const CHC* start, const CHC* stop)
     : element(start, stop - start) {}
 Charsf::Charsf(const CHC* start, ISW count) : element(start, count) {}
 #endif
+
+DTW Charsf::Type() { return element.Type(); }
+
+
 
 Indentf::Indentf(ISW indent_count) : indent_count(indent_count) {}
 

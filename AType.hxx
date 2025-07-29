@@ -84,21 +84,21 @@ DTW ACTXHandlerDefault(void* begin, void* end, DTW type, IUW value, IUW vmsb) {
   #if CPU_SIZE != CPU_2_BYTE
   switch (Action) {
     #ifdef USING_STA
-    case ACTXFunPrintSTA: {
+    case _SWA: {
       TSPrinter<CHA> p_a((CHA*)begin, (CHA*)end);
       while (ctx_index-- > 0) p_a.Hex(IUA(ctx_index));
       return DTW(p_a.start);
     }
     #endif
     #ifdef USING_STB
-    case ACTXFunPrintSTB: {
+    case _SWB: {
       TSPrinter<CHB> p_b((CHB*)begin, (CHB*)end);
       while (ctx_index-- > 0) p_b.Hex(IUA(ctx_index));
       return DTW(p_b.start);
     }
     #endif
     #ifdef USING_STC
-    case ACTXFunPrintSTC: {
+    case _SWC: {
       TSPrinter<CHC> p_c((CHC*)begin, (CHC*)end);
       while (ctx_index-- > 0) p_c.Hex(IUA(ctx_index));
       return DTW(p_c.start);
@@ -144,13 +144,13 @@ DTB ATypeMDDeassert(DTW type) {
   return DTB(type ^ DTW(MD << ATypeMDBit0));
 }
 
-DTB ATypeMDP(DTW type) {
+DTB ATypeMakePtr(DTW type) {
   const DTW MD = (type >> ATypeMDBit0) & 0x3;
   type ^= MD << ATypeMDBit0;
   return DTB(type ^ DTW(_MDP << ATypeMDBit0));
 }
 
-DTB ATypeMDI(DTW type) {
+DTB ATypeMakeCrabsIndex(DTW type) {
   const DTW MD = (type >> ATypeMDBit0) & 0x3;
   type ^= MD << ATypeMDBit0;
   return DTB(type ^ DTW(_MDI << ATypeMDBit0));
@@ -162,16 +162,16 @@ DTB ATypeMDC(DTW type) {
   return DTB(type ^ DTW(_MDC << ATypeMDBit0));
 }
 
-DTB ATypeCNS(DTW type) {
+DTB ATypeMakeCNS(DTW type) {
   return DTB(ATypeCNSBit | type);
 }
 
-DTB ATypeCNS_MDP(DTW type) {
-  return DTB(ATypeCNSBit | ATypeMDP(type));
+DTB ATypeMakePtrCNS(DTW type) {
+  return DTB(ATypeCNSBit | ATypeMakePtr(type));
 }
 
-DTB ATypeCNS_MDI(DTW type) {
-  return DTB(ATypeCNSBit | ATypeMDI(type));
+DTB ATypeCrabsIndexCNS(DTW type) {
+  return DTB(ATypeCNSBit | ATypeMakeCrabsIndex(type));
 }
 
 DTB ATypeCNS_MDC(DTW type) {
@@ -250,8 +250,8 @@ BOL ATypeVTBits(DTB type) {
   //|:---:|:-------:|:------:|:-----:|:-----:|:-----:|
   //| CNS |    MD   |   MT   |  SW   |  VT   |  POD  |
   const DTB mask = 3,
-        VT = (type >> ATypeVTBit0) & mask,
-        MT = (type >> ATypeMTBit0) & mask;
+            VT   = (type >> ATypeVTBit0) & mask,
+            MT   = (type >> ATypeMTBit0) & mask;
   return (VT != _ARY || MT != 0) ? -1 : VT;
 }
 
@@ -575,7 +575,7 @@ void ATypeValue::SetNIL(IUW value) {
 
 inline void* ATypeValue::Set(void* value) {
   if (!value) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(_PTR);
+  ATypeMakePtr(_PTR);
   value_ = IUW(value);
   return NILP;
 }
@@ -583,14 +583,14 @@ inline void* ATypeValue::Set(void* value) {
 inline const void* ATypeValue::Set(const void* value)
 {
   if (!value) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(_PTR);
+  ATypeMakePtr(_PTR);
   value_ = IUW(value);
   return NILP;
 }
 
 inline void* ATypeValue::Set(void* base_ptr, ISW voffset) {
   if (!base_ptr) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(_PTR);
+  ATypeMakePtr(_PTR);
   value_ = IUW(ISW(base_ptr) + voffset);
   return NILP;
 }
@@ -598,14 +598,14 @@ inline void* ATypeValue::Set(void* base_ptr, ISW voffset) {
 inline const void* ATypeValue::Set(const void* base_ptr, ISW voffset)
 {
   if (!base_ptr) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(_PTR);
+  ATypeMakePtr(_PTR);
   value_ = IUW(ISW(base_ptr) + voffset);
   return NILP;
 }
 
 inline void* ATypeValue::Set(DTW type, void* value) {
   if (!value) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(type);
+  ATypeMakePtr(type);
   value_ = IUW(value);
   vmsb_  = 0;
   return NILP;
@@ -614,7 +614,7 @@ inline void* ATypeValue::Set(DTW type, void* value) {
 inline const void* ATypeValue::Set(DTW type, const void* value)
 {
   if (!value) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(type);
+  ATypeMakePtr(type);
   value_ = IUW(value);
   vmsb_ = 0;
   return NILP;
@@ -622,21 +622,21 @@ inline const void* ATypeValue::Set(DTW type, const void* value)
 
 inline void* ATypeValue::Set(DTW type, void* base_ptr, ISW voffset) {
   if (!base_ptr || voffset < 0) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(type);
+  ATypeMakePtr(type);
   value_ = IUW(ISW(base_ptr) + voffset);
   return NILP;
 }
 
 inline const void* ATypeValue::Set(DTW type, const void* base_ptr, ISW voffset) {
   if (!base_ptr || voffset < 0) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(type);
+  ATypeMakePtr(type);
   value_ = IUW(ISW(base_ptr) + voffset);
   return NILP;
 }
 
 inline void* ATypeValue::Set(DTW type, void* value, void* value_end) {
   if (!value || !value_end) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(type);
+  ATypeMakePtr(type);
   value_ = IUW(value);
   vmsb_ = IUW(value_end);
   return NILP;
@@ -645,7 +645,7 @@ inline void* ATypeValue::Set(DTW type, void* value, void* value_end) {
 inline const void* ATypeValue::Set(DTW type, const void* value, 
                                    const void* value_end) {
   if (!value || !value_end) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
-  ATypeMDP(type);
+  ATypeMakePtr(type);
   value_ = IUW(value);
   vmsb_ = IUW(value_end);
   return NILP;
@@ -657,7 +657,7 @@ inline void* ATypeValue::Set(DTW type, void* base_ptr, ISW offset,
 }
 
 inline const void* ATypeValue::Set(DTW type, const void* base_ptr, ISW offset,
-                             const void* value_end) {
+                                   const void* value_end) {
   return Set(type, TPtr<>(base_ptr, offset), value_end);
 }
 
@@ -667,101 +667,101 @@ inline void* ATypeValue::Set(DTW type, void* base_ptr, ISW offset,
 }
 
 inline const void* ATypeValue::Set(DTW type, const void* base_ptr, ISW offset,
-                             ISW base_bytes) {
+                                   ISW base_bytes) {
   return Set(type, TPtr<>(base_ptr, offset), TPtr<>(base_ptr, base_bytes));
 }
 
 #if USING_STA == YES_0
 void ATypeValue::Set(CHA value) {
-  type_ = _CHA;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(const CHA* value) {
-  type_ = CATypeMap(_STA, _CNS_PTR);
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 #endif
 #if USING_STB == YES_0
 void ATypeValue::Set(CHB value) {
-  type_ = _CHB;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(const CHB* value) {
-  type_ = _STB;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 #endif
 #if USING_STC == YES_0
 void ATypeValue::Set(CHC value) {
-  type_ = _CHC;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(const CHC* value) {
-  type_ = _STC;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 #endif
 void ATypeValue::Set(ISA value) {
-  type_ = _ISA;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(IUA value) {
-  type_ = _IUA;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(ISB value) {
-  type_ = _ISB;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(IUB value) {
-  type_ = _IUB;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(BOL value) {
-  type_ = _BOL;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(ISC value) {
-  type_ = _ISC;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(IUC value) {
-  type_ = _IUC;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(ISD value) {
-  type_ = _ISD;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 void ATypeValue::Set(IUD value) {
-  type_ = _IUD;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 #if USING_FPC == YES_0
 void ATypeValue::Set(FPC value) {
-  type_ = _FPC;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }
 #endif
 #if USING_FPD == YES_0
 void ATypeValue::Set(FPD value) {
-  type_ = _FPD;
+  type_ = TypeOf(value);
   value_ = IUW(value);
   vmsb_ = 0;
 }

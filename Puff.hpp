@@ -82,22 +82,31 @@ If the SEAM == _0_0_0 (1), then this function will utf debug data.
 @warning This function DOES NOT do any error checking! */
 template<typename CHT = CHR>
 inline CHT* TPrint2Decimals(CHT* socket, IUB decimal_pair) {
-  enum { cSizeBits = sizeof(CHT) * 8 };
-  socket[0] = (CHT)(decimal_pair >> 8);
-  CHA c = (CHA)decimal_pair;
-  socket[1] = (CHT)(c);
+  enum { Bytes = sizeof(CHT) * 8 };
+#if CPU_ENDIAN == CPU_ENDIAN_LITTLE
+  socket[0] = CHA(decimal_pair >> 8);
+  socket[1] = CHA(decimal_pair);
+#else
+  socket[0] = CHA(decimal_pair);
+  socket[1] = CHA(decimal_pair >> 8);
+#endif
   D_PRINT_PRINTED;
   return socket;
 }
 
 inline void PrintCharPair(CHA* socket, IUB value) {
-#if ALIGN_MEMORY
-  socket[0] = (CHA)(value >> 8);
-  socket[1] = (CHA)(value);
+#ifdef ALIGN_MEMORY
+#if CPU_ENDIAN == CPU_ENDIAN_LITTLE
+  socket[0] = CHA(value >> 8);
+  socket[1] = CHA(value);
 #else
-  * ((IUB*)socket) = value;
+  socket[0] = CHA(value);
+  socket[1] = CHA(value >> 8);
 #endif
-  using CHT = CHR;
+#else
+  *((IUB*)socket) = value;
+#endif
+  //using CHT = CHR;
   D_PRINT_PRINTED;
 }
 
@@ -113,7 +122,7 @@ inline void PrintCharPair(CHC* cursor, IUB decimal_pair) {
 template<typename CHT = CHR>
 CHT* TPrint8Decimals(CHT* cursor, IUC value, const IUB* lut) {
   D_COUT("\n    Printing 8 decimals:" << value);
-  IUB pow_10_ui2 = 10000, digits6and5 = (IUB)(value / pow_10_ui2),
+  IUB pow_10_ui2 = 10000, digits6and5 = IUB(value / pow_10_ui2),
     digits2and1 = value - pow_10_ui2 * digits6and5;
   pow_10_ui2 = 100;
   IUB digits8and7 = digits6and5 / pow_10_ui2,
@@ -147,7 +156,7 @@ inline void TPrint8or16Decimals(CHT* cursor, IUC lsd, const IUB* lut,
 }
 
 inline IUC ToIUC(IUC value) { return value; }
-inline IUC ToIUC(IUD value) { return (IUC)value; }
+inline IUC ToIUC(IUD value) { return IUC(value); }
 
 /* Prints the give value to the given socket as a Unicode string.
 @return Nil upon socket overflow and a pointer to the nil-term CHT upon
@@ -176,7 +185,7 @@ CHT* TSPrintUnsigned(CHT* cursor, CHT* stop, IU value) {
   Print1:
     nil_ptr = cursor + delta + 1;
     if (nil_ptr >= stop) return NILP;
-    TSPrintDecimal<CHT>(cursor, (CHT)value);
+    TSPrintDecimal<CHT>(cursor, CHT(value));
     return TPrintNil<CHT>(cursor + delta + 1);
   }
   else if (value < 100) {
@@ -195,7 +204,7 @@ CHT* TSPrintUnsigned(CHT* cursor, CHT* stop, IU value) {
         D_COUT("\n    Range:[1000, 1023] length:4");
         nil_ptr = cursor + delta + 4;
         if (nil_ptr >= stop) return NILP;
-        IUB digits2and1 = (IUB)(value - pow_10_ui2);
+        IUB digits2and1 = IUB(value - pow_10_ui2);
 #if CPU_ENDIAN == CPU_ENDIAN_LITTLE
         cursor[0] = '1';
         cursor[1] = '0';
@@ -210,9 +219,9 @@ CHT* TSPrintUnsigned(CHT* cursor, CHT* stop, IU value) {
       D_COUT("\n    Range:[100, 999] length:3");
       nil_ptr = cursor + delta + 3;
       if (nil_ptr >= stop) return NILP;
-      IUB digits2and1 = (IUB)value, pow_10_ui2 = 100;
+      IUB digits2and1 = IUB(value), pow_10_ui2 = 100;
       CHT digit = (CHT)(digits2and1 / pow_10_ui2);
-      digits2and1 -= ((IUB)digit) * pow_10_ui2;
+      digits2and1 -= IUB(digit) * pow_10_ui2;
       TSPrintDecimal<CHT>(cursor, digit);
       PrintCharPair(cursor + 1, lut[digits2and1]);
       return TPrintNil<CHT>(nil_ptr);
@@ -235,7 +244,8 @@ CHT* TSPrintUnsigned(CHT* cursor, CHT* stop, IU value) {
         TPrintNil<CHT>(nil_ptr);
       }
       pow_10_ui2 = 100;
-      IUB digits2and1 = (IUB)value, digits4and3 = digits2and1 / pow_10_ui2;
+      IUB digits2and1 = IUB(value),
+          digits4and3 = digits2and1 / pow_10_ui2;
       digits2and1 -= digits4and3 * pow_10_ui2;
       PrintCharPair(cursor, lut[digits4and3]);
       PrintCharPair(cursor + 2, lut[digits2and1]);
@@ -257,8 +267,8 @@ CHT* TSPrintUnsigned(CHT* cursor, CHT* stop, IU value) {
       value_ui4 -= pow_10_ui2 * digit6;
       cursor = TWriteChar<CHT>(cursor, '0' + digit6);
       pow_10_ui2 = 100;
-      IUB digits4and3 = ((IUB)value_ui4) / pow_10_ui2,
-        digits2and1 = (IUB)(value_ui4 - digits4and3 * pow_10_ui2);
+      IUB digits4and3 = IUB(value_ui4) / pow_10_ui2,
+        digits2and1 = IUB(value_ui4 - digits4and3 * pow_10_ui2);
       PrintCharPair(cursor, lut[digits4and3]);
       PrintCharPair(cursor + 2, lut[digits2and1]);
       return TPrintNil<CHT>(nil_ptr);
@@ -282,7 +292,7 @@ CHT* TSPrintUnsigned(CHT* cursor, CHT* stop, IU value) {
       }
       IUC value_ui4 = (IUC)value;
       pow_10_ui2 = 10000;
-      IUB digits6and5 = (IUB)(value_ui4 / pow_10_ui2),
+      IUB digits6and5 = IUB(value_ui4 / pow_10_ui2),
         digits2and1 = value_ui4 - pow_10_ui2 * digits6and5;
       pow_10_ui2 = 100;
       IUB digits8and7 = digits6and5 / pow_10_ui2,
@@ -458,10 +468,10 @@ success.
 template<typename IS = ISD, typename IU = IUD, typename CHT = CHR>
 inline CHT* TSPrintSigned(CHT* start, CHT* stop, IS value) {
   if (value >= 0) {
-    return TSPrintUnsigned<IU, CHT>(start, stop, (IU)value);
+    return TSPrintUnsigned<IU, CHT>(start, stop, IU(value));
   }
   *start++ = '-';
-  return TSPrintUnsigned<IU, CHT>(start, stop, (IU)(-(IS)value));
+  return TSPrintUnsigned<IU, CHT>(start, stop, IU(-IS(value)));
 }
 
 /* Writes the give value to the given socket as an ASCII string.
@@ -529,8 +539,7 @@ inline void FloatBytes(FPC value, CHA& byte_0, CHA& byte_1, CHA& byte_2,
 }
 
 inline void FloatBytes(FPD value, CHA& byte_0, CHA& byte_1, CHA& byte_2,
-  CHA& byte_3, CHA& byte_4, CHA& byte_5, CHA& byte_6,
-  CHA& byte_7) {
+  CHA& byte_3, CHA& byte_4, CHA& byte_5, CHA& byte_6, CHA& byte_7) {
   IUD ui_value = *TPtr<IUD>(&value);
   byte_0 = (CHA)(ui_value);
   byte_1 = (CHA)(ui_value >> 8);
@@ -552,7 +561,7 @@ CHT* TPrint3(CHT* string, CHT* stop, CHT a, CHT b, CHT c) {
 }
 
 /* Masks off the given bits starting at b0. */
-template<typename IS, ISN cMSb_, ISN cLSb_>
+template<typename IS, ISN MSb_, ISN LSb_>
 IS TMiddleBits(IS value) {
   // The goal is to not allow for undefined shifting behavior and not pay for
   // the error checking.
@@ -562,12 +571,12 @@ IS TMiddleBits(IS value) {
   // right_shift_count = 32 - 16 = 16
   enum {
     Size = sizeof(IS) * 8,
-    cMSbNatural = (cMSb_ < 0) ? 0 : cMSb_,
-    cLSbLNatural = (cLSb_ < 0) ? 0 : cLSb_,
-    cRightShiftTemp1 = Size - cMSbNatural + 1,
+    MSbNatural = (MSb_ < 0) ? 0 : MSb_,
+    LSbLNatural = (LSb_ < 0) ? 0 : LSb_,
+    cRightShiftTemp1 = Size - MSbNatural + 1,
     cRightShiftTemp2 = (cRightShiftTemp1 >= Size) ? 0 : cRightShiftTemp1,
-    cLeftShift = (cRightShiftTemp2 < cLSb_) ? 0 : cRightShiftTemp2,
-    cRightShift = (cRightShiftTemp2 < cLSb_) ? 0 : cRightShiftTemp2,
+    cLeftShift = (cRightShiftTemp2 < LSb_) ? 0 : cRightShiftTemp2,
+    cRightShift = (cRightShiftTemp2 < LSb_) ? 0 : cRightShiftTemp2,
   };
   return (value << cRightShift) >> cLeftShift;
 }
@@ -592,52 +601,52 @@ class TBinary {
 
 public:
   enum {
-    cSizeMax = 8,
-    Size = sizeof(Float) >= cSizeMax ? 0 : sizeof(Float),
-    cSizeBits = Size * 8,
-    cMSb = cSizeBits - 1,
-    cStringLengthMax = 24,
-    cExponentSizeBits =
-    (sizeof(Float) == 2)
-    ? 5
-    : (sizeof(Float) == 4) ? 8 : (sizeof(Float) == 8) ? 11 : 15,
-    cCoefficientSize = cSizeBits - cExponentSizeBits - 1,
-    cMantissaSize = cSizeBits - cExponentSizeBits - 1,
-    cExponentMaskUnshifted =
-    (sizeof(Size) == 2)
-    ? 0xf
-    : (sizeof(Size) == 4) ? 0x7f : (sizeof(Size) == 8) ? 0x3FF : 0,
-    cExponentBias = cExponentMaskUnshifted + cCoefficientSize,
-    cExponentMin = -cExponentBias,
+    SizeMax = 8,
+    Size = sizeof(Float) >= SizeMax ? 0 : sizeof(Float),
+    SizeBits = Size * 8,
+    MSb = SizeBits - 1,
+    StringLengthMax = 24,
+    ExponentSizeBits = (sizeof(Float) == 2) ? 5
+                     : (sizeof(Float) == 4) ? 8 
+                     : (sizeof(Float) == 8) ? 11
+                     : 15,
+    CoefficientSize = SizeBits - ExponentSizeBits - 1,
+    MantissaSize = SizeBits - ExponentSizeBits - 1,
+    ExponentMaskUnshifted = (sizeof(Size) == 2) ? 0xf
+                          : (sizeof(Size) == 4) ? 0x7f
+                          : (sizeof(Size) == 8) ? 0x3FF
+                          : 0,
+    ExponentBias = ExponentMaskUnshifted + CoefficientSize,
+    ExponentMin = -ExponentBias,
   };
 
   // Constructs an uninitialized floating-point number_.
   TBinary() : f(0), e(0) {}
 
   inline static IU Coefficient(IU decimal) {
-    return (decimal << (cExponentSizeBits + 1)) >> (cExponentSizeBits + 1);
+    return (decimal << (ExponentSizeBits + 1)) >> (ExponentSizeBits + 1);
   }
 
   // Converts a Float to a TBinary
   TBinary(Float value) {
     IU ui = *TPtr<IU>(&value);
 
-    IU biased_e = TMiddleBits<IU, cMSb - 1, cMantissaSize - 1>(ui);
+    IU biased_e = TMiddleBits<IU, MSb - 1, MantissaSize - 1>(ui);
     IU coefficient = Coefficient(ui);
     if (biased_e != 0) {
-      f = coefficient + (((IU)1) << cExponentSizeBits);
-      e = biased_e - cExponentBias;
+      f = coefficient + (IU(1) << ExponentSizeBits);
+      e = biased_e - ExponentBias;
     }
     else {
       f = coefficient;
-      e = cExponentMin + 1;
+      e = ExponentMin + 1;
     }
   }
 
   TBinary(IU f, IS e) : f(f), e(e) {}
 
   inline static IU Exponent(IU decimal) {
-    return (decimal << (cExponentSizeBits + 1)) >> (cExponentSizeBits + 1);
+    return (decimal << (ExponentSizeBits + 1)) >> (ExponentSizeBits + 1);
   }
 
   template<typename CHT = CHR>
@@ -683,13 +692,13 @@ public:
     // + 374; dk must be positive to perform ceiling function on positive
     // values.
     Float scalar = sizeof(Float) == 8 ? 0.30102999566398114 : 0.301029995f,
-      dk = (-61 - e) * scalar + 347;
+          dk      = (-61 - e) * scalar + 347;
     k = static_cast<IS>(dk);
     if (k != dk) ++k;
 
     IS index = (k >> 3) + 1;
 
-    k = -(-((IS)348) + (index << 3));
+    k = -(-IS(348) + (index << 3));
     // decimal exponent no need lookup table.
 
     D_ASSERT(index < 87);
@@ -707,14 +716,14 @@ public:
 
 #if D_THIS
   static void PrintDebugInfo() {
-    D_COUT("\nkSize:" << Size << " cSizeBits:" << cSizeBits << " cMSbIndex:"
-      << cMSb << " cStringLengthMax:" << cStringLengthMax
-      << "\nkExponentSizeBits:" << cExponentSizeBits
-      << " cCoefficientSize:" << cCoefficientSize
-      << " cMantissaSize:" << cMantissaSize
-      << "\nkExponentMaskUnshifted:" << cExponentMaskUnshifted
-      << " cExponentBias:" << cExponentBias
-      << " ExponentMin ():" << cExponentMin << "\n\n");
+    D_COUT("\nSize:" << Size << " SizeBits:" << SizeBits << " MSbIndex:"
+      << MSb << " StringLengthMax:" << StringLengthMax
+      << "\nExponentSizeBits:" << ExponentSizeBits
+      << " CoefficientSize:" << CoefficientSize
+      << " MantissaSize:" << MantissaSize
+      << "\nExponentMaskUnshifted:" << ExponentMaskUnshifted
+      << " ExponentBias:" << ExponentBias
+      << " ExponentMin ():" << ExponentMin << "\n\n");
   }
 #endif
 
@@ -833,17 +842,17 @@ private:
 #if defined(_MSC_VER) && defined(_M_AMD64)
     unsigned long index;  //< This is Microsoft's fault.
     _BitScanReverse64(&index, f);
-    unsigned long msb_minus_index = cMSb - index;
-    return TBinary(f << (cMSb - index), e - msb_minus_index);
+    unsigned long msb_minus_index = MSb - index;
+    return TBinary(f << (MSb - index), e - msb_minus_index);
 #else
     TBinary res = *this;
-    IU cDpHiddenBit = ((IU)1) << cMantissaSize;  // 0x0010000000000000;
-    while (!(res.f & (kDpHiddenBit << 1))) {
+    IU DpHiddenBit = ((IU)1) << MantissaSize;  // 0x0010000000000000;
+    while (!(res.f & (DpHiddenBit << 1))) {
       res.f <<= 1;
       --res.e;
     }
-    res.f <<= (kDiySignificandSize - cCoefficientSize - 2);
-    res.e = res.e - (kDiySignificandSize - cCoefficientSize - 2);
+    res.f <<= (DiySignificandSize - CoefficientSize - 2);
+    res.e = res.e - (DiySignificandSize - CoefficientSize - 2);
     return res;
 #endif
   }
@@ -856,10 +865,10 @@ private:
     IU l_f = f,   //< Local copy of f.
       l_e = e;  //< Local copy of e.
     TBinary pl = TBinary((l_f << 1) + 1, ((IS)l_e) - 1).NormalizeBoundary();
-    ISC cShiftCount = (cMantissaSize >= 8) ? 0 : cMantissaSize;
-    const IU cHiddenBit = ((IU)1) << cShiftCount;
-    TBinary mi = (f == cHiddenBit) ? TBinary((l_f << 2) - 1, e - 2)
-      : TBinary((l_f << 1) - 1, e - 1);
+    ISC cShiftCount = (MantissaSize >= 8) ? 0 : MantissaSize;
+    const IU HiddenBit = IU(1) << cShiftCount;
+    TBinary mi = (f == HiddenBit) ? TBinary((l_f << 2) - 1, e - 2)
+               : TBinary((l_f << 1) - 1, e - 1);
     mi.f <<= mi.e - pl.e;
     mi.e = pl.e;
     m_plus = pl;
@@ -1083,25 +1092,25 @@ private:
   /* Converts the Grisu2 output to a standardized/easier-to-read format. */
   template<typename CHT = CHR>
   static CHT* Standardize(CHT* start, CHT* stop, ISW length, IS k) {
-    const ISW kk = length + k;  // 10^(kk-1) <= v < 10^kk
+    const ISW KK = length + k;  // 10^(kk-1) <= v < 10^kk
     CHT* nil_term_char;
-    if (length <= kk && kk <= 21) {  // 1234e7 -> 12340000000
-      for (ISW i = length; i < kk; i++) start[i] = '0';
-      start[kk] = '.';
-      start[kk + 1] = '0';
-      nil_term_char = &start[kk + 2];
+    if (length <= KK && KK <= 21) {  // 1234e7 -> 12340000000
+      for (ISW i = length; i < KK; i++) start[i] = '0';
+      start[KK] = '.';
+      start[KK + 1] = '0';
+      nil_term_char = &start[KK + 2];
       *nil_term_char = _NIL;
       return nil_term_char;
     }
-    else if (0 < kk && kk <= 21) {  // 1234e-2 -> 12.34
-      ShiftUp(&start[kk + 1], length - kk);
-      start[kk] = '.';
+    else if (0 < KK && KK <= 21) {  // 1234e-2 -> 12.34
+      ShiftUp(&start[KK + 1], length - KK);
+      start[KK] = '.';
       nil_term_char = &start[length + 1];
       *nil_term_char = _NIL;
       return nil_term_char;
     }
-    else if (-6 < kk && kk <= 0) {  // 1234e-6 -> 0.001234
-      const ISW offset = 2 - kk;
+    else if (-6 < KK && KK <= 0) {  // 1234e-6 -> 0.001234
+      const ISW offset = 2 - KK;
       ShiftUp(&start[offset], length);
       start[0] = '0';
       start[1] = '.';
@@ -1113,14 +1122,14 @@ private:
     else if (length == 1) {
       // 1e30
       start[1] = 'e';
-      return TSPrintSigned<ISW, IUW, CHT>(start + 2, stop, kk - 1);
+      return TSPrintSigned<ISW, IUW, CHT>(start + 2, stop, KK - 1);
     }
     // else 1234e30 -> 1.234e33
     ShiftUp(&start[2], length - 1);
 
     *(++start)++ = '.';
     *start++ = 'e';
-    return TSPrintSigned<ISW, IUW, CHT>(start + length + 2, stop, kk - 1);
+    return TSPrintSigned<ISW, IUW, CHT>(start + length + 2, stop, KK - 1);
   }
 };
 

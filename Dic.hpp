@@ -598,7 +598,7 @@ DIC* TDicAppend(DIC* table, const DIC* source) {
     StdOut() << "\nvalue_offset:" << value_offset;
 #endif
     DT  type   = *src_types++;
-    ISY result = TDicInsert<DIC_P>(table, keys, key, ATypeMDP(type), 
+    ISY result = TDicInsert<DIC_P>(table, keys, key, ATypeMakePtr(type), 
                                    IUW(&source->values) + value_offset);
     const CHA* dez_nutz = TAErrors<CHA, ISY>(result);
     D_COUT("\nResult:" << result << ' ' << (result < 0 ? dez_nutz : " "));
@@ -771,13 +771,13 @@ public:
   }
 #endif
   inline ISY Insert(const CHT* key, const CHA* value, ISY index = PSH) {
-    return InvertTV(key, _STA, value, index);
+    return InvertTV(key, _SWA, value, index);
   }
   inline ISY Insert(const CHT* key, const CHB* value, ISY index = PSH) {
-    return InvertTV(key, _STB, value, index);
+    return InvertTV(key, _SWB, value, index);
   }
   inline ISY Insert(const CHT* key, const CHC* value, ISY index = PSH) {
-    return InvertTV(key, _STC, value, index);
+    return InvertTV(key, _SWC, value, index);
   }
 
   /* Removes the string at the given index from the Dic. */
