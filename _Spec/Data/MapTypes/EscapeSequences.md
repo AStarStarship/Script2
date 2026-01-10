@@ -30,8 +30,8 @@ Parent {
 } //< Code won't execute until you close the curly brackets or type ';'
 ```
 
+## Requirements
+
+[1] ./
+
 **[<< Previous Section:](./) | [Next Section: >>](./)**
-
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.

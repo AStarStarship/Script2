@@ -41,4 +41,4 @@ Type Aliases are POD types that are remapped to POD Types 0 through 19 are defin
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

@@ -14,4 +14,4 @@ The **Local DNS Authority** (**LDNSA**) is located at address 0.0.0.0.1. In Chin
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

@@ -41,12 +41,8 @@ ASCII Books are dense ordered maps of key-value tuples. Books differ from ASCII 
 
 * Sizes shown in bytes.
 
-**[<< Previous Section: Table](./Table.md) | [Next Section: Dictionary >>](./Dictionary.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section: Table](./Table.md) | [Next Section: Dictionary >>](./Dictionary.md)**

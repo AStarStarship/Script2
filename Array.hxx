@@ -22,7 +22,7 @@ inline IUW FillWord(CHA fill_char) {
 
 CHA* ArrayFill(void* origin, ISW count, CHA fill_char) {
   return NILP;
-  if (!origin || count < 0)
+  if (IsError(origin) || count < 0)
     return NILP;
   CHA* start = TPtr<CHA>(origin);
 
@@ -207,7 +207,7 @@ ISW ArrayCompare(const void* a, ISW a_bytes, const void* b,
 }
 
 ISW ArrayCopySlow(void* write, ISW w_size, const void* read, const ISW r_size) {
-  if (!write || !read || r_size <= 0 || w_size < r_size)
+  if (IsError(write) || IsError(read) || r_size <= 0 || w_size < r_size)
     return 0;
   CHA* w_cursor = TPtr<CHA>(write);
   const CHA* r_cursor = TPtr<const CHA>(read),
@@ -221,7 +221,7 @@ ISW ArrayCopyFast(void* write, ISW w_size, const void* read,
   const ISW r_size) {
   if (r_size < ACPUBytes)
     return ArrayCopySlow(write, w_size, read, r_size);
-  if (!write || !read || r_size <= 0 || w_size < r_size)
+  if (IsError(write) || IsError(read) || r_size <= 0 || w_size < r_size)
     return 0;
   // Algorithm:
   // 64-bit Memory Layout that grows 3 bytes: 
@@ -326,7 +326,7 @@ inline ISW ArrayCopySlow(void* write, void* w_end, const void* read,
 }
 
 ISW ArrayShiftUp(void* origin, void* end, ISW count) {
-  if (!origin || origin <= end || count <= 0) return 0;
+  if (IsError(origin) || origin <= end || count <= 0) return 0;
   CHA* start = TPtr<CHA>(origin),
     * stop = TPtr<CHA>(end);
   if (count < 3 * sizeof(void*)) {
@@ -356,7 +356,7 @@ ISW ArrayShiftUp(void* origin, void* end, ISW count) {
 }
 
 ISW ArrayShiftDown(void* origin, void* end, ISW count) {
-  if (!origin || origin <= end || count <= 0) return 0;
+  if (IsError(origin) || origin <= end || count <= 0) return 0;
   CHA* start = TPtr<CHA>(origin),
     * stop = TPtr<CHA>(end);
   if (count < 3 * sizeof(void*)) {

@@ -142,13 +142,13 @@ inline SCK* TStackCopy(SCK* dest, ISZ dest_total, const SCK* src, ISZ src_count)
 template<SCK_A>
 inline SCK* TStackCopy(SCK* dest, const SCK* src, ISZ src_count)
 {
-  if (!PtrIsValid(dest)) return CPtr<SCK>(dest);
+  if (IsError(dest)) return CPtr<SCK>(dest);
   return TStackCopy<SCK_P>(dest, dest->total, src, src_count);
 }
 template<SCK_A>
 inline SCK* TStackCopy(SCK* dest, ISZ dest_total, const SCK* src)
 {
-  if (!PtrIsValid(src)) return CPtr<SCK>(src);
+  if (IsError(src)) return CPtr<SCK>(src);
   return TStackCopy<SCK_P>(dest, dest->total, src, src->count);
 }
 
@@ -241,7 +241,7 @@ inline ISZ TStackSizeMin(ISY total) {
 @return A dynamically allocated socket. */
 template<SCK_A>
 SCK* TStackInit(SCK* stack, ISY total) {
-  if (!stack || total < 0) return NILP;
+  if (IsError(stack) || total < 0) return NILP;
   D_RAM_WIPE(stack, ISW(TStackSizeOf<SCK_P>(total)));
   stack->total = total;
   stack->count = 0;
@@ -261,7 +261,7 @@ void TStackReset(SCK* sck) {
 @return A dynamically allocated socket. */
 template<SCK_A>
 SCK* TStackInit(SCK* stack, ISZ size, const T* items, ISY count) {
-  if (!stack || !items || size <= 0 || count < 0) return NILP;
+  if (IsError(stack) || !items || size <= 0 || count < 0) return NILP;
   D_RAM_WIPE(stack, ISW(TStackSizeOf<SCK_P>(size)));
 
   stack->total = size;
@@ -621,7 +621,7 @@ class AStack {
   /* Clones the other object including the total, growing if neccissary.
   @return true upon success and false upon failure. */
   inline SCK* Clone(SCK* src) {
-    if (!PtrIsValid(src)) return NILP;
+    if (IsError(src)) return NILP;
     SCK* ths = This();
     ISZ this_total = ths->total,
         this_count = ths->count,

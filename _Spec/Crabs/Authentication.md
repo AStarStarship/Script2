@@ -14,4 +14,4 @@ Authentication in Script shall be done using a sequence of Script Operations.
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

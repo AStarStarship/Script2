@@ -18,7 +18,7 @@
 #include "13.Map.hxx"
 #include "14.Table.hxx"
 #include "15.Dic.hxx"
-#include "16.Crabs.hxx"
+#include "16.CrabsBSQ.hxx"
 #include "17.Room.hxx"
 #include "18.Matrix.hxx"
 #include "19.File.hxx"
@@ -34,6 +34,6 @@ inline const CHA* Script2Tests(const CHA* args) {
                    Script2::Uniprinter, Script2::Clock, Script2::Stack, 
                    Script2::Matrix, Script2::String, Script2::Loom, 
                    Script2::List, Script2::Book, Script2::Map, Script2::Table, 
-                   Script2::Dic, Script2::Crabs, Script2::Room, Script2::Matrix,
-                   Script2::Autojects, Script2::File>(args);
+                   Script2::Dic, Script2::CrabsBSQ, Script2::Room, 
+                   Script2::Matrix, Script2::Autojects, Script2::File>(args);
 }

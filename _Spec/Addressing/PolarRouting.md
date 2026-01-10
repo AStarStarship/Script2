@@ -44,4 +44,4 @@ Haversine Formula's is used to calculate 3D arc lengths using polar coordinates 
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

@@ -48,7 +48,7 @@ class TDoor : public Operand {
   /* A door in a Chinese room. */
   TDoor(const CHA* roomName = NILP, IUW* socket = NILP,
         IUW bytes = DoorBytesMin) {
-    if (!socket) {
+    if (IsError(socket)) {
       if (bytes < DoorBytesMin) {
         bytes = DoorBytesMin;
       }

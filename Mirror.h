@@ -3,14 +3,14 @@
 #ifndef SCRIPT2_MIRROR_DECL
 #define SCRIPT2_MIRROR_DECL 1
 #include <_Config.h>
-#if SEAM >= SCRIPT2_ROOM
+#if SEAM >= SCRIPT2_CRABS_BSQ
 #include "BIn.h"
 #include "BOut.h"
 #include "Op.h"
 namespace _ {
 
 /* A Mirror in a Chinese Room.
-A Mirror */
+Okay, then what does a Mirror do? */
 struct LIB_MEMBER Mirror {
   ISC size,    //< The size of the socket.
       origin,  //< The starting index of the ring socket data.
@@ -18,7 +18,6 @@ struct LIB_MEMBER Mirror {
       read;    //< The read variable.
 };
 
-const Op* MirrorResult(Mirror* mirror, Error error);
 const Op* MirrorResult(Mirror* mirror, Error error);
 
 enum {
@@ -68,7 +67,7 @@ LIB_MEMBER BOL MirrorIsReadable(Mirror* mirror);
 @param address The address of the IUA in error.
 @return         Returns a Static Error Operation Result. */
 LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
-                                  const ISC* header);
+                                  const DTB* header);
 /* Used to return an erroneous result from a B-Input.
 @param bin     The source Mirror.
 @param error   The error type.
@@ -77,7 +76,7 @@ LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
 @param address The address of the IUA in error.
 @return         Returns a Static Error Operation Result. */
 LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
-                                  const ISC* header);
+                                  const DTB* header);
 
 /* Used to return an erroneous result from a B-Input.
 @param bin     The source Mirror.
@@ -87,7 +86,7 @@ LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
 @param address The address of the IUA in error.
 @return         Returns a Static Error Operation Result. */
 LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
-                                  const ISC* header, IUA offset);
+                                  const DTB* header, IUA offset);
 
 /* Used to return an erroneous result from a B-Input.
 @param bin     The source Mirror.
@@ -97,7 +96,7 @@ LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
 @param address The address of the IUA in error.
 @return         Returns a Static Error Operation Result. */
 // LIB_MEMBER const Op* MirrorResult (Mirror* mirror, Error error,
-//                                   const ISC* header,
+//                                   const DTB* header,
 //                                   ISC offset);
 
 /* Used to return an erroneous result from a B-Input.
@@ -108,7 +107,7 @@ LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
 @param address The address of the IUA in error.
 @return         Returns a Static Error Operation Result. */
 LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
-                                  const ISC* header, ISC offset, CHA* address);
+                                  const DTB* header, ISC offset, CHA* address);
 
 /* Used to return an erroneous result from a B-Input.
 @param bin     The source Mirror.
@@ -118,8 +117,8 @@ LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
 @param address The address of the IUA in error.
 @return         Returns a Static Error Operation Result. */
 LIB_MEMBER const Op* MirrorResult(Mirror* mirror, Error error,
-                                  const ISC* header, ISC offset, CHA* address);
+                                  const DTB* header, ISC offset, CHA* address);
 
 }  //< namespace _
-#endif  //< #if SEAM >= SCRIPT2_DIC
+#endif
 #endif

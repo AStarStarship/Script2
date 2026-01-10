@@ -43,4 +43,4 @@ Please note that this Release for Comment (RFC) is a living document and not an 
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

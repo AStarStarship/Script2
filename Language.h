@@ -5,15 +5,15 @@
 #include <_Config.h>
 #if SEAM >= SCRIPT2_DIC
 namespace _ {
-namespace langauge {
+namespace language {
 
 enum {
-  cEnUppercaseBegin = 'A',
-  cEnUppercaseEnd   = 'Z',
-  cEnLowercaseBegin = 'a',
-  cEnLowercaseEnd   = 'z',
+  EnUppercaseBegin = 'A',
+  EnUppercaseEnd   = 'Z',
+  EnLowercaseBegin = 'a',
+  EnLowercaseEnd   = 'z',
 };
-}  //< namespace langauge
+}  //< namespace language
 
 /* A spoken language Unicode character range.
 

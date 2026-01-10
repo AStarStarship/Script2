@@ -8,7 +8,7 @@ const CHA* ASCIIErrorSTA() {
 
 const CHA* ASCIIErrorSTR(ISA error) {
   error = error < 0 ? -error : error;
-  if (error > ASCIIErrorCount) error = ASCIIErrorCount;
+  if (error > AErrorTotal) error = AErrorTotal;
   return &TAErrors<CHA>()[error * 32];
 }
 const CHA* ASCIIErrorSTR(ISB error) {
@@ -22,7 +22,7 @@ const CHA* ASCIIErrorSTR(ISD error) {
 }
 
 BOL AIsError(const void* result) {
-  return TDelta<IUW>(result) < ASCIIErrorCount;
+  return TDelta<IUW>(result) < AErrorTotal;
 }
 
 }  //< namespace _

@@ -16,4 +16,4 @@ The Unix timestamp cycles around in the year 3038, so to ensure stability on 32-
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_EXCEPTIONS_DECL
 #define SCRIPT2_EXCEPTIONS_DECL 1
 #include <_Config.h>
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 #if USING_SCRIPT2_INTERRUPTS == YES_0
 namespace _ {
 

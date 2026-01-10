@@ -9,8 +9,8 @@
 ```C++
 template <typename ISZ = ISN>
 struct TStack {
-  ISZ total,  //< Size of the Array in elements.
-      count;  //< Element count.
+  ISZ total,    //< Size of the Array in elements.
+      count;    //< Element count.
 };
 ```
 
@@ -26,12 +26,8 @@ struct TStack {
 0xN +---------------+
 ```
 
-**[<< Previous Section: Array](Array.md) | [Next Section: Matrix >>](Matrix.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section: Array](Array.md) | [Next Section: Matrix >>](Matrix.md)**

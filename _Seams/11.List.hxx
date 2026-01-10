@@ -25,7 +25,7 @@ static void TestList() {
                             << " list.SizeWords():" << list.BytesWords());
   D_COUT_OBJ(list);
   D_COUT("\n\nStep 1: Fill up the list...");
-  ISY i = list.Count();
+  auto i = list.Count();
   A_AVOW(i, list.Insert(ISA('!' + i)));
   auto tv = TListTypeValue<LST_P>(list.This(), i);
   A_AVOW(DT(_ISA), tv.type);

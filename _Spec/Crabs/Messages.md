@@ -16,4 +16,4 @@ Crabs Messages beginning with a non-printable Unicode Character shall be IUA-enc
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

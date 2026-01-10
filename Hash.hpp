@@ -56,7 +56,7 @@ inline CHT* THashPrimePrint_NC(CHT* start, CHT* stop, const CHY* item, HSH& hash
     ++length;
     hash = THashPrime<HSH, CHY>(c, hash);
     start = SPrint(start, stop, c);
-    if (!start) return start;
+    if (IsError(start)) return start;
     item = SScan(item, c);
   }
   *start = 0;

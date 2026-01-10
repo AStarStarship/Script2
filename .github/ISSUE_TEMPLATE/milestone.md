@@ -5,7 +5,7 @@ title: ''
 labels: ''
 assignees: ''
 ---
-<https://github.com/KabukiStarship/Script2/milestone/N>
+<https://github.com/AStarStarship/Script2/milestone/N>
 
 ### Todo
 
@@ -19,4 +19,4 @@ assignees: ''
 
 ## License
 
-Copyright [Kabuki Starship](https://kabukistarship.com); all rights reserved.
+Copyright [AStarship™](https://astarship.net).

@@ -9,7 +9,7 @@ namespace _ {
 /* Prints the given string to the Printer. */
 template<typename Printer, typename CH = CHR>
 Printer& TSPrintString(Printer& p, const CH* string) {
-  if (!string) return p;
+  if (IsError(string)) return p;
   CHL c = 0;
   string = SScan(string, c);
   while (c) {
@@ -23,7 +23,7 @@ Printer& TSPrintString(Printer& p, const CH* string) {
 printed. */
 template<typename Printer, typename CH = CHR>
 ISN TPrintAndCount(Printer& p, const CH* string) {
-  if (!string) return 0;
+  if (IsError(string)) return 0;
   ISN print_count = 0;
   CHL c = 0;
   string = SScan(string, c);
@@ -80,7 +80,7 @@ byte_count is greater than zero then the memory will be printed sequentially
 one byte at a time. */
 template<typename Printer>
 Printer& TPrintHex(Printer& p, const void* origin, ISW byte_count) {
-  if (!origin) return p;
+  if (IsError(origin)) return p;
   ISW delta;
   const IUA* cursor = TPtr<const IUA>(origin);
 #if CPU_ENDIAN == CPU_ENDIAN_LITTLE
@@ -120,7 +120,7 @@ Printer& TPrint(Printer& p, Hexf& value) {
 /* Prints the memory beginning at start to the Printer. */
 template<typename Printer>
 Printer& TPrintBinary(Printer& p, const void* start, ISW byte_count) {
-  if (!start) return p;
+  if (IsError(start)) return p;
   const IUA* cursor = TPtr<const IUA>(start);
 #if CPU_ENDIAN == CPU_ENDIAN_LITTLE
   ISA delta;
@@ -193,7 +193,7 @@ Printer& TPrintAligned(Printer& p, const CHA* string, ISW char_count,
 #else
     CHL c;
     string = SScan(string, c);
-    if (!string) return p;
+    if (IsError(string)) return p;
     p << c;
 #endif
   }
@@ -226,7 +226,7 @@ pointer to the nil-term CHA upon success.
 @param column_count The number_ of columns to align right to. */
 template<typename Printer, typename CHT = CHR>
 Printer& TPrintCenter(Printer& p, const CHT* value, ISW column_count = 80) {
-  if (!value || column_count < 1) return p;
+  if (IsError(value) || column_count < 1) return p;
 
   // const CHT* token_end = TStringStop<CHT>(value);
   const CHT* token_end = value;
@@ -307,7 +307,7 @@ pointer to the nil-term CHA upon success.
 @param column_count The number_ of columns to align right to. */
 template<typename Printer, typename CHT = CHR>
 Printer& TPrintRight(Printer& p, const CHT* value, ISW column_count = 80) {
-  if (!value || column_count < 1) return p;
+  if (IsError(value) || column_count < 1) return p;
 
   // const CH* token_end = TStringStop<CH>(value);
   const CHT* token_end = value;
@@ -436,7 +436,7 @@ const CHT* TPrintLinef(Printer& p, const CHT* style = NILP,
     StateStateDuplicateChar = 1,
     BreakCount = 3,
   };
-  if (!style) style = TStringLinef<CHT>();
+  if (IsError(style)) style = TStringLinef<CHT>();
   if (column_count < BreakCount) return NILP;
 
   ISW state = StateScanningDifferentChars;
@@ -538,9 +538,9 @@ template<typename Printer, typename CH>
 Printer& TPrintHeading(Printer& p, const CH* element, const CHA* style = NILP,
                        ISW column_count = 80, const CHA* caption2 = NILP,
                        const CHA* caption3 = NILP) {
-  if (!style) style = TStringHeadingf<CHA>();
+  if (IsError(style)) style = TStringHeadingf<CHA>();
   style = TPrintLinef<Printer, CHA>(p, style, column_count);
-  if (!style) return p;
+  if (IsError(style)) return p;
   p << element;
   if (caption2) p << caption2;
   if (caption3) p << caption3;
@@ -580,7 +580,7 @@ Printer& TPrint(Printer& p, Headingf& value) {
 
 template<typename Printer, typename CH = CHR>
 Printer& TPrintChars(Printer& p, const CH* start, const CH* stop) {
-  if (!start || start >= stop) return p;
+  if (IsError(start) || start >= stop) return p;
 
   ISW bytes = stop - start + 1;
 
@@ -775,7 +775,7 @@ Printer& TPrintAError(Printer& p, ISW error, const CHR* message = NILP) {
     if (message) return p << message;
     return p;
   }
-  if (!message) return p << TAErrors<CHR, ISW>(error);
+  if (IsError(message)) return p << TAErrors<CHR, ISW>(error);
   return p << "Error " << TAErrors<CHR, ISW>(error) << ": " << message;
 }
 
@@ -858,7 +858,7 @@ Printer& TPrintValue(Printer& p, DTW type, IUW value, IUW vmsb = 0) {
       type = ATypeMDDeassert(type);
       if (type == 0) return p;
       if (type > _PCa) {
-        if (!actxh) return p;
+        if (IsError(actxh)) return p;
         type = actxh(NILP, NILP, type, 0, 0);
       }
       switch (type >> 2) {
@@ -907,7 +907,7 @@ Printer& TPrintValue(Printer& p, DTW type, IUW value, IUW vmsb = 0) {
   }
   if (type < ATypePODTotal) {
     if (type > _PCa) {
-      if (!actxh) return p;
+      if (IsError(actxh)) return p;
       type = actxh(NILP, NILP, type, 0, 0);
     }
     return TPrintPOD_NC<Printer>(p, type, value, vmsb);

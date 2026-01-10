@@ -25,14 +25,14 @@ Printer& TPrintSizeCodef(Printer o, TSizeCodef<T, CH> item) {
 template<typename CHT = CHR>
 ISN TStringCompare(const CHT* string, const CHT* other_String,
                    CHT delimiter = 0) {
-  if (!string || !other_String) return 0;
+  if (IsError(string) || IsError(other_String)) return 0;
 
   ISN a, b, result;
-  if (!string) {
-    if (!other_String) return 0;
+  if (IsError(string)) {
+    if (IsError(other_String)) return 0;
     return ISN(*string);
   }
-  if (!other_String) return 0 - *string;
+  if (IsError(other_String)) return 0 - *string;
 
   a = *string;
   b = *other_String;
@@ -227,7 +227,7 @@ inline CHC ToLower(CHC value) { return TToLower<CHC>(value); }
 
 template<typename CHT>
 ISN TStringIsYesNo(const CHT* string) {
-  if (!string) return 0;
+  if (IsError(string)) return 0;
   CHT c = TToLower<CHT>(*string++);
   ISN result;
   if (c == 'y')
@@ -258,7 +258,7 @@ BOL TIsDigit(CHT c) {
 @param item The IS to write the scanned IS. */
 template<typename IS = ISW, typename IU = IUW, typename CHT = CHR>
 const CHT* TScanSigned(const CHT* string, IS& item) {
-  if (!string) return NILP;
+  if (IsError(string)) return NILP;
   IS sign;
   const CHT* cursor = string;
   CHT c = *cursor++;
@@ -344,7 +344,7 @@ CHT* TSScan(CHT* string, ISD& item) {
 @param item The IU to write the scanned IU. */
 template<typename IU, typename CHT = CHR>
 const CHT* TScanUnsigned(const CHT* string, IU& item) {
-  if (!string) return NILP;
+  if (IsError(string)) return NILP;
   const CHT* cursor = string;
   CHT c = *cursor++;
   if (!TIsDigit<CHT>(c)) return NILP;
@@ -422,7 +422,7 @@ CHT* TSScan(CHT* string, IUD& item) {
 @param item  The string to print. */
 template<typename CHT = CHR>
 CHT* TSPrint(CHT* start, CHT* stop, CHA item) {
-  if (!start++ || start >= stop) return NILP;
+  if (IsError(start++) || start >= stop) return NILP;
   *start = item;
   *start = 0;
   return start;
@@ -457,7 +457,7 @@ CHT* TSPrint(CHT* start, ISW count, CHC item) {
   return TSPrint<CHT>(start, start + count - 1, item);
 }
 inline CHA* SPrint(CHA* start, CHA* stop, CHA item) {
-  if (!PtrIsValid(stop) || start >= stop) return NILP;
+  if (IsError(stop) || start >= stop) return NILP;
   *start++ = item;
   *start = 0;
   return start;
@@ -473,7 +473,7 @@ inline CHA* SPrint(CHA* string, ISW size, CHB item) {
 }
 
 inline CHB* SPrint(CHB* string, CHB* stop, CHB item) {
-  if (!string || string >= stop) return NILP;
+  if (IsError(string) || string >= stop) return NILP;
   *string++ = item;
   *string = 0;
   return string;
@@ -498,7 +498,7 @@ inline CHA* SPrint(CHA* string, ISW size, CHC item) {
 }
 
 inline CHC* SPrint(CHC* string, CHC* stop, CHC item) {
-  if (!string || string >= stop) return NILP;
+  if (IsError(string) || string >= stop) return NILP;
   *string++ = item;
   *string = 0;
   return string;
@@ -540,7 +540,7 @@ CHT* TPrintLinef(CHT* start, CHT* stop, CHT item, ISW count = AConsoleWidth,
                  const CHT* header = TStringNL<CHT>(),
                  const CHT* footer = NILP) {
   if (header) start = SPrint(start, stop, header);
-  if (!start || start + count <= stop) return NILP;
+  if (IsError(start) || start + count <= stop) return NILP;
 
   while (count-- > 0) *start++ = item;
 
@@ -558,7 +558,7 @@ CHT* TPrintLinef(CHT* start, CHT* stop, const CHT* item,
                  const CHT* header = TStringNL<CHT>(),
                  const CHT* footer = NILP) {
   if (header) start = SPrint(start, stop, header);
-  if (!start || start <= stop || (start + count >= stop)) return NILP;
+  if (IsError(start) || start <= stop || (start + count >= stop)) return NILP;
 
   const CHT* cursor = item;
   while (count-- > 0) {
@@ -588,12 +588,12 @@ namespace _ {
 @param item   The item to print. */
 template<typename CHX, typename CHY>
 inline CHX* TSPrintString(CHX* start, CHX* stop, const CHY* item) {
-  if (!start || start >= stop || !item) return NILP;
+  if (IsError(start) || start >= stop || !item) return NILP;
   CHL c = 0;
   item = SScan(item, c);
   while (c) {
     start = SPrint(start, stop, c);
-    if (!start) return start;
+    if (IsError(start)) return start;
     item = SScan(item, c);
   }
   *start = 0;
@@ -671,7 +671,7 @@ void TPrint1(CHT* start, CHT token) {
 template<typename T, typename CHT = CHR>
 CHT* TPrintHex(CHT* start, CHT* stop, const void* origin, ISW bytes) {
   CHT* end = start + (bytes * 2);
-  if (!start || bytes <= 0 || end < start) return NILP;
+  if (IsError(start) || bytes <= 0 || end < start) return NILP;
   const IUA* cursor = TPtr<const IUA>(origin);
   while (bytes-- > 0) {
     IUA byte = *cursor++;
@@ -687,7 +687,7 @@ template<typename CHT, typename IU>
 CHT* TPrintHex(CHT* start, CHT* stop, IU value) {
   enum { HexStringLengthSizeMax = sizeof(IU) * 2 + 3 };
 
-  if (!start || start + HexStringLengthSizeMax >= stop) return NILP;
+  if (IsError(start) || start + HexStringLengthSizeMax >= stop) return NILP;
 
   *start++ = '0';
   *start++ = 'x';
@@ -853,7 +853,7 @@ pointer to the nil-term CHA upon success.
 template<typename CHT = CHR>
 CHT* TPrintRight(CHT* cursor, CHT* stop, const CHT* item,
                  ISC column_count = AConsoleWidth) {
-  if (!cursor || cursor + column_count > stop) {
+  if (IsError(cursor) || cursor + column_count > stop) {
     return NILP;
   }
 
@@ -907,7 +907,7 @@ CHT* TPrintRight(CHT* cursor, CHT* stop, const CHT* item,
 template<typename CHT = CHR>
 CHT* TPrintCenter(CHT* cursor, CHT* stop, const CHT* string,
                   ISC column_count = AConsoleWidth) {
-  if (!cursor || cursor >= stop) return NILP;
+  if (IsError(cursor) || cursor >= stop) return NILP;
 
   // We need to leave at least one space to the left and right of
   ISC length = TStringLength<CHT>(string);
@@ -946,7 +946,7 @@ CHT* TPrintCenter(CHT* cursor, CHT* stop, const CHT* string,
 
 template<typename CHT = CHR>
 CHT* TSConcat(CHT* start, CHT* stop, const CHT* item) {
-  if (!start) return;
+  if (IsError(start)) return;
   return TSPrint<CHT*>(TStringStop<CHT>(start), stop, item);
 }
 
@@ -960,7 +960,7 @@ CHT* TSConcat(CHT* start, ISW size, const CHT* item) {
 @param start The start of the string to search. */
 template<typename CHT = const CHA>
 const CHT* TStringDecimalEnd(const CHT* start) {
-  if (!start) return start;
+  if (IsError(start)) return start;
   CHT c = *start++;
   if (c == '-') c = *start++;
   if (c < '0' || c > '9') return NILP;
@@ -981,7 +981,7 @@ given range.
 template<typename CHT = CHR>
 const CHT* TStringSkipAllInRange(const CHT* cursor, CHT lower_bounds,
                                  CHT upper_bounds) {
-  if (!cursor || lower_bounds >= upper_bounds) return NILP;
+  if (IsError(cursor) || lower_bounds >= upper_bounds) return NILP;
   CHT c = *cursor;
   while (c >= lower_bounds && c <= upper_bounds) c = *(++cursor);
   return cursor;
@@ -1024,7 +1024,7 @@ CHT* TStringDecimalEnd(CHT* start) {
 @param stop    The last CHT in the boofer. */
 template<typename CHT = CHR>
 const CHT* TStringDecimalEnd(const CHT* cursor, const CHT* stop) {
-  if (!cursor || cursor >= stop) return NILP;
+  if (IsError(cursor) || cursor >= stop) return NILP;
   CHT c = *cursor++;
   if (!c) return NILP;
   if (c == '-') {  // It might be negative.
@@ -1051,7 +1051,7 @@ inline CHT* TStringDecimalEnd(CHT* cursor, CHT* stop) {
 template<typename CHT>
 const CHT* TStringFloatStop(const CHT* start) {
   const CHA* stop = TStringDecimalEnd<CHA>(start);
-  if (!stop) return stop;
+  if (IsError(stop)) return stop;
   CHA c = *stop++;
   if (c == '.') {
     stop = TStringDecimalEnd<CHA>(start);
@@ -1116,7 +1116,7 @@ inline CHT TCharPrintable(CHT item) {
 is nil. */
 template<typename CHT = CHR>
 inline CHT* TStringSet(CHT* string) {
-  if (!string) return TStringEmpty<CHT>();
+  if (IsError(string)) return TStringEmpty<CHT>();
   return string;
 }
 
@@ -1157,7 +1157,7 @@ CHT* TStringLineEnd(CHT* cursor, ISC column_count = AConsoleWidth) {
 template<typename CHT = CHR>
 const CHT* TStringLineEnd(const CHT* cursor, const CHT* stop,
                           ISC column_count = AConsoleWidth) {
-  if (!cursor || cursor >= stop) return NILP;
+  if (IsError(cursor) || cursor >= stop) return NILP;
   CHT c;
   // Scroll to the stop of the line.
   c = *cursor++;
@@ -1191,7 +1191,7 @@ inline CHT* TStringLineEnd(CHT* cursor, CHT* stop,
 @param cursor  The first CHT in the boofer. */
 template<typename CHT = CHR>
 const CHT* TStringSkipSpaces(const CHT* cursor) {
-  if (!cursor) return NILP;
+  if (IsError(cursor)) return NILP;
   CHT c = *cursor;
   while (TIsWhitespace<CHT>(c)) {
     if (!c) return cursor;  //< This isn't an error as far as I can see.
@@ -1259,7 +1259,7 @@ inline CHT* TStringFind(CHT* string, const CHT* query) {
 @return Nil if there are no spaces to skip. */
 template<typename CHT = CHR>
 const CHT* TStringSkipSpaces(const CHT* cursor, const CHT* stop) {
-  if (!cursor) return NILP;
+  if (IsError(cursor)) return NILP;
   if (cursor > stop) return NILP;
   CHT c = *cursor;
   while (IsWhitespace(c)) {
@@ -1314,8 +1314,7 @@ inline CHT* TStringEquals(CHT* String_a, const CHT* String_b) {
 s upon success. */
 template<typename CHT = CHR>
 const CHT* TStringEquals(const CHT* cursor, const CHT* stop, const CHT* query) {
-  if (!cursor || cursor >= stop) return NILP;
-  if (!query) return NILP;
+  if (IsError(cursor) || cursor >= stop || IsError(query)) return NILP;
 
   CHT a = *cursor, b = *query;
   while (a) {
@@ -1346,7 +1345,7 @@ CHT* TStringEquals(CHT* cursor, CHT* stop, const CHT* query) {
 @desc A s is defined as empty if it is _NIL or all whitespace. */
 template<typename CHT = CHR>
 BOL TStringIsntEmpty(const CHT* cursor) {
-  if (!cursor) return false;
+  if (IsError(cursor)) return false;
   CHT c = *cursor;
   while (c) {
     if (!TIsWhitespace<CHT>(c)) return true;
@@ -1370,7 +1369,7 @@ BOL TStringIsntEmpty(CHT* cursor) {
 @param stop    The last CHT in the boofer. */
 template<typename CHT = CHR>
 BOL TStringIsntEmpty(const CHT* cursor, const CHT* stop) {
-  if (!cursor) return false;
+  if (IsError(cursor)) return false;
   if (cursor > stop) return false;
   CHT c = *cursor;
   while (c) {
@@ -1402,7 +1401,7 @@ BOL TStringIsntEmpty(CHT* cursor, const CHT* stop) {
 template<typename CHT = CHR>
 CHT* TPrintWrap(CHT* cursor, CHT* stop, const CHT* string,
                 ISW column_count = AConsoleWidth) {
-  if (!cursor || cursor <= stop || !string) return NILP;
+  if (IsError(cursor) || cursor <= stop || !string) return NILP;
   if (column_count < 2) return cursor;
 
   CHT c = *string++;
@@ -1432,13 +1431,13 @@ ISC TStringQuery(const CHT* cursor, const CHT* stop, const CHT* query) {
   CHT a = *cursor, b = *query;
   ISC result;
 
-  if (!cursor) {
-    if (!query) return 0;
+  if (IsError(cursor)) {
+    if (IsError(query)) return 0;
     a = 0;
     b = *query;
     return b - a;
   }
-  if (!query) {
+  if (IsError(query)) {
     a = *cursor;
     b = 0;
     return b - a;
@@ -1473,5 +1472,5 @@ ISC TStringQuery(const CHT* cursor, const CHT* stop, const CHT* query) {
 
 }  // namespace _
 
-#endif  //< #if SEAM >= SCRIPT2_UNIPRINTER
-#endif  //< #ifndef SCRIPT2_STRINGF_HPP
+#endif
+#endif

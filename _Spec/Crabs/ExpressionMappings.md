@@ -71,4 +71,4 @@ Parent Child1 Foo "Number conversion Example" stuff things item1 stuff things it
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

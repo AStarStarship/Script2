@@ -4,12 +4,12 @@
 
 ### Timestamps
 
-ASCII provides three types of timestamps, a 32-bit signed integer TM4 seconds from epoch timestamp, a 64-bit signed integer TME seconds from epoch timestamp, and 64-bit Time Sub-second (TME) timestamp composed of a TM4 timestamp and a IUC tick that gets incremented at a variable time period. The Sub-second Tick Epoch (STE) shall be programmable but shall be set to the defaults of either 1000 or 64, depending on if a microsecond or OS update timer is used respectively. The operation of the sub-second tick is intended to use unsigned addition wraparound in order to allow one thread to update the sub-second tick. To calculate the number of ticks implementations shall implement unsigned wrap-around checking.
+ASCII provides three types of timestamps, a 32-bit signed integer TMD seconds from epoch timestamp, a 64-bit signed integer TME seconds from epoch timestamp, and 64-bit Time Sub-second (TME) timestamp composed of a TMD timestamp and a IUC tick that gets incremented at a variable time period. The Sub-second Tick Epoch (STE) shall be programmable but shall be set to the defaults of either 1000 or 64, depending on if a microsecond or OS update timer is used respectively. The operation of the sub-second tick is intended to use unsigned addition wraparound in order to allow one thread to update the sub-second tick. To calculate the number of ticks implementations shall implement unsigned wrap-around checking.
 
 ```C++
 /* Example functions.
-@fn Foo <TM4>:<NIL>
-@fn Foo <TM8>:<NIL>
+@fn Foo <TMD>:<NIL>
+@fn Foo <TME>:<NIL>
 @fn Foo <TME>:<NIL>
 
 # Timestamp Format
@@ -40,4 +40,4 @@ The 32-bit time epoch shall be set to 32 years[] starting at the January 1st of 
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

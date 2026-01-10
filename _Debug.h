@@ -7,8 +7,7 @@
 #define R_(code)
 #define D_THIS 1
 #define A_TEST_BEGIN\
-  ::_::COut cout;   \
-  cout << Headingf("Testing ", __FUNCTION__, NILP, NILP, 80)
+  ::_::StdOut() << Headingf("Testing ", __FUNCTION__, NILP, NILP, 80)
 #define A_RUN_TEST(test_unit) \
   { const CHA* result = test_unit(); if(result) return result; }
 #define D_RUN_TEST(test_unit) \
@@ -62,7 +61,7 @@
 #define A_CHECK(condition) \
   if (!::_::Test(condition)) ::_::TestWarn(__LINE__, __FUNCTION__, __FILE__)
 #define A_COMPARE(a, b)                              \
-  if (!::_::Test(a, b)) {                            \
+  if (!::_::TestEq(a, b)) {                            \
     ::_::TestWarn(__LINE__, __FUNCTION__, __FILE__); \
   }
 #define D_ASSERT_INDEX(condition, index)                           \
@@ -76,39 +75,39 @@
   if (!::_::Test(condition)) ::_::TestFail(__LINE__, __FUNCTION__, __FILE__)
 #define R_ASSERT(condition)
 #define A_ASSERT_PTR(ptr)                            \
-  if (IUW(ptr) < ASCIIErrorCount)  \
+  if (IsError(ptr))  \
     ::_::TestFail(__LINE__, __FUNCTION__, __FILE__)
 #define D_ASSERT_PTR(ptr)                            \
-  if (IUW(ptr) < ASCIIErrorCount)  \
+  if (IsError(ptr))  \
     ::_::TestFail(__LINE__, __FUNCTION__, __FILE__)
 #define R_ASSERT_PTR(ptr)
 #define A_AVOW(a, b)                                 \
-  if (!::_::Test(a, b)) {                            \
+  if (!::_::TestEq(a, b)) {                            \
     ::_::TestFail(__LINE__, __FUNCTION__, __FILE__); \
   }
 #define D_AVOW(a, b)                                 \
-  if (!::_::Test(a, b)) {                            \
+  if (!::_::TestEq(a, b)) {                            \
     ::_::TestFail(__LINE__, __FUNCTION__, __FILE__); \
   }
 #define R_AVOW(a, b)
-#define A_AVOW_NOT(a, b)                             \
+#define A_DISAVOW(a, b)                             \
   if (!::_::TestNot(a, b)) {                            \
     ::_::TestFail(__LINE__, __FUNCTION__, __FILE__); \
   }
-#define D_AVOW_NOT(a, b)                             \
+#define D_DISAVOW(a, b)                             \
   if (!::_::TestNot(a, b)) {                            \
     ::_::TestFail(__LINE__, __FUNCTION__, __FILE__); \
   }
-#define R_AVOW_NOT(a, b)
+#define R_DISAVOW(a, b)
 #define R_AVOW_INDEX(a, b, index)
 #define D_AVOW_INDEX(a, b, index)                    \
-  if (!::_::Test(a, b)) {                            \
-    ::_::COut(kSTRIndex).Print(index);               \
+  if (!::_::TestEq(a, b)) {                            \
+    ::_::StdOut() << kSTRIndex << index;               \
     ::_::TestFail(__LINE__, __FUNCTION__, __FILE__); \
   }
 #define A_AVOW_INDEX(a, b, index)                    \
-  if (!::_::Test(a, b)) {                            \
-    ::_::COut("\n           Index:").Print(index);   \
+  if (!::_::TestEq(a, b)) {                            \
+    ::_::StdOut() << "\n           Index:" << index;   \
     ::_::TestFail(__LINE__, __FUNCTION__, __FILE__); \
   }
 #define A_FAIL() ::_::TestWarn(__LINE__, __FUNCTION__, __FILE__)
@@ -126,22 +125,22 @@
 #define R_RETURN(value)
 #define D_RETURNT(type, error) { \
   ::_::TestWarn(__LINE__, __FUNCTION__, __FILE__); \
-  ::_::COut("\n\nERROR ").Print(error) << ": " << \
+  ::_::StdOut() << "\n\nERROR " << error << ": " << \
     TAErrors<CHR, ISN>(error); \
   return type(error); }
 #define D_RETURN_CPTR_ERROR(type, error){ \
   ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__); \
-  ::_::COut("\n\nERROR ").Print(ISW(error)) << ": " << \
+  ::_::StdOut() << "\n\nERROR " << ISW(error) << ": " << \
     TAErrors<CHR, ISW>(ISW(error)); \
   return const_cast<type*>(error);}
 #define D_RETURN_TPTR_ERROR(type, error){ \
   ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__); \
-  ::_::COut("\n\nERROR ").Print(ISW(error)) << ": " << \
+  ::_::StdOut() << "\n\nERROR " << ISW(error) << ": " << \
     TAErrors<CHR, ISW>(ISW(error)); \
   return reinterpret_cast<type*>(error);}
 #define D_RETURN_PTR_ERROR(error) {\
   ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__); \
-  ::_::COut("\n\nERROR ").Print(ISW(error)) << ": " << \
+  ::_::StdOut() << "\n\nERROR " << ISW(error) << ": " << \
     TAErrors<CHR, ISW>(ISW(error)); \
   return error;}
 #define A_RETURN_VALUE(value) {\
@@ -150,50 +149,50 @@
   ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__); return value; }
 #define R_RETURN_VALUE(value)
 #define D_CHECK_PTR_RETURN_CODE(ptr) \
-  if(IUW(ptr) < ASCIIErrorCount) {\
+  if(IUW(ptr) < AErrorTotal) {\
     ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__);\
-    ::_::COut("\n\nERROR ").Print(IUW(ptr)) << ": " <<\
+    ::_::StdOut() << "\n\nERROR " << IUW(ptr) << ": " <<\
       TAErrors<CHR, ISW>(ISW(ptr));\
     return ptr;\
   }
 #define D_CHECK_PTR_TRETURN(type, ptr) \
-  if(IUW(ptr) < ASCIIErrorCount) {\
+  if(IUW(ptr) < AErrorTotal) {\
     ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__);\
-    ::_::COut("\n\nERROR ").Print(IUW(ptr)) << ": " <<\
+    ::_::StdOut() << "\n\nERROR " << IUW(ptr) << ": " <<\
       TAErrors<CHR, ISW>(ISW(ptr));\
     return type(IUW(ptr));\
   }
 #define D_CHECK_PTR_TRETURN2(type, ptr1, ptr2) \
-  if(IUW(ptr1) < ASCIIErrorCount) {\
+  if(IUW(ptr1) < AErrorTotal) {\
     ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__);\
-    ::_::COut("\n\nERROR ").Print(IUW(ptr1)) << ": " <<\
+    ::_::StdOut() << "\n\nERROR " << IUW(ptr1) << ": " <<\
       TAErrors<CHR, ISW>(ISW(ptr2));\
     return type(IUW(ptr1));\
   } \
-  if(IUW(ptr2) < ASCIIErrorCount) {\
+  if(IUW(ptr2) < AErrorTotal) {\
     ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__);\
-    ::_::COut("\n\nERROR ").Print(IUW(ptr2)) << ": " <<\
+    ::_::StdOut() << "\n\nERROR " << IUW(ptr2) << ": " <<\
       TAErrors<CHR, ISW>(ISW(ptr2));\
     return type(IUW(ptr2));\
   }
 #define D_CHECK_CPTR_RETURN(type, ptr)\
-  if(IUW(ptr) < ASCIIErrorCount) {\
+  if(IUW(ptr) < AErrorTotal) {\
     ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__);\
-    ::_::COut("\n\nERROR ").Print(IUW(ptr)) << ": " <<\
+    ::_::StdOut() << "\n\nERROR " << IUW(ptr) << ": " <<\
       TAErrors<CHR, ISW>(reinterpret_cast<ISW>(ptr));\
     return const_cast<type*>(ptr);\
   }
 #define D_CHECK_TPTR_RETURN(type, ptr) \
-  if(IUW(ptr) < ASCIIErrorCount) {\
+  if(IUW(ptr) < AErrorTotal) {\
     ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__);\
-    ::_::COut("\n\nERROR ").Print(IUW(ptr)) << ": " <<\
+    ::_::StdOut() << "\n\nERROR " << IUW(ptr) << ": " <<\
       TAErrors<CHR, ISW>(reinterpret_cast<ISW>(ptr));\
     return reinterpret_cast<type*>(IUW(ptr));\
   }
 #define D_CHECK_PTR_RETURN_NIL(ptr) \
-  if(IUW(ptr) < ASCIIErrorCount) {\
+  if(IUW(ptr) < AErrorTotal) {\
     ::_::TestFunctionLine(__LINE__, __FUNCTION__, __FILE__);\
-    ::_::COut("\n\nERROR ").Print(reinterpret_cast<ISW>(ptr)) << ": " <<\
+    ::_::StdOut() << "\n\nERROR " << reinterpret_cast<ISW>(ptr) << ": " <<\
       TAErrors<CHR, ISW>(reinterpret_cast<ISW>(IUW(ptr)));\
     return;\
   }

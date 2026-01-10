@@ -18,7 +18,7 @@ CHT* TPrintPrinted(CHT* start = NILP) {
   }
   std::cout << "\n    Printed \"";
   CHT* string = boofer_begin;
-  if (!string) return string;
+  if (IsError(string)) return string;
   CHT c = *string++;
   while (c) {
     std::cout << c;
@@ -167,7 +167,7 @@ template<typename IU = IUW, typename CHT = CHR>
 CHT* TSPrintUnsigned(CHT* cursor, CHT* stop, IU value) {
   BEGIN_ITOS_ALGORITHM;
 
-  if (!cursor || cursor >= stop) return NILP;
+  if (IsError(cursor) || cursor >= stop) return NILP;
 
   CHT* nil_ptr;
   IUB pow_10_ui2, delta = 0;
@@ -553,7 +553,7 @@ inline void FloatBytes(FPD value, CHA& byte_0, CHA& byte_1, CHA& byte_2,
 
 template<typename CHT = CHR>
 CHT* TPrint3(CHT* string, CHT* stop, CHT a, CHT b, CHT c) {
-  if (!string || string + 3 >= stop) return NILP;
+  if (IsError(string) || string + 3 >= stop) return NILP;
   *string++ = a;
   *string++ = b;
   *string++ = c;
@@ -681,7 +681,7 @@ public:
     }
     IS k;
     CHT* cursor = Print<CHT>(socket, stop, value, k);
-    if (!cursor) return cursor;
+    if (IsError(cursor)) return cursor;
     return Standardize<CHT>(socket, stop, cursor - socket, k);
   }
 

@@ -12,7 +12,6 @@ namespace Script2 {
 
 inline const CHA* COut(const CHA* args) {
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
-
   A_TEST_BEGIN;
   
   D_COUT(Headingf("Testing ArgsToString"));
@@ -38,10 +37,10 @@ inline const CHA* COut(const CHA* args) {
   }
   D_COUT("\n\nRunning ArgsToString... ");
 
-  D_ASSERT(ArgsToString(ArgCount, test_args));
+  const CHA* arg_result = ArgsToString(ArgCount, test_args);
+  D_ASSERT(!IsError(arg_result));
 
-  D_COUT("Result:\"");
-  D_COUT(test_args[1]);
+  D_COUT("Result:\"" << test_args[1] << '\"');
 
   CHC ch4_found;
 
@@ -93,11 +92,11 @@ inline const CHA* COut(const CHA* args) {
   D_COUT(Headingf("Testing Hex functions"));
   for (ISC i = 0; i < 16; ++i) {
     ISC value = HexToByte(HexNibbleToLowerCase(i));
-    Test(i, value);
+    TestEq(i, value);
     // D_COUT("\n    " << i << ".) " >> value);
     value = HexToByte(HexNibbleToUpperCase(i));
     // D_COUT(" Result:" << value);
-    Test(i, value);
+    TestEq(i, value);
   }
 
   for (ISC i = 0; i < 256; ++i) {
@@ -109,7 +108,7 @@ inline const CHA* COut(const CHA* args) {
     A_AVOW(i, value);
     value = HexToByte(HexByteToUpperCase(i));
     // D_COUT(" Result:" << value);
-    Test(i, value);
+    TestEq(i, value);
   }
 #endif
 

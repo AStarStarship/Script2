@@ -78,24 +78,24 @@ const Op* Star (wchar_t index, Expression* crabs)  {
 
     static const unsigned int params[] = { 2, kADR, kUI4, kSTR, 32 },
                               result[] = { 2, kUI4, kSTR };
-    static const Operation kOpExample= { “expression-name”,
+    static const Operation OpExample= { “expression-name”,
                                          params, result,
                                          “Description”, 0 };
     // Script uses the a nil crabs pointer as a flag to get the Operation header.
-    if (!crabs) return &kOpExample;
+    if (IsError(crabs)) return &OpExample;
 
     // Example RPC variables.
     IUC input_a,
-             input_b,
-             output_a = 1,
-             output_b = 2;
+        input_b,
+        output_a = 1,
+        output_b = 2;
 
-    if (Read (crabs, kOpExample, Args (params, &input_a, &input_b)))
+    if (Read (crabs, OpExample, Args (params, &input_a, &input_b)))
          return crabs->result;
 
     // Operation logic here.
 
-    return Write (crabs, kOpExample, Args (params, &output_a, &output_b));
+    return Write (crabs, OpExample, Args (params, &output_a, &output_b));
 }
 ```
 
@@ -228,4 +228,4 @@ Return values just need an address of an Operation to send the return value too.
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

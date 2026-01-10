@@ -16,7 +16,7 @@ File::File(const CHR* uri) : uri_(uri_) {}
 const CHR* File::URI() { return uri_; }
 
 const CHR* File::URISet(const CHR* uri) {
-  if (!uri) return uri;
+  if (IsError(uri)) return uri;
 
   uri_ = uri;
 

@@ -24,4 +24,4 @@ The Target shall be certified as a Group Automata if the Target supports Script^
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

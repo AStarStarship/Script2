@@ -1,6 +1,6 @@
 # SCRIPT Specification
 
-This document is a Release for Comment (RFC) not an ISO Specification, there are plenty of errors and things we can do better so your comments and criticism are appreciated. If you would like to contribute to this RFC, contributors are welcome on GitHub at <https://github.com/KabukiStarship/script2>.
+SCRIPT (Serial Chinese Room, Interprocess, and Telemetry) Specification defines the Crabs (Chinese Room Abstract Stack) Machine and ASCII (Automaton Standard Code for Information Interchange) Data Specification. This document is a Release for Comment (RFC) not an ISO Specification, there are plenty of errors and things we can do better so your comments and criticism are appreciated. If you would like to contribute to this RFC, contributors are welcome on GitHub at <https://github.com/AStarStarship/script2>.
 
 ## Content Table
 
@@ -26,34 +26,33 @@ This document is a Release for Comment (RFC) not an ISO Specification, there are
       1. [Table](Data/MapTypes/Table)
       1. [Book](Data/MapTypes/Book)
       1. [Dictionary](Data/MapTypes/Dictionary)
+      1. [TokenMap](./Data/MapTypes/TokenMap)
 3. [Universal Addressing Specification](Addressing/)
    1. [Most Longitudinal bit](Addressing/MostLongitudinalBit)
-   1. [Universal Address Format](Addressing/UniversalAddressFormat)
+   2. [Universal Address Format](Addressing/UniversalAddressFormat)
 4. [SCRIPT Protocol Specification](Protocol/)
    1. [Group Automata](Protocol/GroupAutomata)
-   1. [Time](Protocol/Time)
-   1. [Slots](Protocol/Slots)
-   1. [Expressions](Protocol/Expressions)
-   1. [Operations](Protocol/Operations)
-   1. [Generic Handshake](Protocol/Handshake)
-   1. [Encryption](Protocol/Encryption)
-   1. [Terminals](Protocol/Terminals)
-   1. [Quality of Service](Protocol/QualityOfService)
-   1. [Congestion Control](Protocol/CongestionControl)
-   1. [Abnormal Behavior](Protocol/AbnormalBehavior)
+   2. [Time](Protocol/Time)
+   3. [Slots](Protocol/Slots)
+   4. [Expressions](Protocol/Expressions)
+   5. [Operations](Protocol/Operations)
+   6. [Generic Handshake](Protocol/Handshake)
+   7. [Encryption](Protocol/Encryption)
+   8. [Terminals](Protocol/Terminals)
+   9. [Quality of Service](Protocol/QualityOfService)
+   10. [Congestion Control](Protocol/CongestionControl)
+   11. [Abnormal Behavior](Protocol/AbnormalBehavior)
 5. [Crabs Specification](Crabs/)
    1. [Authentication](Crabs/Authentication)
-   1. [Portals](Crabs/Portals)
-   1. [Room Contents](Crabs/RoomContents)
-   1. [Conformance Targets](Crabs/ConformanceTargets)
-   1. [Autojects](Crabs/Autojects)
-   1. [Messages](Crabs/Messages)
-   1. [Expression Mappings](Crabs/ExpressionMappings)
+   2. [Portals](Crabs/Portals)
+   3. [Room Contents](Crabs/RoomContents)
+   4. [Conformance Targets](Crabs/ConformanceTargets)
+   5. [Autojects](Crabs/Autojects)
+   6. [Messages](Crabs/Messages)
+   7. [Expression Mappings](Crabs/ExpressionMappings)
 6. [IMUL Specification](IMUL)
    1. 
 
 ## License
 
-Copyright [Kabuki Starship](https://kabukistarship.com).
-
-This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at <https://mozilla.org/MPL/2.0/>.
+Copyright [AStarship™](https://astarship.net).

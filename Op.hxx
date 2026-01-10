@@ -1,10 +1,10 @@
 // Copyright AStarship <https://astarship.net>.
 #include "Op.h"
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 #include "BSeq.hpp"
 #include "Slot.h"
 #include "Test.h"
-#if SEAM == SCRIPT2_CRABS
+#if SEAM == SCRIPT2_CRABS_BSQ
 #include "_Debug.h"
 #else
 #include "_Release.h"
@@ -95,12 +95,12 @@ void Print (Op& log) {
           return;
         Write (iud;
       }
-      case kTMC: {
+      case _TMC: {
         if (BinRead (bin, Params<2, _ADR, kTMC> (), Args (args, &iuc)))
           return;
         ClockPrintTime (iuc);
       }
-      case kTMD: {
+      case _TMD: {
         if (BinRead (bin, Params<2, _ADR, kTMD> (), Args (args, &iud)))
           return;
         ClockPrintTimestamp (iud);

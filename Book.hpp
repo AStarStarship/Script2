@@ -212,7 +212,7 @@ inline ISZ TBookFreeSpace(BOK* book) {
 template<typename Printer, BOK_A>
 Printer& TBookPrint(Printer& o, const BOK* book) {
   D_ASSERT_PTR(book);
-  if (!PtrIsValid(book))
+  if (IsError(book))
     return o << "book ptr invalid";
   auto total        = book->values.map.total;
   auto count        = book->values.map.count;
@@ -325,7 +325,7 @@ BOK* TBookInit(BOK* book, ISY total = BookDefaultTotalFractionShift,
   D_COUT(TPrintAType<COut>(StdOut(), KeysType));
   D_COUT("\nvalue_offsets_delta:" << TDelta<>(book, TBookValuesMap<BOK_P>(book)));
   D_COUT("\nkeys_delta:" << TDelta<>(book, keys));
-  if (!keys) {
+  if (IsError(keys)) {
     D_COUT("\nBook Keys too large to fit in list! size_keys:" << size_keys);
     return NILP;
   }
@@ -334,7 +334,7 @@ BOK* TBookInit(BOK* book, ISY total = BookDefaultTotalFractionShift,
   D_COUT("\nkeys->top:" << keys->start);
   D_COUT("\nTDelta<>(book, TBookKeys<BOK_P>(book)):" << 
          TDelta<>(book, TBookKeys<BOK_P>(book)));
-  if (!result) return NILP;
+  if (IsError(result)) return NILP;
   D_COUT("\n\nTListInit Post bytes: " << bytes << 
          " total:" << total << 
          "\nBook End  :" << TDelta<>(book, TBookEnd<BOK_P>(book)) <<

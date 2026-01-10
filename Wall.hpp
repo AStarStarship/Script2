@@ -1,4 +1,4 @@
-// Copyright AStarship <https://astarship.net>; all rights reserved.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_WALL_HPP
 #define SCRIPT2_WALL_HPP 1

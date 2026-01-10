@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_BIN_DECL
 #define SCRIPT2_BIN_DECL
 #include <_Config.h>
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 namespace _ {
 
 struct BIn;
@@ -32,7 +32,7 @@ typedef enum BInStates {
 /* B-Input ring boofer Slot.
 A B-Input Slot is functionally identical to a input port in TCP. */
 struct LIB_MEMBER BIn {
-  ISN size,           //< The size of the socket.
+  ISN bytes,          //< The size of the socket in bytes.
       origin;         //< The starting index of the ring socket data.
   volatile ISN stop;  //< The stopping index of the ring socket data.
   ISN read;           //< The read variable to memory align the socket.
@@ -64,11 +64,11 @@ LIB_MEMBER inline ISN BinBooferLength(BIn* bin);
 #if USING_SCRIPT2_TEXT == YES_0
 
 /* Pulls the keyboard input into the ring socket. */
-// LIB_MEMBER void BInKeyboard ()
+// LIB_MEMBER void BInKeyboard()
 #endif
 
 /* Initializes the BIn struct LIB_MEMBER to an empty socket. */
-LIB_MEMBER BIn* BInInit(IUW* socket, ISN size);
+LIB_MEMBER BIn* BInInit(BIn* socket, ISN size);
 
 /* Gets the stop address of the rx socket. */
 LIB_MEMBER IUA* BInEnd(BIn* bin);
@@ -86,7 +86,8 @@ doesn't have a hash with an escape sequence.
 @param args   The arguments.
 @return       Returns 0 upon success and an ErrorList ticket number upon
               failure. */
-LIB_MEMBER const Op* BInRead(BIn* bin, const ISN* params, void** args);
+LIB_MEMBER const Op* BInRead(BIn* bin, const DTB* params, void** args, IUD 
+                             pc_ctx);
 
 }  //< namespace _
 

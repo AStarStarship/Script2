@@ -40,4 +40,4 @@ Registering a *Internet Guild* requires a server computer with fixed *UP IP Addr
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

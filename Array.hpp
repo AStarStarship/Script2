@@ -199,7 +199,7 @@ template<typename T = IUA, typename ISZ = ISW, typename Class>
 IUW* TArrayCloneSlow(Autoject& origin) {
   RAMFactory factory = origin.ram;
   IUW* origin = origin.origin;
-  // if (!factory || !origin) return NILP;
+  // if (IsError(factory) || IsError(origin)) return NILP;
 
   ARY* o = TPtr<ARY>(origin);
   ISZ size = o->size;
@@ -584,7 +584,7 @@ class AArray {
   /* Clones the other object including the total, growing if neccissary.
   @return true upon success and false upon failure. */
   inline ARY* Clone(ARY* src) {
-    if (!PtrIsValid(src)) return NILP;
+    if (IsError(src)) return NILP;
     ARY* ths = This();
     ISZ this_total = ths->total,
         this_count = ths->count,

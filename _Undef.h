@@ -12,6 +12,9 @@
 #undef D_COUT_NL
 #undef D_LINEF
 #undef D_COUT_ERROR
+#undef D_COUT_BSQ
+#undef D_COUT_BIN
+#undef D_COUT_BOUT
 #undef D_COUT_OBJ
 #undef D_COUT_FUNCTION
 #undef D_COUT_FUNCTION_LINE
@@ -49,9 +52,9 @@
 #undef A_AVOW
 #undef D_AVOW
 #undef R_AVOW
-#undef A_AVOW_NOT
-#undef D_AVOW_NOT
-#undef R_AVOW_NOT
+#undef A_DISAVOW
+#undef D_DISAVOW
+#undef R_DISAVOW
 #undef A_AVOW_INDEX
 #undef R_AVOW_INDEX
 #undef D_AVOW_INDEX

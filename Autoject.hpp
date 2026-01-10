@@ -304,7 +304,7 @@ inline BOL AutojectCanGrow(ISD size, ISD new_size) {
 template<typename IS>
 inline BOL TAutojectCanGrow(Autoject& obj) {
   IUW* origin = obj.origin;
-  if (!origin) return false;
+  if (IsError(origin)) return false;
   IS size = *TPtr<IS>(origin);
   return AutojectCanGrow(size, AutojectGrowBytes(size));
 }
@@ -325,7 +325,7 @@ class Autoboofer {
     D_ASSERT(ram);
     D_ASSERT(size >= CSizeMin<ISZ>());
     ajt_.ram = ram;
-    if (!boofer) {
+    if (IsError(boofer)) {
       ISZ boofer_size = AlignUp(ISZ(size * sizeof(T) + sizeof(Class)));
       boofer = ram(NILP, boofer_size);
     }
@@ -439,7 +439,7 @@ class Autoboofer {
   BOL Resize(Autoject& obj, ISZ new_size) {
     D_COUT("\nResizing Array to new_size:" << new_size);
     IUW* boofer = obj.origin;
-    if (!boofer) return false;
+    if (IsError(boofer)) return false;
     ISZ size = TSizeBytes<ISZ>(boofer);
     if (size < new_size) {
       if (size <= 0) return false;

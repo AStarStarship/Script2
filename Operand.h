@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_OPERAND_DECL
 #define SCRIPT2_OPERAND_DECL
 #include "Slot.h"
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 namespace _ {
 
 struct LIB_MEMBER Crabs;

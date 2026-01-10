@@ -133,7 +133,7 @@ class TFile {
     CHR ext_buf[cFilenameLengthMax];
 #endif
 
-    if (!path || TStringLength<CHT>(path) == 0) {
+    if (IsError(path) || TStringLength<CHT>(path) == 0) {
       errno = EINVAL;
       return -1;
     }
@@ -195,7 +195,7 @@ class TFile {
       }
       dir.Next();
     }
-    if (!found) {
+    if (IsError(found)) {
       result = -1;
       errno = ENOENT;
     }
@@ -243,7 +243,7 @@ class TFolder {
 #endif
     CHR *pathp;
 
-    if (!dir || !path || TStringLength<CHT>(path) == 0) {
+    if (IsError(dir) || IsError(path) || TStringLength<CHT>(path) == 0) {
       errno = EINVAL;
       return cErrorInvalidInput;
     }
@@ -331,7 +331,7 @@ class TFolder {
 
     file_count = 0;
     _files = (TFile<CHT> *)_TINYDIR_MALLOC(sizeof *_files * file_count);
-    if (!_files) goto bail;
+    if (IsError(_files)) goto bail;
     while (has_next_) {
       TFile<CHT> *p_file;
       file_count++;
@@ -356,7 +356,7 @@ class TFolder {
   }
 
   inline void tinydir_close() {
-    if (!dir) {
+    if (IsError(dir)) {
       return;
     }
 
@@ -384,7 +384,7 @@ class TFolder {
   }
 
   inline ISN tinydir_next(TFolder *dir) {
-    if (!dir) {
+    if (IsError(dir)) {
       errno = EINVAL;
       return -1;
     }
@@ -425,14 +425,14 @@ class TFolder {
 
   ISN Read(TFile<> *file) {
     const CHR *filename;
-    if (!file) {
+    if (IsError(file)) {
       errno = EINVAL;
       return cErrorNilInput;
     }
 #ifdef _MSC_VER
     if (_h == INVALID_HANDLE_VALUE)
 #else
-    if (!_e)
+    if (IsError(_e))
 #endif
     {
       errno = ENOENT;
@@ -503,7 +503,7 @@ class TFolder {
   }
 
   inline ISN ReadFile(TFile<CHT> *file, size_t i) {
-    if (!file) {
+    if (IsError(file)) {
       errno = EINVAL;
       return -1;
     }
@@ -520,7 +520,7 @@ class TFolder {
 
   inline ISN OpenSubfolder(size_t i) {
     CHR path[cPathLengthMax];
-    if (!dir) {
+    if (IsError(dir)) {
       errno = EINVAL;
       return -1;
     }
