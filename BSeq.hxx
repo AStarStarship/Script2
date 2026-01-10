@@ -1,15 +1,15 @@
 // Copyright AStarship <https://astarship.net>.
 #include "BSeq.h"
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 namespace _ {
 
-ISN BSeqParamNumber(const ISN* params, ISN param_number) {
-  if (!params) return 0;
-  ISN num_params = *params++;
+ISC BSeqParamNumber(const DTB* params, ISN param_number) {
+  if (IsError(params)) return 0;
+  DTB num_params = *params++;
   if (param_number > num_params) return _NIL;
-  ISN i;
+  DTB i;
   for (i = 0; i < param_number; ++i) {
-    ISN value = params[i];
+    DTB value = params[i];
     if (value == STR_)
       ++param_number;
     else if (value > 31) {  // It's an array!

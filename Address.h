@@ -3,68 +3,36 @@
 #ifndef SCRIPT2_ADDRESS
 #define SCRIPT2_ADDRESS 1
 #include <_Config.h>
-#if SEAM >= SCRIPT2_DIC
+#if SEAM >= SCRIPT2_CRABS_BSQ
 namespace _ {
-
-/* C++11 constexpr function for creating Script addresses headers with less
-typing as well as ensuring there is only a single copy in ROM.
-Template solves the problem of not being able using array constructors to
-create data structures in ROM.
-
-@code
-Address<'A', 'B', 'C'> ()
-@endcode
-*/
-template<const CHA... N>
-LIB_MEMBER const CHA* Address() {
-  static const CHA path[sizeof...(N)] = {N...};
-  static const CHA term_char = 0;
-  return path;
-}
 
 /* Returns a pointer to static variable for writing the address { a, \0 } to.
  */
-inline IUB PackAddress(IUA a) { return ((1 << 8) | a); }
+IUB PackAddress(IUA a);
 
 /* Returns a pointer to static variable for writing the address 
 { a, b, \0, \0 } to. */
-inline IUC PackAddress(IUC a, IUC b) { return ((1 << 16) | a | (b << 8)); }
+IUC PackAddress(IUC a, IUC b);
 
 /* Returns a pointer to static variable for writing the address { a, b, c, \0 }
 to. */
-inline IUC PackAddress(IUC a, IUC b, IUC c) {
-  return ((1 << 24) | a | (b << 8) | (c << 16));
-}
+IUC PackAddress(IUC a, IUC b, IUC c);
 
 /* Returns a pointer to static variable for writing the address { a, b, c, d,
 e, f, g, \0 } to. */
-inline IUD PackAddress(IUD a, IUD b, IUD c, IUD d) {
-  IUD one = 1;
-  return (one << 32 | a | (b << 8) | (c << 16) | (d << 24));
-}
+IUD PackAddress(IUD a, IUD b, IUD c, IUD d);
 
 /* Returns a pointer to static variable for writing the address { a, b, c, d,
 e, f, g, \0 } to. */
-inline IUD PackAddress(IUD a, IUD b, IUD c, IUD d, IUD e) {
-  IUD one = 1;
-  return (one << 40 | a | (b << 8) | (c << 16) | (d << 24) | (e << 32));
-}
+IUD PackAddress(IUD a, IUD b, IUD c, IUD d, IUD e);
 
 /* Returns a pointer to static variable for writing the address
 { a, b, c, d, e, f, g, \0 } to. */
-inline IUD PackAddress(IUD a, IUD b, IUD c, IUD d, IUD e, IUD f) {
-  IUD one = 1;
-  return (one << 48 | a | (b << 8) | (c << 16) | (d << 24) | (e << 32) |
-          (f << 40));
-}
+IUD PackAddress(IUD a, IUD b, IUD c, IUD d, IUD e, IUD f);
 
 /* Returns a pointer to static variable for writing the address
 { a, b, c, d, e, f, g, \0 } to. */
-inline IUD PackAddress(IUD a, IUD b, IUD c, IUD d, IUD e, IUD f, IUD g) {
-  IUD one = 1;
-  return (one << 56 | a | (b << 8) | (c << 16) | (d << 24) | (e << 32) |
-          (f << 40) | (g << 48));
-}
+IUD PackAddress(IUD a, IUD b, IUD c, IUD d, IUD e, IUD f, IUD g);
 
 }  //< namespace _
 #endif

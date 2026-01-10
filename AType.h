@@ -166,6 +166,46 @@ BOL ATypeIsCH(DTB type);
 // Returns the size of the given type in bytes.
 ISA ATypeSizeOfPOD(DTB type);
 
+/* Gets the alignment mask of the given type. */
+inline DTW AlignmentMask(CHA item);
+inline DTW AlignmentMask(ISA item);
+inline DTW AlignmentMask(IUA item);
+inline DTW AlignmentMask(CHB item);
+inline DTW AlignmentMask(ISB item);
+inline DTW AlignmentMask(IUB item);
+inline DTW AlignmentMask(CHC item);
+inline DTW AlignmentMask(ISC item);
+inline DTW AlignmentMask(IUC item);
+inline DTW AlignmentMask(FPC item);
+inline DTW AlignmentMask(ISD item);
+inline DTW AlignmentMask(IUD item);
+inline DTW AlignmentMask(FPD item);
+inline DTW AlignmentMask(void* item);
+inline DTW AlignmentMask(const void* item);
+
+/* Gets the type of the given item. */
+inline DTW TypeOf(CHA item);
+inline DTW TypeOf(ISA item);
+inline DTW TypeOf(IUA item);
+inline DTW TypeOf(CHB item);
+inline DTW TypeOf(ISB item);
+inline DTW TypeOf(IUB item);
+inline DTW TypeOf(CHC item);
+inline DTW TypeOf(ISC item);
+inline DTW TypeOf(IUC item);
+inline DTW TypeOf(FPC item);
+inline DTW TypeOf(ISD item);
+inline DTW TypeOf(IUD item);
+inline DTW TypeOf(FPD item);
+inline DTW TypeOf(CHA* item);
+inline DTW TypeOf(const CHA* item);
+inline DTW TypeOf(CHB* item);
+inline DTW TypeOf(const CHB* item);
+inline DTW TypeOf(CHC* item);
+inline DTW TypeOf(const CHC* item);
+inline DTW TypeOf(void* item);
+inline DTW TypeOf(const void* item);
+
 /* Returns the size of the given type in bytes.
 @return the size bytes of the value. */
 ISW ATypeBytes(const void* value, DTB type);

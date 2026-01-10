@@ -72,4 +72,4 @@ data_type_word = reinterpret_cast<DTW>(socket_factory(nullptr, 1));
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

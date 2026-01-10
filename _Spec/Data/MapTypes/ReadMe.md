@@ -32,9 +32,3 @@ more than 4GB RAM, or the need to attach a DVD ISO image as a key-value
 pair, so we need a 64-bit dictionary.
 
 **[<< Previous Section: Homo-tuples](../HomoTuples.md) | [Next Section: Array >>](Array.md)**
-
-## License
-
-Copyright [Kabuki Starship](https://kabukistarship.com).
-
-This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at <https://mozilla.org/MPL/2.0/>.

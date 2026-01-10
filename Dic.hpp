@@ -14,8 +14,7 @@ namespace _ {
 /* @ingroup Dic
 Please see the ASCII Data Specificaiton for DRY documentation.
 @link ./Spec/Data/MapTypes/Dictionary.md */
-#define DIC_A \
-  typename CHT = CHR, typename ISZ = ISR, typename ISY = ISQ, \
+#define DIC_A typename CHT = CHR, typename ISZ = ISR, typename ISY = ISQ,\
   typename DT = DTB, typename HSH = IUN
 #define DIC_P CHT, ISZ, ISY, DT, HSH
 
@@ -147,7 +146,7 @@ inline BOL TDicSizesAreValid(ISZ bytes, ISZ size_keys, ISY total) {
 template<DIC_A>
 inline ISZ TDicSpace(const DIC* dic) {
   auto keys = TDicKeys<DIC_P>(dic);
-  if (!keys) return -1;
+  if (IsError(keys)) return -1;
   return TListSpace<LST_P>(&dic->values) + TTableSpace<TBL_P>(keys);
 }
 
@@ -281,17 +280,17 @@ inline DIC* TDicInit(DIC* dic,
          "\nvalue_offsets_delta:" << TDelta<>(dic, TDicValuesMap<DIC_P>(dic)) <<
          "\nkeys_delta:" << TDelta<>(dic, keys) << 
          " size_bytes_found:" << *TPtr<ISZ>(keys));
-  if (!keys) {
+  if (IsError(keys)) {
     D_COUT("\nTable Keys too large to fit in list! size_keys:" << size_keys);
     return NILP;
   }
   auto result = TTableInit<TBL_P>(keys, total);
-  if (!PtrIsValid(result))
+  if (IsError(result))
     D_RETURN_TPTR_ERROR(DIC, result);
   TTableAppend<TBL_P>(keys, TStringEmpty<CHT>());
   D_COUT("\nTDelta<>(dic, TDicKeys<DIC_P>(dic)):" <<
     TDelta<>(dic, TDicKeys<DIC_P>(dic)));
-  if (!result) return NILP;
+  if (IsError(result)) return NILP;
   D_COUT("\n\nTListInit Post bytes: " << bytes <<
          " total:" << total <<
          "\nTable End :" << TDelta<>(dic, TDicEnd<DIC_P>(dic)) <<
@@ -626,7 +625,7 @@ void* TDicListRemove(DIC* dic, ISY index) {
 template<DIC_A>
 void* TDicRemove(DIC* table, ISY index) {
   ISY result = TTableRemove<TBL_P>(TDicKeys<DIC_P>(table), index);
-  if (!result) return NILP;
+  if (IsError(result)) return NILP;
   return TDicListRemove<DIC_P>(table, index);
 }
 

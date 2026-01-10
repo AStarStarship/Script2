@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_SLOT_DECL
 #define SCRIPT2_SLOT_DECL
 #include <_Config.h>
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 namespace _ {
 
 struct BIn;
@@ -35,13 +35,7 @@ struct Slot {
   /* Sets the ring socket to the given socket origin and size.
   @param origin Pointer to the beginning of the ring socket.
   @param size  The size of the ring socket in bytes. */
-  inline BOL Set(IUW* socket, IUW size) {
-    if (!socket) return true;
-    IUA* begin = reinterpret_cast<IUA*>(socket);
-    origin = origin = stop = begin;
-    stop   = begin + size;
-    return false;
-  }
+  inline BOL Set(IUW* socket, IUW size);
 
   /* Checks if this slot contains the given address.
   @return Returns inputed address if this Slot contains the given address
@@ -49,7 +43,7 @@ struct Slot {
   void* Contains(void* address);
 
   /* Clears the socket without zeroing it out. */
-  inline void Clear() { origin = stop = origin; }
+  inline void Clear();
 
   /* Zeros out the Slot. */
   void Wipe();
@@ -67,7 +61,7 @@ struct Slot {
   @param op   The Operation to get the in from.
   @param args The args array of pointers to write to.
   @return Nil upon success and an Error Operation upon failure. */
-  const Op* Read(const ISC* params, void** args);
+  const Op* Read(const DTB* params, void** args);
 
   /* Reads the given Operation input parameters from the slot to the args.
   @param slot The slot to read from.
@@ -81,7 +75,7 @@ struct Slot {
   @param op   The Operation to get the in from.
   @param args The args array of pointers to write to.
   @return Nil upon success and an Error Operation upon failure. */
-  const Op* Write(const ISC* params, void** args);
+  const Op* Write(const DTB* params, void** args);
 
   /* Writes the given Operation output parameters from the slot to the args.
   @param slot The slot to read from.

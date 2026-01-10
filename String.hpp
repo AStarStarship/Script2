@@ -149,7 +149,7 @@ inline STR* TStringInit(void* origin, ISZ total) {
 /* Prints this object to the given printer. */
 template<typename Printer, STR_A>
 Printer& TStringPrint(Printer& o, const STR* str) {
-  if (!str) return o;
+  if (IsError(str)) return o;
   const T* begin = TStringBegin<STR_P>(str);
   ISZ total = str->total,
       count = str->count,
@@ -530,7 +530,7 @@ class AString {
     AStack<SCK_P>::Clone(dest, TPtr<TStack<SCK_P>>(src),
                          total_new, count_start, count_stop);
     IUW* origin = dest.origin;
-    if (PtrIsValid(origin)) {
+    if (!IsError(origin)) {
       if (dest.origin != origin) {
         Delete(dest);
         dest.origin = origin;

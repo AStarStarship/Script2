@@ -132,7 +132,7 @@ inline const CHA* ItoS(const CHA* args) {
                             << i << ".) ");
     ISN expected_length = TStringLength<CHA>(expecting);
     result = TSPrintUnsigned<IUD, CHA>(text, text + Size - 1, expected_ui8);
-    if (!result) {
+    if (IsError(result)) {
       D_PAUSE("An error occurred :-(");
       break;
     }
@@ -147,7 +147,7 @@ inline const CHA* ItoS(const CHA* args) {
     sprintf_s(expecting, 24, "%llu", expected_ui8);
     D_COUT("\n\n" << i + 1 << ".) ");
     result = TSPrintUnsigned<IUD, CHA>(text, text + Size - 1, expected_ui8);
-    if (!result) {
+    if (IsError(result)) {
       D_PAUSE("An error occurred :-(");
       break;
     }
@@ -174,7 +174,7 @@ inline const CHA* ItoS(const CHA* args) {
       sprintf_s(expecting, 24, "%llu", expected_ui8);
       D_COUT("\n\n" << i + 1);
       result = TSPrintUnsigned<IUD, CHA>(text, text + Size - 1, expected_ui8);
-      if (!result) {
+      if (IsError(result)) {
         D_PAUSE("An error occurred :-(");
         break;
       }

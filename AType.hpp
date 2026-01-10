@@ -81,7 +81,7 @@ inline CHA ASizeCodef(ISD sw) {
 template<typename T>
 T TCTXHandle(ACTXHandler actxh, void* begin, void* end, DTW type, IUW value, 
              IUW vmsb) {
-  if (!actxh) return 0;
+  if (IsError(actxh)) return 0;
   return (T)actxh(begin, end, type, value, vmsb);
 }
 
@@ -242,7 +242,7 @@ const CH* TATypeMaps(IS value) {
 /* Human-readable Crabs error strings. */
 template<typename CH = CHR>
 const CH* TAErrors() {
-  static const CH error_strings[ASCIIErrorCount + 1][32] = {
+  static const CH error_strings[AErrorTotal + 1][32] = {
     /*00*/{'S','u','c','k',' ','i','t',0,},
     /*01*/{'I','n','v','a','l','i','d',0,},
     /*02*/{'I','n','v','a','l','i','d',' ','b','o','o','f','e','r',0},
@@ -504,7 +504,7 @@ inline DT TATypeMap(DTW pod, DTW mt, DTW sw = 0) {
 template<typename CH = CHR, typename IS = ISN>
 const CH* TAErrors(IS index) {
   if (index < 0) index *= -1;
-  if (index >= ASCIIErrorCount) index = ASCIIErrorCount;
+  if (index >= AErrorTotal) index = AErrorTotal;
   return &TAErrors<CH>()[index << 5];
 }
 
@@ -526,51 +526,6 @@ constexpr DT CATypeSW(DT pod) {
 template<typename T, typename DT = DTB>
 inline DT TATypeSW(DT pod) {
   return pod | (CATypeSW<T, DT>() << ATypeSWBit0);
-}
-
-template<typename IS = ISW>
-IS TATypeSizeOf(const void* value, DTB type) {
-  if (type < ATypePODTotal)
-    return ATypeSizeOfPOD(type);
-  // | b15:b14 | b13:b9 | b8:b7 | b6:b5 | b4:b0 |
-  // |:-------:|:------:|:-----:|:-----:|:-----:|
-  // |   MOD   |   MT   |  SW   |  VT   |  POD  |
-  DTB mod = type >> ATypeMDBit0;
-  if (mod && 1) return sizeof(void*);
-  type ^= mod << ATypeMDBit0;
-  DTB mt = type >> ATypeMTBit0;
-  type ^= mt << ATypeMTBit0;
-  DTB sw = type >> ATypeSWBit0;
-  type ^= sw << ATypeSWBit0;
-  DTB vt = type >> ATypeVTBit0;
-  type ^= vt << ATypeVTBit0;
-  if (vt == DTB(0)) {
-    IS dez  = IS(sw);
-    IS nutz = IS(ATypeSizeOfPOD(type));
-    return dez * nutz;
-  }
-  IS size = 1;
-  switch (sw) {
-    case 0: return IS(*static_cast<const ISA*>(value));
-    case 1: return IS(*static_cast<const ISB*>(value));
-    case 2: return IS(*static_cast<const ISC*>(value));
-  }
-  return IS(*static_cast<const ISD*>(value));
-}
-
-template<typename IS = ISW>
-IS TATypeSizeOf(void* value, DTB type) {
-  return TATypeSizeOf<IS>((const void*)value, type);
-}
-template<typename IS = ISW>
-IS TATypeSizeOf(const void* value_base, IS bytes, DTB type) {
-  const IUA* vbase = (const IUA*)value_base;
-  return TATypeSizeOf<IS>(vbase + bytes, type);
-}
-template<typename IS = ISW>
-IS TATypeSizeOf(void* value_base, IS bytes, DTB type) {
-  const void* vbase = (const void*)value_base;
-  return TATypeSizeOf<IS>(vbase, bytes, type);
 }
 
 /* Returns the ASCII Type for the given floating-point type FP.
@@ -679,55 +634,6 @@ inline ISA ATypeTextFormat(DTW type) {
     return ISA(pod >> 2);
   return -1;
 }
-
-/* Gets the alignment mask of the given type. */
-inline DTW AlignmentMask(CHA item) { return 0; }
-inline DTW AlignmentMask(ISA item) { return 0; }
-inline DTW AlignmentMask(IUA item) { return 0; }
-inline DTW AlignmentMask(CHB item) { return 1; }
-inline DTW AlignmentMask(ISB item) { return 1; }
-inline DTW AlignmentMask(IUB item) { return 1; }
-inline DTW AlignmentMask(CHC item) { return 3; }
-inline DTW AlignmentMask(ISC item) { return 3; }
-inline DTW AlignmentMask(IUC item) { return 3; }
-inline DTW AlignmentMask(FPC item) { return 3; }
-inline DTW AlignmentMask(ISD item) { return 7; }
-inline DTW AlignmentMask(IUD item) { return 7; }
-inline DTW AlignmentMask(FPD item) { return 7; }
-inline DTW AlignmentMask(void* item) { return ACPUMask; }
-inline DTW AlignmentMask(const void* item) { return ACPUMask; }
-
-/* Gets the type of the given item. */
-inline DTW TypeOf(CHA item) { return _CHA; }
-inline DTW TypeOf(ISA item) { return _ISA; }
-inline DTW TypeOf(IUA item) { return _IUA; }
-inline DTW TypeOf(CHB item) { return _CHB; }
-inline DTW TypeOf(ISB item) { return _ISB; }
-inline DTW TypeOf(IUB item) { return _IUB; }
-inline DTW TypeOf(CHC item) { return _CHB; }
-inline DTW TypeOf(ISC item) { return _ISC; }
-inline DTW TypeOf(IUC item) { return _IUC; }
-inline DTW TypeOf(FPC item) { return _FPC; }
-inline DTW TypeOf(ISD item) { return _ISD; }
-inline DTW TypeOf(IUD item) { return _IUD; }
-inline DTW TypeOf(FPD item) { return _FPD; }
-inline DTW TypeOf(CHA* item) { return _STA; }
-inline DTW TypeOf(const CHA* item) { 
-  //return _CNS_STA;
-  return CATypeMap(_SWA, _CNS_PTR);
-}
-inline DTW TypeOf(CHB* item) { return _STB; }
-inline DTW TypeOf(const CHB* item) {
-  //return _CNS_STA;
-  return CATypeMap(_SWB, _CNS_PTR);
-}
-inline DTW TypeOf(CHC* item) { return _STC; }
-inline DTW TypeOf(const CHC* item) {
-  //return _CNS_STA;
-  return CATypeMap(_SWC, _CNS_PTR);
-}
-inline DTW TypeOf(void* item) { return _PTR; }
-inline DTW TypeOf(const void* item) { return _CNS_PTR; }
 
 template<typename IS>
 inline BOL TSizeIsValid(IS size) {

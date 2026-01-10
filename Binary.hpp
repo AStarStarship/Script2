@@ -23,17 +23,21 @@ inline const T* TPtr(const void* ptr) {
   return reinterpret_cast<const T*>(ptr);
 }
 
-/* Checks if the pointer is not an ASCII Error Code. */
-inline BOL PtrIsValid(const void* ptr) { return IUW(ptr) >= ASCIIErrorCount; }
-
 /* Checks if the pointer is an ASCII Error Code. */
 inline BOL IsError(const void* ptr) {
-  return !PtrIsValid(ptr);
+  return IUW(ptr) < AErrorTotal;
+}
+
+/* Checks if the pointer is an ASCII Error Code. */
+constexpr BOL CIsError(const void* ptr) {
+  return IUW(ptr) < AErrorTotal;
 }
 
 // Checks if the input is aligned to the T word boundary.
 template<typename T = void>
-inline BOL TAlignIs(const T* input) { return (IUW(input) & (sizeof(T) - 1)) == 0; }
+inline BOL TAlignIs(const T* input) {
+  return (IUW(input) & (sizeof(T) - 1)) == 0;
+}
 template<typename T = IUW, typename I = T>
 inline BOL TAlignIs(I input) { return (input & (sizeof(T) - 1)) == 0; }
 
@@ -348,6 +352,19 @@ constexpr ISD CAlignUp(ISD value, ISD align_mask = ACPUMask) {
 }
 constexpr IUD CAlignUp(IUD value, IUD align_mask = ACPUMask) {
   return value + (IUD(-ISD(value)) & align_mask);
+}
+
+inline ISA AlignUpA(void* origin) {
+  return (-ISW(origin)) & (sizeof(ISA) - 1);
+}
+inline ISB AlignUpB(void* origin) {
+  return (-ISW(origin)) & (sizeof(ISB) - 1);
+}
+inline ISC AlignUpC(void* origin) {
+  return (-ISC(origin)) & (sizeof(ISC) - 1);
+}
+inline ISD AlignUpD(void* origin) {
+  return (-ISD(origin)) & (sizeof(ISD) - 1);
 }
 
 inline void* PtrUp(void* pointer, ISW mask = ACPUMask) {
@@ -913,6 +930,7 @@ inline IUB HexByteToUpperCase(IUA b) {
 
 /* Converts a hex value to a byte. */
 inline ISN HexToByte(CHA c) {
+
   if (c < '0') {
     return -1;
   }

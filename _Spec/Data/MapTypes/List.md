@@ -28,12 +28,8 @@ Lists are stacks of type-value tuples similar in memory layout to Books but they
 +----------------------------+ 0xN
 ```
 
-**[<< Previous Section: Map](Map.md) | [Next Section: Table >>](Table.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section: Map](Map.md) | [Next Section: Table >>](Table.md)**

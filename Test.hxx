@@ -4,39 +4,226 @@
 #include "Stringf.hpp"
 namespace _ {
 
+inline BOL BRK(BOL value, const CHR* message) {
+  return TBRK<BOL>(value, message);
+}
+inline BOL* BRK(BOL* value, const CHR* message) {
+  TBRK<BOL>(*value, message);
+  return value;
+}
+inline const BOL* BRK(const BOL* value, const CHR* message) {
+  TBRK<BOL>(*value, message);
+  return value;
+}
+
+inline IUA BRK(IUA value, const CHR* message) {
+  return TBRK<IUA>(value, message);
+}
+inline IUA* BRK(IUA* value, const CHR* message) {
+  TBRK<IUA>(*value, message);
+  return value;
+}
+inline const IUA* BRK(const IUA* value, const CHR* message) {
+  TBRK<IUA>(*value, message);
+  return value;
+}
+
+inline ISA BRK(ISA value, const CHR* message) {
+  return TBRK<ISA>(value, message);
+}
+inline ISA* BRK(ISA* value, const CHR* message) {
+  TBRK<ISA>(*value, message);
+  return value;
+}
+inline const ISA* BRK(const ISA* value, const CHR* message) {
+  TBRK<ISA>(*value, message);
+  return value;
+}
+
+inline IUB BRK(IUB value, const CHR* message) {
+  return TBRK<IUB>(value, message);
+}
+inline IUB* BRK(IUB* value, const CHR* message) {
+  TBRK<IUB>(*value, message);
+  return value;
+}
+inline const IUB* BRK(const IUB* value, const CHR* message) {
+  TBRK<IUB>(*value, message);
+  return value;
+}
+
+inline ISB BRK(ISB value, const CHR* message) {
+  return TBRK<ISB>(value, message);
+}
+inline ISB* BRK(ISB* value, const CHR* message) {
+  TBRK<ISB>(*value, message);
+  return value;
+}
+inline const ISB* BRK(const ISB* value, const CHR* message) {
+  TBRK<ISB>(*value, message);
+  return value;
+}
+
+inline IUC BRK(IUC value, const CHR* message) {
+  return TBRK<IUC>(value, message);
+}
+inline IUC* BRK(IUC* value, const CHR* message) {
+  TBRK<IUC>(*value, message);
+  return value;
+}
+inline const IUC* BRK(const IUC* value, const CHR* message) {
+  TBRK<IUC>(*value, message);
+  return value;
+}
+
+inline ISC BRK(ISC value, const CHR* message) {
+  return TBRK<ISC>(value, message);
+}
+inline ISC* BRK(ISC* value, const CHR* message) {
+  TBRK<ISC>(*value, message);
+  return value;
+}
+inline const ISC* BRK(const ISC* value, const CHR* message) {
+  TBRK<ISC>(*value, message);
+  return value;
+}
+
+inline IUD BRK(IUD value, const CHR* message) {
+  return TBRK<IUD>(value, message);
+}
+inline IUD* BRK(IUD* value, const CHR* message) {
+  TBRK<IUD>(*value, message);
+  return value;
+}
+inline const IUD* BRK(const IUD* value, const CHR* message) {
+  TBRK<IUD>(*value, message);
+  return value;
+}
+
+inline ISD BRK(ISD value, const CHR* message) {
+  return TBRK<ISD>(value, message);
+}
+inline ISD* BRK(ISD* value, const CHR* message) {
+  TBRK<ISD>(*value, message);
+  return value;
+}
+inline const ISD* BRK(const ISD* value, const CHR* message) {
+  TBRK<ISD>(*value, message);
+  return value;
+}
+
+//inline IUE BreakPoint(IUE value, const CHR* message) {
+//  return TBreakPoint<IUE>(value, message);
+//}
+//inline IUE* BRK(IUE* value, const CHR* message) {
+//  TBRK<IUE>(*value, message);
+//  return value;
+//}
+//inline const IUE* BRK(const IUE* value, const CHR* message) {
+//  TBRK<IUE>(*value, message);
+//  return value;
+//}
+//
+//inline ISE BreakPoint(ISE value, const CHR* message) {
+//  return TBreakPoint<ISE>(value, message);
+//}
+//
+//inline ISE* BRK(ISE* value, const CHR* message) {
+//  TBRK<ISE>(*value, message);
+//  return value;
+//}
+//inline const ISE* BRK(const ISE* value, const CHR* message) {
+//  TBRK<ISE>(*value, message);
+//  return value;
+//}
+
+inline FPC BRK(FPC value, const CHR* message) {
+  return TBRK<FPC>(value, message);
+}
+inline FPC* BRK(FPC* value, const CHR* message) {
+  TBRK<FPC>(*value, message);
+  return value;
+}
+inline const FPC* BRK(const FPC* value, const CHR* message) {
+  TBRK<FPC>(*value, message);
+  return value;
+}
+
+inline FPD BRK(FPD value, const CHR* message) {
+  return TBRK<FPD>(value, message);
+}
+inline FPD* BRK(FPD* value, const CHR* message) {
+  TBRK<FPD>(*value, message);
+  return value;
+}
+inline const FPD* BRK(const FPD* value, const CHR* message) {
+  TBRK<FPD>(*value, message);
+  return value;
+}
+
+inline CHA BRK(CHA value, const CHR* message) {
+  return TBRK<CHA>(value, message);
+}
+inline CHA* BRK(CHA* value, const CHR* message) {
+  return TBRK<CHA*>(value, message);
+}
+inline const CHA* BRK(const CHA* value, const CHR* message) {
+  return TBRK<const CHA*>(value, message);
+}
+
+inline CHB BRK(CHB value, const CHR* message) {
+  return TBRK<CHB>(value, message);
+}
+inline CHB* BRK(CHB* value, const CHR* message) {
+  return TBRK<CHB*>(value, message);
+}
+inline const CHB* BRK(const CHB* value, const CHR* message) {
+  return TBRK<const CHB*>(value, message);
+}
+
+inline CHC BRK(CHC value, const CHR* message) {
+  return TBRK<CHC>(value, message);
+}
+inline CHC* BRK(CHC* value, const CHR* message) {
+  return TBRK<CHC*>(value, message);
+}
+inline const CHC* BRK(const CHC* value, const CHR* message) {
+  return TBRK<const CHC*>(value, message);
+}
+
+BOL TestWarnFail(ISN line, const CHA* function, const CHA* file) {
+#if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
+  StdOut() << "\n\nFAILURE Function:" << function << " at line:" << line <<
+    "\n       " << " in \"" << file << '\"';
+#endif
+  return false;
+}
+
+BOL TestFail(ISN line, const CHA* function, const CHA* file) {
+  BOL result = TestWarnFail(line, function, file);
+  return TBRK<>();
+}
+
 void TestFunctionLine(ISN line, const CHA* function, const CHA* file) {
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
-  COut("\n        Function:").Print(function) <<
-       "\n            Line:" << line << " in \"" << file << '\"';
+  StdOut() << "\n        Function:" << function
+           << "\n            Line:" << line << " in \"" << file << '\"';
 #endif
 }
 
 BOL TestWarn(ISN line, const CHA* function, const CHA* file) {
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
-  COut("\n\nWARNING Function:").Print(function) << " at line:" << line <<
+  StdOut() << "\n\nWARNING Function:" << function << " at line:" << line <<
        "\n       " << " in \"" << file << '\"';
 #endif
   return true;
 }
 
-BOL TestWarnFail(ISN line, const CHA* function, const CHA* file) {
-#if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
-  COut("\n\nFAILURE Function:").Print(function) << " at line:" << line <<
-    "\n       " << " in \"" << file << '\"';
-#endif
-  return true;
-}
-
-BOL TestFail(ISN line, const CHA* function, const CHA* file) {
-  BOL result = TestWarnFail(line, function, file);
-  // Insert break-point here.
-  return result;
-}
-
 const CHA* ArgsToString(ISN arg_count, CHA** args) {
-  if (!args || arg_count <= 1) return "";
+  if (IsError(args) || arg_count <= 1) return "";
   if (arg_count == 2) return args[1];
-  CHA *origin = args[1], *stop = args[arg_count - 1] - 1;
+  CHA* origin = args[1],
+     * stop = args[arg_count - 1] - 1;
   while (stop > origin) {
     CHA c = *stop;
     if (!c) *stop = ' ';
@@ -46,10 +233,10 @@ const CHA* ArgsToString(ISN arg_count, CHA** args) {
 }
 
 const CHA* TestTree(const CHA* args, TestCase* tests, ISN count) {
-  if (!tests) return NILP;
+  if (IsError(tests)) return NILP;
   for (ISN i = 0; i < count; ++i) {
     TestCase test = tests[i];
-    if (!test) {
+    if (IsError(test)) {
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
       COut("\nError: seam node ").Print(i) << " is missing!";
 #endif
@@ -90,16 +277,21 @@ BOL TestGEQ(ISB a, ISB b) { return a >= b; }
 BOL TestGEQ(ISC a, ISC b) { return a >= b; }
 BOL TestGEQ(ISD a, ISD b) { return a >= b; }
 
-BOL TestLEQ(ISA a, ISA b) { return a >= b; }
-BOL TestLEQ(ISB a, ISB b) { return a >= b; }
-BOL TestLEQ(ISC a, ISC b) { return a >= b; }
-BOL TestLEQ(ISD a, ISD b) { return a >= b; }
+BOL TestLEQ(IUA a, IUA b) { return TTestLTEQ<IUA>(a, b); }
+BOL TestLEQ(ISA a, ISA b) { return TTestLTEQ<ISA>(a, b); }
+BOL TestLEQ(IUB a, IUB b) { return TTestLTEQ<IUB>(a, b); }
+BOL TestLEQ(ISB a, ISB b) { return TTestLTEQ<ISB>(a, b); }
+BOL TestLEQ(IUC a, IUC b) { return TTestLTEQ<IUC>(a, b); }
+BOL TestLEQ(ISC a, ISC b) { return TTestLTEQ<ISC>(a, b); }
+BOL TestLEQ(IUD a, IUD b) { return TTestLTEQ<IUD>(a, b); }
+BOL TestLEQ(ISD a, ISD b) { return TTestLTEQ<ISD>(a, b); }
+BOL TestLEQ(FPC a, FPC b) { return TTestLTEQ<FPC>(a, b); }
 
 static const CHA STRErrorExpecting[] = "\n\nERROR: Expecting:0x\0";
 static const CHA STRFound[] = "\n           Found:0x\0";
 //static const CHA STRErrorNil[] = "\nERROR: value was nil!\0";
 
-BOL Test(const CHA* a, const CHA* b) {
+BOL TestEq(const CHA* a, const CHA* b) {
   ISN difference = TStringCompare<CHA>(a, b);
   if (!difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
@@ -111,7 +303,7 @@ BOL Test(const CHA* a, const CHA* b) {
 }
 
 #if USING_STB == YES_0
-BOL Test(const CHB* a, const CHB* b) {
+BOL TestEq(const CHB* a, const CHB* b) {
   ISN difference = TStringCompare<CHB>(a, b);
   if (!difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
@@ -122,8 +314,9 @@ BOL Test(const CHB* a, const CHB* b) {
   return false;
 }
 #endif
+
 #if USING_STC == YES_0
-BOL Test(const CHC* a, const CHC* b) {
+BOL TestEq(const CHC* a, const CHC* b) {
   ISN difference = TStringCompare<CHC>(a, b);
   if (!difference) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
@@ -134,7 +327,8 @@ BOL Test(const CHC* a, const CHC* b) {
   return false;
 }
 #endif
-BOL Test(CHA a, CHA b) {
+
+BOL TestEq(CHA a, CHA b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -143,7 +337,7 @@ BOL Test(CHA a, CHA b) {
   return false;
 }
 
-BOL Test(CHB a, CHB b) {
+BOL TestEq(CHB a, CHB b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -152,7 +346,7 @@ BOL Test(CHB a, CHB b) {
   return false;
 }
 
-BOL Test(CHC a, CHC b) {
+BOL TestEq(CHC a, CHC b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -161,7 +355,7 @@ BOL Test(CHC a, CHC b) {
   return false;
 }
 
-BOL Test(const void* a, const void* b) {
+BOL TestEq(const void* a, const void* b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a) << STRFound << Hexf(b);
@@ -169,7 +363,7 @@ BOL Test(const void* a, const void* b) {
   return false;
 }
 
-BOL Test(IUA a, IUA b) {
+BOL TestEq(IUA a, IUA b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -178,7 +372,7 @@ BOL Test(IUA a, IUA b) {
   return false;
 }
 
-BOL Test(ISA a, ISA b) {
+BOL TestEq(ISA a, ISA b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -187,7 +381,7 @@ BOL Test(ISA a, ISA b) {
   return false;
 }
 
-BOL Test(IUB a, IUB b) {
+BOL TestEq(IUB a, IUB b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -196,7 +390,7 @@ BOL Test(IUB a, IUB b) {
   return false;
 }
 
-BOL Test(ISB a, ISB b) {
+BOL TestEq(ISB a, ISB b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -205,7 +399,7 @@ BOL Test(ISB a, ISB b) {
   return false;
 }
 
-BOL Test(IUC a, IUC b) {
+BOL TestEq(IUC a, IUC b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -214,7 +408,7 @@ BOL Test(IUC a, IUC b) {
   return false;
 }
 
-BOL Test(ISC a, ISC b) {
+BOL TestEq(ISC a, ISC b) {
   if (a == b) return true;
 
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
@@ -224,7 +418,7 @@ BOL Test(ISC a, ISC b) {
   return false;
 }
 
-BOL Test(IUD a, IUD b) {
+BOL TestEq(IUD a, IUD b) {
   if (a == b) return true;
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
   COut(STRErrorExpecting).Hex(a)
@@ -233,7 +427,7 @@ BOL Test(IUD a, IUD b) {
   return false;
 }
 
-BOL Test(ISD a, ISD b) {
+BOL TestEq(ISD a, ISD b) {
   if (a == b) return true;
 
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0
@@ -244,7 +438,7 @@ BOL Test(ISD a, ISD b) {
 }
 
 #if USING_FPC == YES_0
-BOL Test(FPC a, FPC b) {
+BOL TestEq(FPC a, FPC b) {
   if (a == b) return true;
   COut(STRErrorExpecting).Hex(a)
       << ':' << a << STRFound << Hexf(b) << ':' << b;
@@ -252,7 +446,7 @@ BOL Test(FPC a, FPC b) {
 }
 #endif
 #if USING_FPD == YES_0
-BOL Test(FPD a, FPD b) {
+BOL TestEq(FPD a, FPD b) {
   if (a == b) return true;
   COut(STRErrorExpecting).Hex(a)
       << ':' << a << STRFound << Hexf(b) << ':' << b;
@@ -409,8 +603,8 @@ BOL TestNot(ISD a, ISD b) {
 #if USING_FPC == YES_0
 BOL TestNot(FPC a, FPC b) {
   if (a != b) return true;
-  COut(STRErrorExpecting).Hex(a)
-      << ':' << a << STRFound << Hexf(b) << ':' << b;
+  COut(STRErrorExpecting).Hex(a) << ':' << a << STRFound << Hexf(b) << ':' 
+                                 << b;
   return false;
 }
 #endif
@@ -423,26 +617,26 @@ BOL TestNot(FPD a, FPD b) {
 }
 #endif
 
-BOL Test(const void* value) { return value != NILP; }
+inline BOL Test(const void* value) { return ISW(value) >= AErrorTotal; }
 
-BOL Test(IUA value) { return value != 0; }
+inline BOL Test(IUA value) { return TTestNZ<IUA>(value); }
 
-BOL Test(ISA value) { return value != 0; }
+inline BOL Test(ISA value) { return TTestNZ<ISA>(value); }
 
-BOL Test(IUB value) { return value != 0; }
+inline BOL Test(IUB value) { return TTestNZ<IUB>(value); }
 
-BOL Test(ISB value) { return value != 0; }
+inline BOL Test(ISB value) { return TTestNZ<ISB>(value); }
 
-BOL Test(IUC value) { return value != 0; }
+inline BOL Test(IUC value) { return TTestNZ<IUC>(value); }
 
-BOL Test(ISC value) { return value != 0; }
+inline BOL Test(ISC value) { return TTestNZ<ISC>(value); }
 
-BOL Test(IUD value) { return value != 0; }
+inline BOL Test(IUD value) { return TTestNZ<IUD>(value); }
 
-BOL Test(ISD value) { return value != 0; }
+inline BOL Test(ISD value) { return TTestNZ<ISD>(value); }
 
-BOL Test(FPC value) { return value != 0; }
+inline BOL Test(FPC value) { return TTestNZ<FPC>(value); }
 
-BOL Test(FPD value) { return value != 0; }
+inline BOL Test(FPD value) { return TTestNZ<FPD>(value); }
 
 }  //< namespace _

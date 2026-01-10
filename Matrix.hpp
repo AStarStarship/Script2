@@ -240,11 +240,11 @@ inline TMatrix<ISZ>* TMatrixCloneDelta(Autoject& ajt,
   TMatrix<ISZ>* matrix = TMatrixPtr<ISZ>(ajt.origin);
   ISZ* a_dimensions = &matrix->dimensions.count;
   ISZ dimension_count = *a_dimensions;
-  if (!dimensions_delta || dimension_count == 0) {
+  if (IsError(dimensions_delta) || dimension_count == 0) {
     ISZ bytes = TMatrixSize<T, ISZ>(matrix);
     if (bytes < 0) return NILP;
     IUW* origin_new = ajt.ram(NILP, bytes);
-    if (!origin_new) return NILP;
+    if (IsError(origin_new)) return NILP;
     IUW* origin = ajt.origin;
     ISZ bytes = TMatrixSize<T, ISZ>(&matrix->dimensions.count);
     ArrayCopy(origin_new, TPtr<CHA>(origin_new) + bytes, 
@@ -280,7 +280,7 @@ inline TMatrix<ISZ>* TMatrixCloneDelta(Autoject& ajt,
 template<typename T = ISW, typename ISZ = ISN>
 inline TMatrix<ISZ>* TMatrixResize(Autoject& ajt, const ISZ* dimensions_delta) {
   auto matrix = TMatrixCloneDelta<ISZ>(ajt, dimensions_delta);
-  if (!matrix) return matrix;
+  if (IsError(matrix)) return matrix;
   ajt.origin = TPtr<IUW>(matrix);
   return matrix;
 }

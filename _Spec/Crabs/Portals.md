@@ -54,4 +54,4 @@ Inter-process communication is assumed to be a secure connection without data lo
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

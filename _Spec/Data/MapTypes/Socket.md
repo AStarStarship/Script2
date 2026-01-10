@@ -6,12 +6,8 @@
 
 
 
-**[<< Previous Section: Map Types](./) | [Next Section: Array >>](Array.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section: Map Types](./) | [Next Section: Array >>](Array.md)**

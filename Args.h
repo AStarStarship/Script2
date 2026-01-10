@@ -3,14 +3,13 @@
 #ifndef SCRIPT2_ARGS
 #define SCRIPT2_ARGS 1
 #include "BSeq.h"
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 namespace _ {
 
 /* Sets the params to the given pointers corresponding to the index 1-26 of the
 letters a-z. */
 inline void** Args(void** ptrs, void* a) {
   ptrs[0] = a;
-
   return ptrs;
 }
 
@@ -19,7 +18,6 @@ letters a-z. */
 inline void** Args(void** ptrs, void* a, void* b) {
   ptrs[0] = a;
   ptrs[1] = b;
-
   return ptrs;
 }
 
@@ -29,7 +27,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c) {
   ptrs[0] = a;
   ptrs[1] = b;
   ptrs[2] = c;
-
   return ptrs;
 }
 
@@ -40,7 +37,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d) {
   ptrs[1] = b;
   ptrs[2] = c;
   ptrs[3] = d;
-
   return ptrs;
 }
 
@@ -52,7 +48,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e) {
   ptrs[2] = c;
   ptrs[3] = d;
   ptrs[4] = e;
-
   return ptrs;
 }
 
@@ -66,7 +61,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[3] = d;
   ptrs[4] = e;
   ptrs[5] = f;
-
   return ptrs;
 }
 
@@ -81,7 +75,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[4] = e;
   ptrs[5] = f;
   ptrs[6] = g;
-
   return ptrs;
 }
 
@@ -97,7 +90,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[5] = f;
   ptrs[6] = g;
   ptrs[7] = h;
-
   return ptrs;
 }
 
@@ -114,7 +106,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[6] = g;
   ptrs[7] = h;
   ptrs[8] = i;
-
   return ptrs;
 }
 
@@ -132,7 +123,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[7] = h;
   ptrs[8] = i;
   ptrs[9] = j;
-
   return ptrs;
 }
 
@@ -151,7 +141,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[8] = i;
   ptrs[9] = j;
   ptrs[10] = k;
-
   return ptrs;
 }
 
@@ -172,7 +161,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[9] = j;
   ptrs[10] = k;
   ptrs[11] = l;
-
   return ptrs;
 }
 
@@ -194,7 +182,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[10] = k;
   ptrs[11] = l;
   ptrs[12] = m;
-
   return ptrs;
 }
 
@@ -217,7 +204,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[11] = l;
   ptrs[12] = m;
   ptrs[13] = n;
-
   return ptrs;
 }
 
@@ -241,7 +227,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[12] = m;
   ptrs[13] = n;
   ptrs[14] = o;
-
   return ptrs;
 }
 
@@ -266,7 +251,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[13] = n;
   ptrs[14] = o;
   ptrs[15] = p;
-
   return ptrs;
 }
 
@@ -294,7 +278,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[15] = p;
   ptrs[16] = q;
   ptrs[17] = r;
-
   return ptrs;
 }
 
@@ -323,7 +306,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[16] = q;
   ptrs[17] = r;
   ptrs[18] = s;
-
   return ptrs;
 }
 
@@ -353,7 +335,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[17] = r;
   ptrs[18] = s;
   ptrs[19] = t;
-
   return ptrs;
 }
 
@@ -384,7 +365,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[18] = s;
   ptrs[19] = t;
   ptrs[20] = u;
-
   return ptrs;
 }
 
@@ -416,7 +396,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[19] = t;
   ptrs[20] = u;
   ptrs[20] = v;
-
   return ptrs;
 }
 
@@ -449,7 +428,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[20] = u;
   ptrs[21] = v;
   ptrs[22] = w;
-
   return ptrs;
 }
 
@@ -484,7 +462,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[21] = v;
   ptrs[22] = w;
   ptrs[23] = x;
-
   return ptrs;
 }
 
@@ -520,7 +497,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[22] = w;
   ptrs[23] = x;
   ptrs[24] = y;
-
   return ptrs;
 }
 
@@ -557,7 +533,6 @@ inline void** Args(void** ptrs, void* a, void* b, void* c, void* d, void* e,
   ptrs[23] = x;
   ptrs[24] = y;
   ptrs[25] = z;
-
   return ptrs;
 }
 
@@ -575,7 +550,6 @@ inline void** Args(void** ptrs, const void* a, const void* b) {
   const void** const_ptrs = const_cast<const void**>(ptrs);
   const_ptrs[0] = a;
   const_ptrs[1] = b;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -586,7 +560,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c) {
   const_ptrs[0] = a;
   const_ptrs[1] = b;
   const_ptrs[2] = c;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -599,7 +572,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[1] = b;
   const_ptrs[2] = c;
   const_ptrs[3] = d;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -613,7 +585,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[2] = c;
   const_ptrs[3] = d;
   const_ptrs[4] = e;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -628,7 +599,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[3] = d;
   const_ptrs[4] = e;
   const_ptrs[5] = f;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -644,7 +614,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[4] = e;
   const_ptrs[5] = f;
   const_ptrs[6] = g;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -662,7 +631,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[5] = f;
   const_ptrs[6] = g;
   const_ptrs[7] = h;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -679,7 +647,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[6] = g;
   const_ptrs[7] = h;
   const_ptrs[8] = i;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -699,7 +666,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[7] = h;
   const_ptrs[8] = i;
   const_ptrs[9] = j;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -720,7 +686,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[8] = i;
   const_ptrs[9] = j;
   const_ptrs[10] = k;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -743,7 +708,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[9] = j;
   const_ptrs[10] = k;
   const_ptrs[11] = l;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -767,7 +731,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[10] = k;
   const_ptrs[11] = l;
   const_ptrs[12] = m;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -792,7 +755,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[11] = l;
   const_ptrs[12] = m;
   const_ptrs[13] = n;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -818,7 +780,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[12] = m;
   const_ptrs[13] = n;
   const_ptrs[14] = o;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -845,7 +806,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[12] = m;
   const_ptrs[13] = n;
   const_ptrs[14] = o;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -967,7 +927,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[17] = r;
   const_ptrs[18] = s;
   const_ptrs[19] = t;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -1001,7 +960,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[18] = s;
   const_ptrs[19] = t;
   const_ptrs[20] = u;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -1036,7 +994,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[19] = t;
   const_ptrs[20] = u;
   const_ptrs[21] = v;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -1072,7 +1029,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[20] = u;
   const_ptrs[21] = v;
   const_ptrs[21] = w;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -1110,7 +1066,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[21] = v;
   const_ptrs[22] = w;
   const_ptrs[23] = x;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -1149,7 +1104,6 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[22] = w;
   const_ptrs[23] = x;
   const_ptrs[24] = y;
-
   return const_cast<void**>(const_ptrs);
 }
 
@@ -1189,11 +1143,10 @@ inline void** Args(void** ptrs, const void* a, const void* b, const void* c,
   const_ptrs[23] = x;
   const_ptrs[24] = y;
   const_ptrs[25] = z;
-
   return const_cast<void**>(const_ptrs);
 }
 
 }  //< namespace _
 
-#endif  //< SCRIPT2_ARGS
-#endif  //< #if SEAM >= SCRIPT2_DIC
+#endif
+#endif

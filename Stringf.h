@@ -549,6 +549,7 @@ struct LIB_MEMBER ATypef {
 
 /* Utility class for printing an ASCII type-value one-liner. */
 struct LIB_MEMBER AValuef {
+  ATypeValue value;  //< The item type and value.
 };
 
 // Utility class for printing an ASCII Error Code.

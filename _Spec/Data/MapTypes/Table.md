@@ -1,14 +1,10 @@
-# [SCRIPT Specification](../../)
+# Table
 
-## [ASCII Data Specification](../)
-
-### [Map Types](./)
-
-#### Table
+***[Spec](../../) > [Data](../) > [Map Types](./)***
 
 The Table is a string-to-unsorted-index map with a hash table. The acronym for a Table is a TBL.
 
-##### Memory Layout
+## Memory Layout
 
 The memory layout shall be optimized by need to minimize lookup time, which starts with a binary search of the hash table.
 
@@ -55,17 +51,17 @@ struct TTable {
 
 When the count is less than the map.total, the stop of the keys boofer is stored in the stop ISZ value, and the start of the keys boofer is stored in the `keys_map[count]`. When the map.count is equal to the map.total the stop variable stores the keys start offset, and when the map.count returns to being less than the total
 
-##### Hash Function
+## Hash Function
 
 **@warning** *Hash function used may change to use an XOR method*.
 
 All strings are hashed using a prime multiple with the initial value of the largest possible prime that can fit in a 16, 32, or 64-bit size.
 
-##### Hash Function and Overhead
+## Hash Function and Overhead
 
 16, 32, and 64-bit hashes all use the same formula. You multiply the current byte by the magic prime (i.e. the largest 16, 32, or 64-bit prime) and add it to the current hash.
 
-##### C Hash Functions
+## C Hash Functions
 
 ```C++
 inline hash16_t Hash16 (char c, hash16_t hash) {
@@ -113,12 +109,8 @@ hash64_t Hash64 (const char* s, hash64_t hash) {
 }
 ```
 
-**[<< Previous Section: Map](Map.md) | [Next Section: Dictionary >>](Dictionary.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section: Map](Map.md) | [Next Section: Dictionary >>](Dictionary.md)**

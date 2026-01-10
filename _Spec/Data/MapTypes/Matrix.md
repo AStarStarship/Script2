@@ -58,12 +58,8 @@ Matlab style Multi-dimensional matrix separator ---+   */
               N is the Dimension Count -----+  */
 ```
 
-**[<< Previous Section: Stack](Stack.md) | [Next Section: Map >>](Map.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section: Stack](Stack.md) | [Next Section: Map >>](Map.md)**

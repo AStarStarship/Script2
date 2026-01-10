@@ -42,4 +42,4 @@ Script uses DTLS 3.1 provided by the Script. Please see [https://tools.ietf.org/
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

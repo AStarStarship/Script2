@@ -38,12 +38,8 @@ The Memory Layout Requirement is we are required to first search the sorted doma
 +-------------------------------+ 0x0
 ```
 
-**[<< Previous Section:Book](Book.md) | [Next Section: Table >>](Table.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section:Book](Book.md) | [Next Section: Table >>](Table.md)**

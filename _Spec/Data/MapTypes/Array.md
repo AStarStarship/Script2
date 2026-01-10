@@ -21,12 +21,8 @@ struct TArray {
 0xN +----------------+
 ```
 
-**[<< Previous Section: Socket](./Socket) | [Vector Types](./) | [Next Section: Stack >>](./Stack)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section: Socket](./Socket) | [Vector Types](./) | [Next Section: Stack >>](./Stack)**

@@ -8,7 +8,7 @@ Folder::Folder(const CHR* uri) : uri_(uri_) {}
 const CHR* Folder::URI() { return uri_; }
 
 const CHR* Folder::URISet(const CHR* uri) {
-  if (!uri) return uri;
+  if (IsError(uri)) return uri;
 
   uri_ = uri;
 

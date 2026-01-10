@@ -11,11 +11,14 @@ class Library : public Operand {
  public:
   /* Creates an empty automata. */
   Library()
-      : num_members_(0),
-        num_collisions_(0),
-        header_size_(0),
-        collisions_size_(0),
-        data_size_(0) {}
+  :num_members_(0),
+   num_collisions_(0),
+   header_size_(0),
+   collisions_size_(0),
+   data_size_(0)
+  {
+    foo();
+  }
 
   virtual ~Library() {}
 

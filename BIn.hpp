@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_BIN_HPP
 #define SCRIPT2_BIN_HPP
 #include "BIn.h"
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 namespace _ {
 
 #if USING_SCRIPT2_TEXT == YES_0
@@ -15,14 +15,21 @@ inline IUA* BInOrigin(BIn* bin) {
     return TPtr<IUA>(bin, sizeof(BIn));
 }
 
+template<typename Printer>
+Printer& TBInPrintVars(Printer& printer, const BIn* bin) {
+  ISW size = bin->bytes;
+  return printer << Linef('_', 80) << "\nBIn: size:" << bin->bytes
+    << " start:" << bin->origin << " stop:" << bin->stop
+    << " read:" << bin->read;
+}
+
 /* Print the BIn to the printer. */
 template<typename Printer>
-Printer& TBInPrint(Printer& printer, const BIn* bin) {
-  ISW size = bin->size;
-  return printer << Linef('_', 80) << " size:" << bin->size
-                 << " start:" << bin->origin << " stop:" << bin->stop
-                 << " read:" << bin->read;
-  printer << Hexf(BInOrigin(bin), size + sizeof(BIn));
+Printer& TBInPrint(Printer& o, const BIn* bin) {
+  ISW size = bin->bytes;
+  return o << Linef('_', 80) << "\nBIn: size:" << bin->bytes
+           << " start:" << bin->origin << " stop:" << bin->stop
+           << " read:" << bin->read << Hexf(BInOrigin(bin), size + sizeof(BIn));
 }
 
 template<typename CHT=CHR>

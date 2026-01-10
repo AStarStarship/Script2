@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Address.h" />
+    <ClInclude Include="Address.hpp" />
+    <ClInclude Include="Address.hxx" />
     <ClInclude Include="Args.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Array.hpp" />
@@ -50,6 +52,7 @@
     <ClInclude Include="COut.h" />
     <ClInclude Include="COut.hxx" />
     <ClInclude Include="Crabs.h" />
+    <ClInclude Include="Crabs.hpp" />
     <ClInclude Include="Crabs.hxx" />
     <ClInclude Include="Dic.hpp" />
     <ClInclude Include="Door.hpp" />
@@ -125,7 +128,8 @@
     <ClInclude Include="_Seams\13.Map.hxx" />
     <ClInclude Include="_Seams\14.Table.hxx" />
     <ClInclude Include="_Seams\15.Dic.hxx" />
-    <ClInclude Include="_Seams\16.Crabs.hxx" />
+    <ClInclude Include="_Seams\16.CrabsBSQ.hxx" />
+    <ClInclude Include="_Seams\16.CrabsCore.hxx" />
     <ClInclude Include="_Seams\17.Room.hxx" />
     <ClInclude Include="_Seams\18.Matrix.hxx" />
     <ClInclude Include="_Seams\19.File.hxx" />
@@ -142,6 +146,7 @@
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ReadMe.md" />
     <None Include="_Seams\21.Seam.s2" />
     <None Include="_Spec\Addressing\PolarRouting.md" />
     <None Include="_Spec\Addressing\ReadMe.md" />
@@ -208,7 +213,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{8FA0C775-E3C6-46ED-8707-339E0DFE9921}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>kabukisdkdata</RootNamespace>
+    <RootNamespace>KabukiToolkitdata</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>
     </ProjectName>

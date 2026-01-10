@@ -41,18 +41,14 @@ Dictionaries have slower insert times than ASCII Books but faster lookup.
 |    4   |   2   |    4   |   4   |   16  | 16 + 4  per index + buffer.|
 |    8   |   4   |    8   |   8   |   32  | 24 + 16 per index + buffer.|
 
-| DIC  | Max Values | % Collisions (p) |           Overhead |
+| DIC  | Max Values | % Collisions (p) |           Overhead             |
 |:----:|:----------:|:----------------:|:------------------------------:|
 |  2   |     255    |    0.0001        | Ceiling (0.02*p*2^8)  = 2      |
 |  4   |     2^13   |      0.1         | Ceiling (0.04*p*2^13) = 327.68 |
 |  8   |     2^29   |    10^-16        | Ceiling (0.04*p*2^29) = 327.68 |
 
-**[<< Previous Section: Table](./Table.md) | [Next Section: SCRIPT Specification >>](../../)**
-
 ## Requirements
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section: Table](./Table.md) | [Next Section: SCRIPT Specification >>](../../)**

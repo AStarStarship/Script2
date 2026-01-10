@@ -112,4 +112,4 @@ FPE 1.0     // Wastes a TRUCK TON of space but best for repeated addition.
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

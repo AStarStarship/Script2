@@ -198,7 +198,7 @@ class TRoom : public Operand {
 
   /* Sets the Room state_. */
   virtual BOL SetRoomName(const CHA* name) {
-    if (!name) {
+    if (IsError(name)) {
       return false;
     }
     delete name_;

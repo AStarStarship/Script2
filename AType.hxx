@@ -7,137 +7,9 @@
 #else
 #include "_Release.h"
 #endif
+
+#if SEAM >= SCRIPT2_COUT
 namespace _ {
-
-#if SEAM >= SCRIPT2_UNIPRINTER
-DTB ATypeRemapEP(DTW sw_vt_bits, DTW pod_type, DTD ep_remap) {
-  return DTB((pod_type >> (pod_type - _PCa) * 5) & ATypePODMask);
-}
-
-DTW ACTXHandlerDefault(void* begin, void* end, DTW type, IUW value, IUW vmsb) {
-  static const IUD Map = (IUD(_ISA) << _PCaBit0) | (IUD(_ISA) << _PCbBit0) |
-                         (IUD(_CHC) << _PCcBit0) | (IUD(_FPD) << _PCdBit0) |
-                         (IUD(_TMD) << _PCeBit0) | (IUD(_TME) << _PCfBit0) |
-                         (IUD(_FPE) << _PCgBit0) | (IUD(_TME) << _PChBit0) |
-                         (IUD(_IUD) << _PCiBit0) | (IUD(_IUE) << _PCjBit0) |
-                         (IUD(_IUE) << _PCkBit0) | (IUD(_IUE) << _PClBit0);
-  static CHR PCStrings[12][4]{
-    {'P','C','a', 0}, {'P','C','b', 0}, {'P','C','c', 0}, {'P','C','d', 0},
-    {'P','C','e', 0}, {'P','C','f', 0}, {'P','C','g', 0}, {'P','C','h', 0},
-    {'P','C','i', 0}, {'P','C','j', 0}, {'P','C','k', 0}, {'P','C','l', 0},
-  };  //< Dez Nutz a-l takes up 192 bytes in UTF-32 or 48 with UTF-8
-  static CHR ECStrings[ATypeCTXTotal][4]{
-    {'C','0','0', 0}, {'C','0','1', 0}, {'C','0','2', 0}, {'C','0','3', 0},
-    {'C','0','4', 0}, {'C','0','5', 0}, {'C','0','6', 0}, {'C','0','7', 0},
-    {'C','0','8', 0}, {'C','0','9', 0}, {'C','1','0', 0}, {'C','1','1', 0},
-    {'C','1','2', 0}, {'C','1','3', 0}, {'C','1','4', 0}, {'C','1','5', 0},
-    {'C','1','6', 0}, {'C','1','7', 0}, {'C','1','8', 0}, {'C','1','9', 0},
-    {'C','2','0', 0}, {'C','2','1', 0}, {'C','2','2', 0}, {'C','2','3', 0},
-    {'C','2','4', 0}, {'C','2','5', 0}, {'C','2','6', 0}, {'C','2','7', 0},
-    {'C','2','8', 0}, {'C','2','9', 0}, {'C','3','0', 0}, {'C','3','1', 0},
-    {'C','3','2', 0}, {'C','3','3', 0}, {'C','3','4', 0}, {'C','3','5', 0},
-    {'C','3','6', 0}, {'C','3','7', 0}, {'C','3','8', 0}, {'C','3','9', 0},
-    {'C','4','0', 0}, {'C','4','1', 0}, {'C','4','2', 0}, {'C','4','3', 0},
-    {'C','4','4', 0}, {'C','4','5', 0}, {'C','4','6', 0}, {'C','4','7', 0},
-    {'C','4','8', 0}, {'C','4','9', 0}, {'C','5','0', 0}, {'C','5','1', 0},
-    {'C','5','2', 0}, {'C','5','3', 0}, {'C','5','4', 0}, {'C','5','5', 0},
-    {'C','5','6', 0}, {'C','5','7', 0}, {'C','5','8', 0}, {'C','5','9', 0},
-    {'C','6','0', 0}, {'C','6','1', 0}, {'C','6','2', 0}, {'C','6','3', 0},
-    {'C','6','4', 0}, {'C','6','5', 0}, {'C','6','6', 0}, {'C','6','7', 0},
-    {'C','6','8', 0}, {'C','6','9', 0}, {'C','7','0', 0}, {'C','7','1', 0}
-  };  //< Takes up 1152 bytes in UTF-32, 288 with UTF-8.
-  //< 336-1344 bytes is enough for ARM assembly to offset the instruction pointer
-  //< from to avoid having to load it from the .bss section. I forgot if this is
-  //< optimal in x86 assembly.
-  
-  // Array that stores if it's a POD type.
-  static const ISA ECAlign[12]{
-    0,
-    0,
-    ACPUAlignC,
-    ACPUAlignD,
-    ACPUAlignE,
-    ACPUAlignE,
-    ACPUAlignE,
-    ACPUAlignD,
-    ACPUAlignD,
-    ACPUAlignE,
-    ACPUAlignE,
-    ACPUAlignE,
-  };
-  #if CPU_SIZE != CPU_2_BYTES
-  const DTW Action = type >> 16;
-  type ^= Action << 16;
-  #endif
-  const DTW SW_VT = type >> ATypePODBits;
-  const DTW POD = type & ATypePODMask;
-  if (!begin && !end) {
-    DTW align_mask = ECAlign[POD - _PCa];
-    if (value) return 72;
-    return align_mask;
-  }
-  if (!ATypeIsCTX(SW_VT, POD)) return 0;
-  DTW ctx_index = ATypeToCTX_NC(SW_VT, POD);
-  if (!begin) return ATypeRemapEP(SW_VT, POD, Map);
-  if (!end) return DTW(PCStrings + (POD - _PCa));
-
-  #if CPU_SIZE != CPU_2_BYTE
-  switch (Action) {
-    #ifdef USING_STA
-    case _SWA: {
-      TSPrinter<CHA> p_a((CHA*)begin, (CHA*)end);
-      while (ctx_index-- > 0) p_a.Hex(IUA(ctx_index));
-      return DTW(p_a.start);
-    }
-    #endif
-    #ifdef USING_STB
-    case _SWB: {
-      TSPrinter<CHB> p_b((CHB*)begin, (CHB*)end);
-      while (ctx_index-- > 0) p_b.Hex(IUA(ctx_index));
-      return DTW(p_b.start);
-    }
-    #endif
-    #ifdef USING_STC
-    case _SWC: {
-      TSPrinter<CHC> p_c((CHC*)begin, (CHC*)end);
-      while (ctx_index-- > 0) p_c.Hex(IUA(ctx_index));
-      return DTW(p_c.start);
-    }
-    #endif
-    case ACTXFunWrite: {
-      #if SEAM >= SCRIPT2_STACK
-      return ArrayCopy(begin, end, (void*)value, ISW(vmsb));
-      #else
-      return 0;
-      #endif
-    }
-  }
-  #endif
-
-  return 0;
-}
-
-ACTXFrame::ACTXFrame() :
-  handler(ACTX_HANDLER_INIT),
-  epoch(AClockEpochInit)
-{}
-
-ACTXFrame* ACTX() {
-  static IUW frame[(sizeof(ACTXFrame) + ACPUCacheLineSize) >> ACPUBytesLog2];
-  return (ACTXFrame*)(ISW(frame) + (-ISW(frame) & ISW(0x3f)));
-}
-  
-DTW ACTXHandle(ACTXHandler actxh, void* begin, void* end, DTW type, IUW value,
-               IUW vmsb) {
-  if (actxh) return actxh(begin, end, type, value, vmsb);
-  return 0;
-}
-
-DTW ACTXHandle(void* begin, void* end, DTW type, IUW value, IUW vmsb) {
-  return ACTXHandle(ACTX()->handler, begin, end, type, value, vmsb);
-}
-#endif
-
 DTB ATypeMDDeassert(DTW type) {
   const DTW MD = (type >> ATypeMDBit0) & 0x3;
   type ^= MD << ATypeMDBit0;
@@ -279,6 +151,51 @@ ISA ATypeSizeOfPOD(DTB type) {
   return 0;
 }
 
+template<typename IS = ISW>
+IS TATypeSizeOf(const void* value, DTB type) {
+  if (type < ATypePODTotal)
+    return ATypeSizeOfPOD(type);
+  // | b15:b14 | b13:b9 | b8:b7 | b6:b5 | b4:b0 |
+  // |:-------:|:------:|:-----:|:-----:|:-----:|
+  // |   MOD   |   MT   |  SW   |  VT   |  POD  |
+  DTB mod = type >> ATypeMDBit0;
+  if (mod && 1) return sizeof(void*);
+  type ^= mod << ATypeMDBit0;
+  DTB mt = type >> ATypeMTBit0;
+  type ^= mt << ATypeMTBit0;
+  DTB sw = type >> ATypeSWBit0;
+  type ^= sw << ATypeSWBit0;
+  DTB vt = type >> ATypeVTBit0;
+  type ^= vt << ATypeVTBit0;
+  if (vt == DTB(0)) {
+    IS dez = IS(sw);
+    IS nutz = IS(ATypeSizeOfPOD(type));
+    return dez * nutz;
+  }
+  IS size = 1;
+  switch (sw) {
+  case 0: return IS(*static_cast<const ISA*>(value));
+  case 1: return IS(*static_cast<const ISB*>(value));
+  case 2: return IS(*static_cast<const ISC*>(value));
+  }
+  return IS(*static_cast<const ISD*>(value));
+}
+
+template<typename IS = ISW>
+IS TATypeSizeOf(void* value, DTB type) {
+  return TATypeSizeOf<IS>((const void*)value, type);
+}
+template<typename IS = ISW>
+IS TATypeSizeOf(const void* value_base, IS bytes, DTB type) {
+  const IUA* vbase = (const IUA*)value_base;
+  return TATypeSizeOf<IS>(vbase + bytes, type);
+}
+template<typename IS = ISW>
+IS TATypeSizeOf(void* value_base, IS bytes, DTB type) {
+  const void* vbase = (const void*)value_base;
+  return TATypeSizeOf<IS>(vbase, bytes, type);
+}
+
 ISW ATypeBytes(const void* value, DTB type) {
   return TATypeSizeOf<ISW>(value, type);
 }
@@ -290,6 +207,55 @@ ISW ATypeBytes(const void* value_base, ISA bytes, DTB type) {
 void* ATypeValueEnd(void* value, DTB type) {
   return TPtr<void>(value, ATypeBytes(value, type));
 }
+
+/* Gets the alignment mask of the given type. */
+inline DTW AlignmentMask(CHA item) { return 0; }
+inline DTW AlignmentMask(ISA item) { return 0; }
+inline DTW AlignmentMask(IUA item) { return 0; }
+inline DTW AlignmentMask(CHB item) { return 1; }
+inline DTW AlignmentMask(ISB item) { return 1; }
+inline DTW AlignmentMask(IUB item) { return 1; }
+inline DTW AlignmentMask(CHC item) { return 3; }
+inline DTW AlignmentMask(ISC item) { return 3; }
+inline DTW AlignmentMask(IUC item) { return 3; }
+inline DTW AlignmentMask(FPC item) { return 3; }
+inline DTW AlignmentMask(ISD item) { return 7; }
+inline DTW AlignmentMask(IUD item) { return 7; }
+inline DTW AlignmentMask(FPD item) { return 7; }
+inline DTW AlignmentMask(void* item) { return ACPUMask; }
+inline DTW AlignmentMask(const void* item) { return ACPUMask; }
+
+/* Gets the type of the given item. */
+inline DTW TypeOf(CHA item) { return _CHA; }
+inline DTW TypeOf(ISA item) { return _ISA; }
+inline DTW TypeOf(IUA item) { return _IUA; }
+inline DTW TypeOf(CHB item) { return _CHB; }
+inline DTW TypeOf(ISB item) { return _ISB; }
+inline DTW TypeOf(IUB item) { return _IUB; }
+inline DTW TypeOf(CHC item) { return _CHB; }
+inline DTW TypeOf(ISC item) { return _ISC; }
+inline DTW TypeOf(IUC item) { return _IUC; }
+inline DTW TypeOf(FPC item) { return _FPC; }
+inline DTW TypeOf(ISD item) { return _ISD; }
+inline DTW TypeOf(IUD item) { return _IUD; }
+inline DTW TypeOf(FPD item) { return _FPD; }
+inline DTW TypeOf(CHA* item) { return _STA; }
+inline DTW TypeOf(const CHA* item) {
+  //return _CNS_STA;
+  return CATypeMap(_SWA, _CNS_PTR);
+}
+inline DTW TypeOf(CHB* item) { return _STB; }
+inline DTW TypeOf(const CHB* item) {
+  //return _CNS_STA;
+  return CATypeMap(_SWB, _CNS_PTR);
+}
+inline DTW TypeOf(CHC* item) { return _STC; }
+inline DTW TypeOf(const CHC* item) {
+  //return _CNS_STA;
+  return CATypeMap(_SWC, _CNS_PTR);
+}
+inline DTW TypeOf(void* item) { return _PTR; }
+inline DTW TypeOf(const void* item) { return _CNS_PTR; }
 
 // Returns an array of the customizable POD type sizes.
 //const ISA* ATypeCustomSize() {
@@ -574,7 +540,7 @@ void ATypeValue::SetNIL(IUW value) {
 }
 
 inline void* ATypeValue::Set(void* value) {
-  if (!value) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(value)) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(_PTR);
   value_ = IUW(value);
   return NILP;
@@ -582,14 +548,14 @@ inline void* ATypeValue::Set(void* value) {
 
 inline const void* ATypeValue::Set(const void* value)
 {
-  if (!value) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(value)) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(_PTR);
   value_ = IUW(value);
   return NILP;
 }
 
 inline void* ATypeValue::Set(void* base_ptr, ISW voffset) {
-  if (!base_ptr) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(base_ptr)) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(_PTR);
   value_ = IUW(ISW(base_ptr) + voffset);
   return NILP;
@@ -597,14 +563,14 @@ inline void* ATypeValue::Set(void* base_ptr, ISW voffset) {
 
 inline const void* ATypeValue::Set(const void* base_ptr, ISW voffset)
 {
-  if (!base_ptr) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(base_ptr)) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(_PTR);
   value_ = IUW(ISW(base_ptr) + voffset);
   return NILP;
 }
 
 inline void* ATypeValue::Set(DTW type, void* value) {
-  if (!value) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(value)) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(type);
   value_ = IUW(value);
   vmsb_  = 0;
@@ -613,7 +579,7 @@ inline void* ATypeValue::Set(DTW type, void* value) {
 
 inline const void* ATypeValue::Set(DTW type, const void* value)
 {
-  if (!value) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(value)) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(type);
   value_ = IUW(value);
   vmsb_ = 0;
@@ -621,21 +587,21 @@ inline const void* ATypeValue::Set(DTW type, const void* value)
 }
 
 inline void* ATypeValue::Set(DTW type, void* base_ptr, ISW voffset) {
-  if (!base_ptr || voffset < 0) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(base_ptr) || voffset < 0) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(type);
   value_ = IUW(ISW(base_ptr) + voffset);
   return NILP;
 }
 
 inline const void* ATypeValue::Set(DTW type, const void* base_ptr, ISW voffset) {
-  if (!base_ptr || voffset < 0) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(base_ptr) || voffset < 0) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(type);
   value_ = IUW(ISW(base_ptr) + voffset);
   return NILP;
 }
 
 inline void* ATypeValue::Set(DTW type, void* value, void* value_end) {
-  if (!value || !value_end) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(value) || IsError(value_end)) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(type);
   value_ = IUW(value);
   vmsb_ = IUW(value_end);
@@ -644,7 +610,7 @@ inline void* ATypeValue::Set(DTW type, void* value, void* value_end) {
 
 inline const void* ATypeValue::Set(DTW type, const void* value, 
                                    const void* value_end) {
-  if (!value || !value_end) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
+  if (IsError(value) || IsError(value_end)) D_RETURN_TPTR_ERROR(void, -ErrorParamPointer);
   ATypeMakePtr(type);
   value_ = IUW(value);
   vmsb_ = IUW(value_end);
@@ -768,3 +734,137 @@ void ATypeValue::Set(FPD value) {
 #endif
 
 }  //< namespace _
+#endif
+
+#if SEAM >= SCRIPT2_UNIPRINTER
+namespace _ {
+DTB ATypeRemapEP(DTW sw_vt_bits, DTW pod_type, DTD ep_remap) {
+  return DTB((pod_type >> (pod_type - _PCa) * 5) & ATypePODMask);
+}
+
+DTW ACTXHandlerDefault(void* begin, void* end, DTW type, IUW value, IUW vmsb) {
+  static const IUD Map = (IUD(_ISA) << _PCaBit0) | (IUD(_ISA) << _PCbBit0) |
+    (IUD(_CHC) << _PCcBit0) | (IUD(_FPD) << _PCdBit0) |
+    (IUD(_TMD) << _PCeBit0) | (IUD(_TME) << _PCfBit0) |
+    (IUD(_FPE) << _PCgBit0) | (IUD(_TME) << _PChBit0) |
+    (IUD(_IUD) << _PCiBit0) | (IUD(_IUE) << _PCjBit0) |
+    (IUD(_IUE) << _PCkBit0) | (IUD(_IUE) << _PClBit0);
+  static CHR PCStrings[12][4]{
+    {'P','C','a', 0}, {'P','C','b', 0}, {'P','C','c', 0}, {'P','C','d', 0},
+    {'P','C','e', 0}, {'P','C','f', 0}, {'P','C','g', 0}, {'P','C','h', 0},
+    {'P','C','i', 0}, {'P','C','j', 0}, {'P','C','k', 0}, {'P','C','l', 0},
+  };  //< Dez Nutz a-l takes up 192 bytes in UTF-32 or 48 with UTF-8
+  static CHR ECStrings[ATypeCTXTotal][4]{
+    {'C','0','0', 0}, {'C','0','1', 0}, {'C','0','2', 0}, {'C','0','3', 0},
+    {'C','0','4', 0}, {'C','0','5', 0}, {'C','0','6', 0}, {'C','0','7', 0},
+    {'C','0','8', 0}, {'C','0','9', 0}, {'C','1','0', 0}, {'C','1','1', 0},
+    {'C','1','2', 0}, {'C','1','3', 0}, {'C','1','4', 0}, {'C','1','5', 0},
+    {'C','1','6', 0}, {'C','1','7', 0}, {'C','1','8', 0}, {'C','1','9', 0},
+    {'C','2','0', 0}, {'C','2','1', 0}, {'C','2','2', 0}, {'C','2','3', 0},
+    {'C','2','4', 0}, {'C','2','5', 0}, {'C','2','6', 0}, {'C','2','7', 0},
+    {'C','2','8', 0}, {'C','2','9', 0}, {'C','3','0', 0}, {'C','3','1', 0},
+    {'C','3','2', 0}, {'C','3','3', 0}, {'C','3','4', 0}, {'C','3','5', 0},
+    {'C','3','6', 0}, {'C','3','7', 0}, {'C','3','8', 0}, {'C','3','9', 0},
+    {'C','4','0', 0}, {'C','4','1', 0}, {'C','4','2', 0}, {'C','4','3', 0},
+    {'C','4','4', 0}, {'C','4','5', 0}, {'C','4','6', 0}, {'C','4','7', 0},
+    {'C','4','8', 0}, {'C','4','9', 0}, {'C','5','0', 0}, {'C','5','1', 0},
+    {'C','5','2', 0}, {'C','5','3', 0}, {'C','5','4', 0}, {'C','5','5', 0},
+    {'C','5','6', 0}, {'C','5','7', 0}, {'C','5','8', 0}, {'C','5','9', 0},
+    {'C','6','0', 0}, {'C','6','1', 0}, {'C','6','2', 0}, {'C','6','3', 0},
+    {'C','6','4', 0}, {'C','6','5', 0}, {'C','6','6', 0}, {'C','6','7', 0},
+    {'C','6','8', 0}, {'C','6','9', 0}, {'C','7','0', 0}, {'C','7','1', 0}
+  };  //< Takes up 1152 bytes in UTF-32, 288 with UTF-8.
+  //< 336-1344 bytes is enough for ARM assembly to offset the instruction pointer
+  //< from to avoid having to load it from the .bss section. I forgot if this is
+  //< optimal in x86 assembly.
+
+  // Array that stores if it's a POD type.
+  static const ISA ECAlign[12]{
+    0,
+    0,
+    ACPUAlignC,
+    ACPUAlignD,
+    ACPUAlignE,
+    ACPUAlignE,
+    ACPUAlignE,
+    ACPUAlignD,
+    ACPUAlignD,
+    ACPUAlignE,
+    ACPUAlignE,
+    ACPUAlignE,
+  };
+#if CPU_SIZE != CPU_2_BYTES
+  const DTW Action = type >> 16;
+  type ^= Action << 16;
+#endif
+  const DTW SW_VT = type >> ATypePODBits;
+  const DTW POD = type & ATypePODMask;
+  if (IsError(begin) && IsError(end)) {
+    DTW align_mask = ECAlign[POD - _PCa];
+    if (value) return 72;
+    return align_mask;
+  }
+  if (!ATypeIsCTX(SW_VT, POD)) return 0;
+  DTW ctx_index = ATypeToCTX_NC(SW_VT, POD);
+  if (IsError(begin)) return ATypeRemapEP(SW_VT, POD, Map);
+  if (IsError(end)) return DTW(PCStrings + (POD - _PCa));
+
+#if CPU_SIZE != CPU_2_BYTE
+  switch (Action) {
+#ifdef USING_STA
+  case _SWA: {
+    TSPrinter<CHA> p_a((CHA*)begin, (CHA*)end);
+    while (ctx_index-- > 0) p_a.Hex(IUA(ctx_index));
+    return DTW(p_a.start);
+  }
+#endif
+#ifdef USING_STB
+  case _SWB: {
+    TSPrinter<CHB> p_b((CHB*)begin, (CHB*)end);
+    while (ctx_index-- > 0) p_b.Hex(IUA(ctx_index));
+    return DTW(p_b.start);
+  }
+#endif
+#ifdef USING_STC
+  case _SWC: {
+    TSPrinter<CHC> p_c((CHC*)begin, (CHC*)end);
+    while (ctx_index-- > 0) p_c.Hex(IUA(ctx_index));
+    return DTW(p_c.start);
+  }
+#endif
+  case ACTXFunWrite: {
+#if SEAM >= SCRIPT2_STACK
+    return ArrayCopy(begin, end, (void*)value, ISW(vmsb));
+#else
+    return 0;
+#endif
+  }
+  }
+#endif
+
+  return 0;
+}
+
+ACTXFrame::ACTXFrame() :
+  handler(ACTX_HANDLER_INIT),
+  epoch(AClockEpochInit)
+{
+}
+
+ACTXFrame* ACTX() {
+  static IUW frame[(sizeof(ACTXFrame) + ACPUCacheLineSize) >> ACPUBytesLog2];
+  return (ACTXFrame*)(ISW(frame) + (-ISW(frame) & ISW(0x3f)));
+}
+
+DTW ACTXHandle(ACTXHandler actxh, void* begin, void* end, DTW type, IUW value,
+  IUW vmsb) {
+  if (actxh) return actxh(begin, end, type, value, vmsb);
+  return 0;
+}
+
+DTW ACTXHandle(void* begin, void* end, DTW type, IUW value, IUW vmsb) {
+  return ACTXHandle(ACTX()->handler, begin, end, type, value, vmsb);
+}
+
+}  //< namespace _
+#endif

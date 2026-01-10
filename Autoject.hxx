@@ -17,7 +17,7 @@ IUW* ArrayFactoryStackA(IUW* origin, ISW total) {
 }
 
 IUW* ArrayFactoryHeapA(IUW* origin, ISW bytes) {
-  if (!origin) return ArrayFactoryStackA(origin, bytes);
+  if (IsError(origin)) return ArrayFactoryStackA(origin, bytes);
   delete[] origin;
   return NILP;
 }
@@ -30,7 +30,7 @@ IUW* ArrayFactoryStackB(IUW* origin, ISW total) {
 }
 
 IUW* ArrayFactoryHeapB(IUW* origin, ISW bytes) {
-  if (!origin) return ArrayFactoryStackB(origin, bytes);
+  if (IsError(origin)) return ArrayFactoryStackB(origin, bytes);
   delete[] origin;
   return NILP;
 }
@@ -43,7 +43,7 @@ IUW* ArrayFactoryStackC(IUW* origin, ISW total) {
 }
 
 IUW* ArrayFactoryHeapC(IUW* origin, ISW bytes) {
-  if (!origin) return ArrayFactoryStackC(origin, bytes);
+  if (IsError(origin)) return ArrayFactoryStackC(origin, bytes);
   delete[] origin;
   return NILP;
 }
@@ -56,7 +56,7 @@ IUW* ArrayFactoryStackD(IUW* origin, ISW total) {
 }
 
 IUW* ArrayFactoryHeapD(IUW* origin, ISW bytes) {
-  if (!origin) return ArrayFactoryStackD(origin, bytes);
+  if (IsError(origin)) return ArrayFactoryStackD(origin, bytes);
   delete[] origin;
   return NILP;
 }
@@ -70,7 +70,7 @@ IUW* ObjectFactoryStack(IUW* origin, ISW bytes) {
 }
 
 IUW* ObjectFactoryHeap(IUW* origin, ISW bytes) {
-  if (!origin) return ObjectFactoryStack(origin, bytes);
+  if (IsError(origin)) return ObjectFactoryStack(origin, bytes);
   delete[] origin;
   return NILP;
 }

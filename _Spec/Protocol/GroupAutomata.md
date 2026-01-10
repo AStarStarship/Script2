@@ -36,4 +36,4 @@ Script, and all formal intelligence, can be recursively defined as follows:
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

@@ -1,150 +1,111 @@
 // Copyright AStarship <https://astarship.net>.
-#include "Crabs.h"
-#if SEAM >= SCRIPT2_CRABS
+#include "Crabs.hpp"
+#if SEAM >= SCRIPT2_CRABS_BSQ
 #include "Args.h"
 #include "Slot.h"
 #include "Op.hpp"
 #include "Hash.hpp"
 #include "BSeq.hpp"
-#if SEAM == SCRIPT2_CRABS
+#if SEAM == SCRIPT2_CRABS_BSQ
 #include "_Debug.h"
 #else
 #include "_Release.h"
 #endif
 namespace _ {
 
-/* Used to return an erroneous result from a B-Input.
-@return Returns a Static Error Op Result.
-@param error The error type. */
-inline const Op* ASCIIError(Crabs* crabs, ERC error) {
+inline ISC CrabsHeaderBytes(ISC stack_total) {
+  return sizeof(Crabs) + 2 * sizeof(void*) * stack_total;
+}
+
+inline const Op* CrabsError(Crabs* crabs, ERC error) {
   D_COUT("\nCrabs " << TAErrors<>(error) << " Error!");
   return TPtr<const Op>(1);
 }
 
-/* Used to return an erroneous result from a B-Input.
-@return         Returns a Static Error Op Result.
-@param crabs    The source Crabs.
-@param error   The error type.
-@param header  The B-Sequence Header.
-@param offset  The offset to the type in error in the B-Sequence.
-@param address The address of the IUA in error. */
-inline const Op* ASCIIError(Crabs* crabs, ERC error, const ISC* header) {
+inline const Op* CrabsError(Crabs* crabs, ERC error, const DTB* header) {
   D_COUT("\nCrabs " << TAErrors<>(error) << " Error!");
   return TPtr<const Op>(1);
 }
 
-/* Used to return an erroneous result from a B-Input.
-@return         Returns a Static Error Op Result.
-@param crabs    The source Crabs.
-@param error   The error type.
-@param header  The B-Sequence Header.
-@param offset  The offset to the type in error in the B-Sequence.
-@param address The address of the IUA in error. */
-inline const Op* ASCIIError(Crabs* crabs, ERC error, const ISC* header,
+inline const Op* CrabsError(Crabs* crabs, ERC error, const DTB* header,
                             IUA offset) {
   D_COUT("\nCrabs " << TAErrors<>(error) << " Error!");
   return TPtr<const Op>(1);
 }
 
-/* Used to return an erroneous result from a B-Input.
-@return         Returns a Static Error Op Result.
-@param crabs    The source Crabs.
-@param error   The error type.
-@param header  The B-Sequence Header.
-@param offset  The offset to the type in error in the B-Sequence.
-@param address The address of the IUA in error. */
-inline const Op* ASCIIError(Crabs* crabs, ERC error, const ISC* header,
+inline const Op* CrabsError(Crabs* crabs, ERC error, const DTB* header,
                             IUA offset, IUA* address) {
   D_COUT("\nCrabs " << TAErrors<>(error) << " Error!");
   return TPtr<const Op>(1);
 }
 
-IUW* CrabsBinAddress(Crabs* crabs) {
-  if (!crabs) return NILP;
-  return TPtr<IUW>(crabs) + crabs->header_size;
-}
-
-IUA* CrabsBoofer(Crabs* crabs) {
+inline IUA* CrabsBoofer(Crabs* crabs) {
   return TPtr<IUA>(crabs, sizeof(Crabs));
 }
 
-BIn* CrabsBIn(Crabs* crabs) {
-  return TPtr<BIn>(CrabsBinAddress(crabs));
+inline BIn* CrabsBIn(Crabs* crabs) {
+  if (IsError(crabs)) {
+    return NILP;
+  }
+  return TPtr<BIn>(crabs, crabs->header_bytes);
 }
 
-IUW* CrabsBOutAddress(Crabs* crabs) {
-  if (!crabs) {
+inline BOut* CrabsBOut(Crabs* crabs) {
+  if (IsError(crabs)) {
     return NILP;
   }
-  return TPtr<IUW>(crabs) + crabs->header_size;
+  BIn* bin = CrabsBIn(crabs);
+  return TPtr<BOut>(bin, bin->bytes + sizeof(BIn));
 }
 
-BOut* CrabsBOut(Crabs* crabs) {
-  return TPtr<BOut>(CrabsBOutAddress(crabs));
-}
-
-Crabs* CrabsInit(IUW* socket, ISC boofer_size, ISC stack_size, Operand* root,
-                 IUW* unpacked_boofer, IUW unpacked_size) {
-  if (!socket) {
+/* Initializes the Crabs Machine. */
+Crabs* CrabsInit(IUW* socket, ISC boofer_bytes, ISC stack_total, Operand* root,
+                 IUW* unpacked_boofer, IUW unpacked_bytes, IUD ctxt) {
+  if (IsError(socket) || IsError(root) || IsError(unpacked_boofer) || 
+    stack_total < Crabs::StackTotalMin || boofer_bytes < Crabs::BooferTotalMin)
+  {
     return NILP;
   }
-  if (boofer_size < Crabs::BooferSizeMin) {
-    return NILP;
-  }
-  if (stack_size < Crabs::StackSizeMin) {
-    stack_size = Crabs::StackSizeMin;
-  }
-  if (unpacked_boofer == NILP) {
-    D_COUT("\nError: unpacked_boofer was nil!");
-  }
-
-  if (root == NILP) {
-    D_COUT("\nError: root can't be nil.");
-    return NILP;
-  }
-
-  Crabs* crabs = TPtr<Crabs>(socket);
-
-  ISC total_stack_size = (stack_size - 1) * ISC(2 * sizeof(Operand*));
-  // Calculate the size of the Slot and Stack.
-  ISC size = (boofer_size - sizeof(Crabs) - total_stack_size + 1) >> 1;
-
-  //< >>1 to divide by 2
-  crabs->bout_state = BOutStateDisconnected;
-  crabs->bin_state = BInStateDisconnected;
-  crabs->stack_count = 1;
-  crabs->type = _NIL;
-  crabs->stack_size = stack_size;
-  crabs->num_states = 0;
-  crabs->operand = NILP;
-  D_COUT("\nInitializing Stack with size:" << stack_size << " boofer_size:"
-                                           << boofer_size << " size:" << size);
-  crabs->bytes_left = 0;
-  // ISC offset    = sizeof (Crabs) + total_stack_size - sizeof (void*);
-  // bin_offset       = sizeof (BIn) + total_stack_size + offset;
-  crabs->header_size = sizeof(Crabs) + 2 * sizeof(void*) * stack_size;
-  crabs->hash = PRIME_LARGEST_IUB;
-  crabs->result = NILP;
-  crabs->header = NILP;
+  D_COUT("\nInitializing Stack with stack_total:" << stack_total << " boofer_bytes:" <<
+         boofer_bytes);
+  Crabs* crabs        = TPtr<Crabs>(socket);
+  ISC stack_bytes     = (stack_total - 1) * ISC(2 * sizeof(Operand*));
+  ISC bin_bout_bytes  = (boofer_bytes - sizeof(Crabs) - stack_bytes + 1) >> 1;
+  D_COUT("\n  bin_bout_bytes:" << bin_bout_bytes);
+  crabs->bout_state   = BOutStateDisconnected;
+  crabs->bin_state    = BInStateDisconnected;
+  crabs->stack_count  = 1;
+  crabs->type         = _NIL;
+  crabs->stack_total  = stack_total;
+  crabs->num_states   = 0;
+  crabs->operand      = NILP;
+  crabs->bytes_left   = 0;
+  //ISC offset          = sizeof (Crabs) + total_stack_size - sizeof (void*);
+  //bin_offset          = sizeof (BIn) + total_stack_size + offset;
+  crabs->header_bytes = CrabsHeaderBytes(stack_total);
+  crabs->hash         = PRIME_LARGEST_IUB;
+  crabs->ctxt         = ctxt;
+  crabs->result       = NILP;
+  crabs->header       = NILP;
   crabs->header_start = NILP;
-  crabs->root = root;
-  IUW* base_ptr = TPtr<IUW>(crabs) + sizeof(Crabs) + stack_size * sizeof(ISC);
-  crabs->slot.Set(base_ptr, unpacked_size);
-  D_COUT("crabs->op:0x" << Hexf(crabs->operand));
-  BInInit(CrabsBinAddress(crabs), size);
-  BOutInit(CrabsBOutAddress(crabs), size);
+  crabs->root         = root;
+  crabs->args         = NILP;
+  IUW* base_ptr = TPtr<IUW>(crabs) + sizeof(Crabs) + stack_total * sizeof(Operand**);
+  crabs->slot.Set(base_ptr, unpacked_bytes);
+  BInInit(CrabsBIn(crabs), bin_bout_bytes);
+  BOutInit(CrabsBOut(crabs), bin_bout_bytes);
   return crabs;
 }
 
 // BOL CrabsIsDynamic (Crabs* crabs) {
 //    return crabs->type % 2 == 1;
-//}
+// }
 
-IUA* CrabsEndAddress(Crabs* crabs) { return BInEnd(CrabsBIn(crabs)); }
+inline IUA* CrabsEndAddress(Crabs* crabs) { return BInEnd(CrabsBIn(crabs)); }
 
-const Op* CrabsReset(Crabs* crabs) { return 0; }
+inline const Op* CrabsReset(Crabs* crabs) { return NILP; }
 
-IUA CrabsExitState(Crabs* crabs) {
+inline IUA CrabsExitState(Crabs* crabs) {
   D_COUT("\nExiting " << TBInStates<CHR>(crabs->bin_state) << 
          " state back to the state:" <<
          TBInStates<CHR>(crabs->last_bin_state) << '.');
@@ -153,17 +114,17 @@ IUA CrabsExitState(Crabs* crabs) {
   return state;
 }
 
-const Op* CrabsSetState(Crabs* crabs, BInState state) {
+inline const Op* CrabsSetState(Crabs* crabs, BInState state) {
   if (state == BInStateLocked)
-    return ASCIIError(crabs, ErrorReadOnly);
+    return CrabsError(crabs, ErrorReadOnly);
   D_COUT("\nEntering " << TBInStates<CHR>(state) << " state:" << state);
   crabs->bin_state = state;
   return NILP;
 }
 
-const Op* CrabsEnterState(Crabs* crabs, BInState state) {
+inline const Op* CrabsEnterState(Crabs* crabs, BInState state) {
   // We are guaranteed crabs is not nil at this point.
-  // if (!crabs) {
+  // if (IsError(crabs)) {
   //    return  ASCIIError (CrabsBIn (crabs), ErrorImplementation);
   //}
   D_COUT("\nEntering " << TBInStates<CHR>(state) << " state:" << state);
@@ -172,20 +133,19 @@ const Op* CrabsEnterState(Crabs* crabs, BInState state) {
   return NILP;
 }
 
-IUA CrabsStreamBOut(Crabs* crabs) { return BOutStreamByte(CrabsBOut(crabs)); }
+inline IUA CrabsStreamBOut(Crabs* crabs) { return BOutStreamByte(CrabsBOut(crabs)); }
 
 const Op* Push(Crabs* crabs, Operand* operand) {
-  if (!crabs) {
-    return ASCIIError(crabs, ErrorImplementation);
+  if (IsError(crabs)) {
+    return CrabsError(crabs, ErrorImplementation);
   }
-  if (!operand) {
-    return ASCIIError(crabs, ErrorInvalidOperand);
+  if (IsError(operand)) {
+    return CrabsError(crabs, ErrorInvalidOperand);
   }
-  D_COUT("\nPushing " << operand->Star('?', NILP)->name
-                      << " onto the stack");
+  D_COUT("\nPushing " << operand->Star('?', NILP)->name << " onto the stack");
   ISC stack_count = crabs->stack_count;
-  if (stack_count >= crabs->stack_size) {
-    return ASCIIError(crabs, ErrorStackOverflow);
+  if (stack_count >= crabs->stack_total) {
+    return CrabsError(crabs, ErrorStackOverflow);
   }
   CrabsStack(crabs)[stack_count - 1] = crabs->operand;
   crabs->operand = operand;
@@ -199,12 +159,12 @@ const Op* Push(Crabs* crabs, Operand* operand) {
 const Op* Pop(Crabs* crabs) {
   ISC stack_count = crabs->stack_count;
   if (stack_count == 0) {  // This should not happen.
-    return ASCIIError(crabs, ErrorInvalidOperand);
+    return CrabsError(crabs, ErrorInvalidOperand);
   }
   if (stack_count == 1) {
     // We ever pop off the root.
     CrabsClose(crabs);
-    return 0;
+    return NILP;
   }
   D_COUT("\nPopping " << OperandName(crabs->operand) << " off the stack.");
   crabs->operand = CrabsStack(crabs)[stack_count - 2];
@@ -218,8 +178,8 @@ const Op* Pop(Crabs* crabs) {
     return NILP;
 }
 const Op* CrabsScanBIn(Crabs* crabs) {
-  if (!crabs) {
-    return ASCIIError(crabs, ErrorImplementation);
+  if (IsError(crabs)) {
+    return CrabsError(crabs, ErrorImplementation);
   }
 
   DTB type = 0;          //< Current type.
@@ -237,16 +197,16 @@ const Op* CrabsScanBIn(Crabs* crabs) {
   ISD timestamp = 0,     //< Last time when the expression ran.
       delta_t = 0;       //< Time delta between the last timestamp.
   const Op* op = 0;      //< Current operation.
-  Operand* operand = 0;  //< The operand.
+  Operand* operand = NILP; //< The operand.
   BIn* bin = 0;          //< BIn.
-  IUA *bin_begin = 0,    //< Beginning of the ring socket.
-      *bin_start = 0,    //< Start of the ring socket data.
-      *bin_stop = 0,     //< Stop of the ring socket data.
-      *bin_end = 0,      //< End of the ring socket.
-      *slot_begin = 0,   //< The first byte in the Slot.
-      *slot_start = 0,   //< Pointer to the write cursor.
-      *slot_stop = 0,    //< The last byte of data in the Slot.
-      *slot_end = 0;     //< The byte after the last byte ein the Slot
+  IUA* bin_begin = 0,    //< Beginning of the ring socket.
+     * bin_start = 0,    //< Start of the ring socket data.
+     * bin_stop = 0,     //< Stop of the ring socket data.
+     * bin_end = 0,      //< End of the ring socket.
+     * slot_begin = 0,   //< The first byte in the Slot.
+     * slot_start = 0,   //< Pointer to the write cursor.
+     * slot_stop = 0,    //< The last byte of data in the Slot.
+     * slot_end = 0;     //< The byte after the last byte ein the Slot.
 
   slot_begin = crabs->slot.origin;
   slot_start = crabs->slot.origin;
@@ -254,7 +214,7 @@ const Op* CrabsScanBIn(Crabs* crabs) {
   slot_end   = crabs->slot.stop;
 
   const Op* result;  //< Result of the SScan.
-  const ISC* header = crabs->header;
+  const DTB* header = crabs->header;
 
   //< Header of the current Op being verified.
   op = NILP;
@@ -267,7 +227,7 @@ const Op* CrabsScanBIn(Crabs* crabs) {
 
   bin_state = crabs->bin_state;  //< This isn't an optimal solution.
   bin = CrabsBIn(crabs);
-  size = bin->size;
+  size = bin->bytes;
   hash = crabs->hash;
   timestamp = ClockNow();
   delta_t = timestamp - crabs->last_time;
@@ -335,7 +295,7 @@ const Op* CrabsScanBIn(Crabs* crabs) {
           // return crabs->result;
           return CrabsForceDisconnect(crabs, ErrorInvalidOperand);
         }
-        const ISC* params = op->in;
+        const DTB* params = op->in;
         IUW num_ops = IUW(params);
         if (num_ops > CrabsParamsMax) {
           // It's an Op.
@@ -350,7 +310,7 @@ const Op* CrabsScanBIn(Crabs* crabs) {
           }
 
           operand = crabs->operand;
-          if (!operand) {
+          if (IsError(operand)) {
             D_COUT("\nNull operand found!");
             return CrabsForceDisconnect(crabs, ErrorInvalidOperand);
           }
@@ -388,7 +348,7 @@ const Op* CrabsScanBIn(Crabs* crabs) {
         if (type <= _ADR) {
           if (type < _ADR) {  // Address type.
             D_COUT("\nScanning address.");
-            ASCIIError(crabs, ErrorInvalidType);
+            CrabsError(crabs, ErrorInvalidType);
             CrabsEnterState(crabs, BInStateLocked);
             bin_state = BInStateLocked;
             break;
@@ -488,8 +448,8 @@ const Op* CrabsScanBIn(Crabs* crabs) {
       }
       case BInStatePackedUTF8: {
         if (bytes_left == 0) {
-          ASCIIError(crabs, ErrorTextOverflow,
-                     const_cast<const ISC*>(crabs->header), 0, bin_start);
+          CrabsError(crabs, ErrorTextOverflow,
+                     CPtr<DTB>(crabs->header), 0, bin_start);
           break;
         }
         hash = HashIUB(b, hash);
@@ -549,10 +509,10 @@ const Op* CrabsScanBIn(Crabs* crabs) {
           // add 32 to the first IUA.
 
           if ((b >> 7) != 1) {
-            const ISC* header = const_cast<const ISC*>(crabs->header);
+            const DTB* header = CPtr<DTB>(crabs->header);
 
             CrabsEnterState(crabs, BInStateHandlingError);
-            return ASCIIError(crabs, ErrorVarintOverflow, header, 0,
+            return CrabsError(crabs, ErrorVarintOverflow, header, 0,
                               bin_start);
           }
 
@@ -644,7 +604,7 @@ const Op* CrabsScanBIn(Crabs* crabs) {
         hash = HashIUB(b, hash);
         D_COUT("\nhash:" << Hexf(hash));
         // parsing plain-old-data.
-        if (!bytes_left) {
+        if (bytes_left == 0) {
           D_COUT("... done!");
           CrabsExitState(crabs);
           bin_state = crabs->bin_state;
@@ -674,45 +634,45 @@ const Op* CrabsScanBIn(Crabs* crabs) {
   return NILP;
 }
 
-BOL CrabsContains(Crabs* crabs, void* address) {
+inline BOL CrabsContains(Crabs* crabs, void* address) {
   if (address < TPtr<IUW>(crabs)) return false;
   if (address > CrabsEndAddress(crabs)) return false;
   return true;
 }
 
-const Op* CrabsScanHeader(Crabs* crabs, const ISC* header) {
-  if (crabs->stack_count >= crabs->stack_size) {
+inline const Op* CrabsScanHeader(Crabs* crabs, const DTB* header) {
+  if (crabs->stack_count >= crabs->stack_total) {
     // Handle overflow cleanup:
-    return ASCIIError(crabs, ErrorStackOverflow, header);
+    return CrabsError(crabs, ErrorStackOverflow, header);
   }
 
   return 0;
 }
 
-const ISC* CrabsHeaderStack(Crabs* crabs) {
+inline const ISC* CrabsHeaderStack(Crabs* crabs) {
   return TPtr<const ISC>(TPtr<CHA>(crabs) +
                          sizeof(Crabs) + crabs->stack_count);
 }
 
-void CrabsClose(Crabs* crabs) {
+inline void CrabsClose(Crabs* crabs) {
   D_COUT("\nClosing expression.");
   crabs->stack_count = 1;
 }
 
-void CrabsCancel(Crabs* crabs) {
+inline void CrabsCancel(Crabs* crabs) {
   D_COUT("\nCanceling expression.");
   crabs->stack_count = 1;
   crabs->bin_state = BInStateAddress;
   // CrabsPush (crabs->root);
 }
 
-void CrabsClear(Crabs* crabs) {
+inline void CrabsClear(Crabs* crabs) {
   // Erase the socket by writing zeros to it.
 
   BIn* bin = CrabsBIn(crabs);
 
   IUA *begin = BInOrigin(bin),
-      *end = begin + bin->size,
+      *end = begin + bin->bytes,
       *origin = begin + bin->origin,
       *stop = begin + bin->stop;
 
@@ -729,119 +689,120 @@ void CrabsClear(Crabs* crabs) {
   bin->stop = TDelta<ISC>(crabs, begin + 1);
 }
 
-void CrabsRingBell(Crabs* crabs, const CHA* address) {
+inline void CrabsRingBell(Crabs* crabs, const CHA* address) {
   BOutRingBell(CrabsBOut(crabs), address);
 }
 
-void CrabsAckBack(Crabs* crabs, const CHA* address) {
+inline void CrabsAckBack(Crabs* crabs, const CHA* address) {
   BOutAckBack(CrabsBOut(crabs), address);
 }
 
-const Op* CrabsForceDisconnect(Crabs* crabs, ERC error) {
+inline const Op* CrabsForceDisconnect(Crabs* crabs, ERC error) {
   crabs->bin_state = BInStateDisconnected;
-  return ASCIIError(crabs, error);
+  return CrabsError(crabs, error);
 }
 
-const Op* CrabsQuery(Crabs* crabs, const Op& op) {
+/* Reads the Crabs args from the crabs->slot.
+inline const Op* CrabsArgs (Crabs* crabs, const ISC* params, void** args) {
+   const CHA* cursor = ArgsParse (crabs->args_cursor, crabs->args_end,
+                                   params, args);
+   if (IsError(cursor)) {
+   }
+}*/
+
+inline const Op* CrabsArgs(Crabs* crabs, const DTB* params, void** args) {
+  A_ASSERT(params);
+  A_ASSERT(args);
+  Slot slot(CrabsBIn(crabs));
+  return slot.Read(params, args);
+}
+
+inline const Op* CrabsArgs(Crabs* crabs, const Op& op, void** args) {
+  A_ASSERT(crabs);
+  A_ASSERT(args);
+  Slot slot(CrabsBIn(crabs));
+  return slot.Read(op.in, args);
+}
+
+inline const Op* CrabsResult(Crabs* crabs, const DTB* params, void** args, 
+  IUD pc_ctx) {
+  if (IsError(params) || IsError(args)) {
+    return NILP;
+  }
+  return BOutWrite(CrabsBOut(crabs), params, args, pc_ctx);
+}
+
+inline const Op* CrabsResult(Crabs* crabs, const Op* op, void** args,
+  IUD pc_ctx) {
+  if (IsError(op) || IsError(args)) {
+    return NILP;
+  }
+  return BOutWrite(CrabsBOut(crabs), op->out, args, pc_ctx);
+}
+
+inline const Op* CrabsResult(Crabs* crabs, const Op& op, void** args, 
+                             IUD pc_ctx) {
+  if (IsError(&args)) {
+    return NILP;
+  }
+  return BOutWrite(CrabsBOut(crabs), op.out, args, pc_ctx);
+}
+
+const Op* CrabsQuery(Crabs* crabs, const Op& op, IUD pc_ctx) {
   if (crabs) {
     void* args[2];
     IUW num_ops = (IUW)op.in, first_op = (IUW)op.out;
     // @todo Write params to crabs!
-    static const ISC* header = 
-      TParams<5, STR_, CROpNameLengthMax, _VUI, _VUI, _STR,
-              CROpDescriptionLengthMax>();
+    static const DTB* header = 
+      TTSQ<STR_, CrabsOpNameLengthMax, _VUI, _VUI, _STR,
+              CrabsOpDescriptionLengthMax>();
     return BOutWrite(CrabsBOut(crabs), header,
-                     Args(args, op.name, &num_ops, &first_op, op.description));
+                     Args(args, op.name, &num_ops, &first_op, op.description),
+                     pc_ctx);
   }
   return &op;
 }
 
-IUA* CrabsBaseAddress(BIn* bin) {
+inline IUA* CrabsBaseAddress(BIn* bin) {
   return TPtr<IUA>(bin) + sizeof(BIn);
 }
 
 ISW CrabsSpace(BIn* bin) {
-  if (!bin) {
+  if (IsError(bin)) {
     return ~0;
   }
 
   IUA* origin = CrabsBaseAddress(bin);
-  return ISW(SlotSpace(origin + bin->origin, origin + bin->stop, bin->size));
+  return ISW(SlotSpace(origin + bin->origin, origin + bin->stop, bin->bytes));
 }
 
 IUW* CrabsBaseAddress(void* ptr, ISC rx_tx_offset) {
   enum {
-    cSlotHeaderSize = sizeof(BIn) + sizeof(IUW) - sizeof(BIn) % sizeof(IUW),
+    SlotHeaderSize = sizeof(BIn) + sizeof(IUW) - sizeof(BIn) % sizeof(IUW),
     //< Offset to the origin of the ring socket.
   };
-  CHA* result = TPtr<CHA>(ptr) + rx_tx_offset + cSlotHeaderSize;
+  CHA* result = TPtr<CHA>(ptr) + rx_tx_offset + SlotHeaderSize;
   return TPtr<IUW>(result);
 }
 
 CHA* CrabsEndAddress(BIn* bin) {
-  return TPtr<CHA>(bin) + sizeof(BIn) + bin->size;
+  return TPtr<CHA>(bin) + sizeof(BIn) + bin->bytes;
 }
 
 const Op* CrabsQuery(Crabs* crabs, const Op* op) {
-  if (crabs) {
-    if (!op) {
-      return ASCIIError(crabs, ErrorImplementation);
-    }
-    void* args[2];
-    return BOutWrite(CrabsBOut(crabs),
-                     TParams<5, STR_, CROpNameLengthMax, _VUI, _VUI, _STR,
-                            CROpDescriptionLengthMax>(),
-                     Args(args, op->name, op->in, op->out, op->description));
+  if (IsError(op)) return op;
+
+  if (IsError(op)) {
+    return CrabsError(crabs, ErrorImplementation);
   }
-  return op;
+  void* args[2];
+  return BOutWrite(CrabsBOut(crabs),
+                   TTSQ<STR_, CrabsOpNameLengthMax, _VUI, _VUI, _STR,
+                   CrabsOpDescriptionLengthMax>(),
+                   Args(args, op->name, op->in, op->out, op->description),
+                   crabs->ctxt);
 }
 
-#if USING_SCRIPT2_TEXT == YES_0
-template<typename Printer>
-Printer& PrintCrabsStack(Printer & o, Crabs* crabs) {
-  A_ASSERT(crabs);
-
-  ISC i, stack_count;
-  const Op* op;
-  Operand* operand;
-  Operand** stack = CrabsStack(crabs);
-
-  stack_count = crabs->stack_count;
-  o << "\nOperand stack_count:" << stack_count;
-
-  if (stack_count == 1) {
-    return o << "\nStack Item 1: " << OperandName(crabs->root);
-  }
-  for (i = 0; i < stack_count - 1; ++i) {
-    o << "\nStack Item " << i + 1 << ":\"";
-    operand = stack[i];
-    op = operand->Star('?', NILP);
-    o << op->name << '\"';
-  }
-  op = crabs->operand->Star('?', NILP);
-  return o << "\nStack Item " << i + 1 << ":\"" << op->name << "\"";
-}
-
-template<typename Printer>
-Printer& Print(Printer& o, Crabs* crabs) {
-  o << Linef('~', 80) << "\nStack:    " << Hexf(crabs) << '\n'
-    << Linef('_', 80) << "\nbytes_left : " << crabs->bytes_left
-    << "\nheader_size: " << crabs->header_size
-    << "\nstack_count: " << crabs->stack_count
-    << "\nstack_size : " << crabs->stack_size
-    << "\nbin_state  : " << BInStates(crabs->bin_state)
-    << "\nbout_state : " << BOutStates(crabs->bout_state)
-    << "\nnum_states : " << crabs->num_states
-    << "\nheader_size: " << crabs->header_size << Linef('-', 80)
-    << crabs->operand << "\nheader     : ";
-  TBSeqPrint<Printer>(o, crabs->header_start);
-  o << Linef('-', 80);
-  PrintCrabsStack(o, crabs);
-  o << Linef('~', 80);
-  return o;
-}
-
-#endif
 }  //< namespace _
 
 #endif

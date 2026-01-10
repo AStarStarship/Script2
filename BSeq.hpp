@@ -16,9 +16,9 @@ template<typename ISY = ISN, typename DT = DTB>
 struct TBSeq {
   const DT* params;  //< BSeq params.
 
-  TBSeq(const DT* params) : params(params) {
-    // Nothing to do here! (:-)|=<
-  }
+  TBSeq(const DT* params = NILP) : params(params) {}
+
+  constexpr const DT* CParams() { return params; }
 };
 
 enum {
@@ -26,27 +26,29 @@ enum {
 };
 
 #if CPU_SIZE == CPU_2_BYTE
-inline ISB UnpackSVI(ISB value) {
+inline ISB UnpackISV(ISB value) {
   if (value < 0) {
     IUB result = 0x8000 return result | ~(value - 1);
   }
   return value;
 }
 
-inline ISB PackSVI(ISB value) {
+inline ISB PackISV(ISB value) {
   if (value < 0) {
     IUB result = 1 << 15;
     return result | ((~value + 1) << 1);
   }
   return value;
 }
+#elseif CPU_SIZE == CPU_4_BYTE
+#elseif CPU_SIZE == CPU_8_BYTE
 #endif
 
-constexpr ISC CBSeqSize(const ISC* params) {
-  if (!params) {
+constexpr DTB CBSeqSize(const DTB* params) {
+  if (CIsError(params)) {
     return 0;
   }
-  ISC bytes = sizeof(ISC), 
+  DTB bytes = sizeof(DTB), 
       count = *params++;
 
   if (count > BSQMax) {
@@ -54,57 +56,50 @@ constexpr ISC CBSeqSize(const ISC* params) {
   }
 
   for (; count > 0; --count) {
-    ISC param = *params++;
+    DTB param = *params++;
 
     if (param == _NIL) {  // This is illegal.
       return 0;
     }
-    //if (param <= _TKN) {
-    //  bytes += sizeof(ISC);
-    //  ++params;
-    //}
     if (param == _ISE) {
-      bytes += sizeof(ISC);
+      bytes += sizeof(DTB);
       ++params;
     }
     if (param == _IUE) {
-      bytes += sizeof(ISC);
+      bytes += sizeof(DTB);
       ++params;
     }
-    //if (param >= _LST && param <= _MAP) {  // This is illegal.
-    //  return 0;
-    //}
-    //if (param > _MAP) {
-    //  if (param >> 8) {  // This is an error.
-    //    return 0;
-    //  }
-    //  if (param & 0x20) {     // It's a multi-dimensional array so
-    //    param = *params;      // add the number_ of dimensions + 1;
-    //    params += param + 1;  // for the dimension count.
-    //  }
-    //}
-    bytes += sizeof(ISC);
+    
+    bytes += sizeof(DTB);
   }
   return bytes;
 }
 
-/* Creates a immutable Script B-Sequence.
-C++11 variadic template to ensure only one copy in ROM
-and to eliminate some redundant typing. */
-template<const ISC... N>
-inline const ISC* TParams() {
-  static const ISC Size = 0,  // BsqSize ({ N... })
-      cList[sizeof...(N)] = {N...};
-  return &Size;
+/* Creates a immutable Type Sequence (TSQ).
+C++11 variadic template to ensure only one copy in ROM and to eliminate some 
+redundant typing. */
+template<const DTB... N>
+constexpr const DTB* TTSQ() {
+  static const DTB CCount = sizeof...(N),
+    CValues[sizeof...(N)] = { N... };
+  return &CCount;
+}
+
+/* Utility class for making allowed and disallowed char sequences. */
+template<const CHR... N>
+constexpr const CHR* CCHRSQ() {
+  static const CHR CCount = sizeof...(N),
+    CValues[sizeof...(N)] = { N... };
+  return &CCount;
 }
 
 /* Writes the given value to the socket between begin and end without any checks.
 @warning You must memory align begin and end and verify the boofer fits before
 calling. */
 template<typename IS = ISR>
-void* TBSeqWrite_NC(void* begin, void* end, DTB type, IUW value,
-  IUW msb = 0) {
-  D_COUT(" value:" << value << " value_msb:" << msb);
+void* TBSeqWrite_NC(void* begin, void* end, DTB type, IUW value, 
+                    IUW value_msb = 0) {
+  D_COUT(" value:" << value << " value_msb:" << value_msb);
   // | b15 | b14:b13 | b12:b9 | b8:b7 | b6:b5 | b4:b0 |
   // |:---:|:-------:|:------:|:-----:|:-----:|:-----:|
   // | CNS |    MD   |   MT   |  SW   |  VT   |  POD  |
@@ -114,7 +109,7 @@ void* TBSeqWrite_NC(void* begin, void* end, DTB type, IUW value,
 
   ISW freespace = ISW(end) - ISW(begin);
   if (type <= _CHA) {
-  Write1Byte:
+   Write1Byte:
     auto ptr = TPtr<IUA>(begin);
     if (freespace < 1) return NILP;
     *ptr++ = MD ? *TPtr<IUA>(value)
@@ -122,7 +117,7 @@ void* TBSeqWrite_NC(void* begin, void* end, DTB type, IUW value,
     return ptr;
   }
   if (type <= _CHB) {
-  Write2Bytes:
+   Write2Bytes:
     if (freespace < 2) return NILP;
     auto ptr = TPtr<IUB>(begin);
     *ptr++ = MD ? *TPtr<IUB>(value)
@@ -130,23 +125,23 @@ void* TBSeqWrite_NC(void* begin, void* end, DTB type, IUW value,
     return ptr;
   }
   if (type <= _CHC) {
-  Write4Bytes:
+   Write4Bytes:
     if (freespace < 4) return NILP;
     auto ptr = TPtr<IUC>(begin);
     *ptr++ = MD ? *TPtr<IUC>(value)
-                 : IUC(value);
+                : IUC(value);
     return ptr;
   }
   if (type <= _TMD) {
-  Write8Bytes:
+   Write8Bytes:
     if (freespace < 8) return NILP;
     auto ptr = TPtr<IUD>(begin);
     *ptr++ = MD ? *TPtr<IUD>(value)
-                 : IUD(value);
+                : IUD(value);
     return ptr;
   }
   if (type <= _TME) {
-  Write16Bytes:
+   Write16Bytes:
     if (freespace < 16) return NILP;
     auto dcursor = TPtr<IUW>(begin);
     if (MD) {
@@ -169,7 +164,7 @@ void* TBSeqWrite_NC(void* begin, void* end, DTB type, IUW value,
     }
 #if CPU_SIZE == CPU_8_BYTE
     *dcursor++ = value;
-    *dcursor++ = msb;
+    *dcursor++ = value_msb;
 #endif
     return dcursor;
   }
@@ -185,6 +180,7 @@ void* TBSeqWrite_NC(void* begin, void* end, DTB type, IUW value,
   type ^= sw << ATypeSWBit0;
   DTB vt = type >> ATypeVTBit0;
   type ^= vt << ATypeVTBit0;
+
   //@todo Fix me!
   if (vt == 0) { // Vector of Homotuples.
     auto bytes = (1 << vt) * ATypeSizeOfPOD(type);
@@ -205,9 +201,9 @@ void* TBSeqWrite_NC(void* begin, void* end, DTB type, IUW value,
       return TPtr<ISA>(begin) + bytes;
     }
     case 2: {
-      auto bytes = *TPtr<ISC>(value);
+      auto bytes = *TPtr<DTB>(value);
       if (freespace <= bytes) return NILP;
-      *TPtr<ISC>(begin) = bytes;
+      *TPtr<DTB>(begin) = bytes;
       return TPtr<ISA>(begin) + bytes;
     }
     case 3: {
@@ -228,7 +224,7 @@ void* TBSeqWrite_NC(void* begin, void* end, DTB type, const void* value) {
 template<typename IS = ISR>
 void* TBSeqWrite_NC(void* begin, void* end, DTC type, IUW value) {
   auto result = TBSeqWrite_NC<IS>(begin, end, DTB(type), value);
-  if (!result) return result;
+  if (IsError(result)) return result;
   return TBSeqWrite_NC<IS>(result, end, DTB(type >> 16), value);
 }
 template<typename IS = ISR>
@@ -239,9 +235,9 @@ void* TBSeqWrite_NC(void* begin, void* end, DTC type, const void* value) {
 template<typename IS = ISR>
 void* TBSeqWrite_NC(void* begin, void* end, DTD type, IUW value) {
   auto result = TBSeqWrite_NC<IS>(begin, end, DTB(type), value);
-  if (!result) return result;
+  if (IsError(result)) return result;
   result = TBSeqWrite_NC<IS>(result, end, DTB(type >> 16), value);
-  if (!result) return result;
+  if (IsError(result)) return result;
   return TBSeqWrite_NC<IS>(result, end, DTB(type >> 24), value);
 }
 template<typename IS = ISR>
@@ -257,27 +253,33 @@ void* TBSeqWrite(void* begin, void* end, DTB type, const void* value) {
 template<typename IS = ISR>
 void* TBSeqWrite(void* begin, void* end, DTC type, const void* value) {
   auto result = TBSeqWrite<IS>(begin, end, DTB(type), value);
-  if (!result) return result;
+  if (IsError(result)) return result;
   return TBSeqWrite<IS>(result, end, DTB(type >> 16), value);
 }
 
 template<typename IS = ISR>
 void* TBSeqWrite(void* begin, void* end, DTD type, const void* value) {
   auto result = TBSeqWrite<IS>(begin, end, DTB(type), value);
-  if (!result) return result;
+  if (IsError(result)) return result;
   result = TBSeqWrite<IS>(result, end, DTB(type >> 16), value);
-  if (!result) return result;
+  if (IsError(result)) return result;
   return TBSeqWrite<IS>(result, end, DTB(type >> 24), value);
 }
 
+/* Prints a BSQ to the Printer. */
 template<typename Printer>
-Printer& TBSeqPrint(Printer& o, const ISN* params) {
+Printer& TBSeqPrint(Printer& o, const DTB* params) {
+  if (IsError(params)) {
+    return o;
+  }
   ISN param_count = *params++,
       i     = 0;
   DTB type  = 0,
       value = 0;
-
   o << "Param<";
+  if (param_count == 0) {
+    return o << "NIL>";
+  }
   if (param_count > BSQMax) {
     o << "\nInvalid num_params: " << param_count;
     return o;
@@ -285,179 +287,178 @@ Printer& TBSeqPrint(Printer& o, const ISN* params) {
   o << param_count << ": ";
   for (i = 1; i < param_count; ++i) {
     value = *params++;
-    type = value & 0x1f;  //< Mask off type.
-    value = value >> 5;   //< Shift over array type.
+    //type = value & 0x1f;  //< Mask off type.
+    //value = value >> 5;   //< Shift over array type.
     o << ATypef(value) << ", ";
-    if (type >= STR_) {
-      if (value) {
-        o << "\nError: arrays may only be created from POD types.";
-        return o;
-      }
-      // Print out the max length of the .
-      ++i;
-      value = *params++;
-      o << value;
-    } else if (value > 31) {
-      if (value > 127) {  //< It's a multi-dimensional array.
-        o << "Multi-dimensional Array:" << value << ", ";
-      }
-      // Then it's an array.
-      ++i;
-      switch (value) {  //< Print out the Array type.
-        case 0: {
-          break;
-        }
-        case 1: {
-          value = *params++;
-          o << "IUA:" << value << ", ";
-          break;
-        }
-        case 2: {
-          value = *params++;
-          o << "IUB:" << value << ", ";
-          break;
-        }
-        case 3: {
-          value = *params++;
-          o << "IUC:" << value << ", ";
-          break;
-        }
-        case 4: {
-          value = *params++;
-          o << "IUD:" << value << ", ";
-          break;
-        }
-        case 5: {
-          value = *params++;
-          if (value == 0) {
-            o << "IUA:[0]";
-            break;
-          }
-          o << "IUA:[" << value << ": ";
-          for (ISN i = value; i != 0; --i) {
-            value = *params++;
-            o << value << ", ";
-          }
-          value = *params++;
-          o << value << "]";
-          break;
-        }
-        case 6: {
-          value = *params++;
-          if (value == 0) {
-            o << "IUB:[0]";
-            break;
-          }
-          o << "IUB:[" << value << ": ";
-          for (ISN i = value; i != 0; --i) {
-            value = *params++;
-            o << value << ", ";
-          }
-          value = *params++;
-          o << value << "]";
-          break;
-        }
-        case 7: {
-          value = *params++;
-          if (value == 0) {
-            o << "IUC:[0]";
-            break;
-          }
-          o << "IUC:[" << value << ": ";
-          for (ISN i = value; i != 0; --i) {
-            value = *params++;
-            o << value << ", ";
-          }
-          value = *params++;
-          o << value << "]";
-          break;
-        }
-      }
-    }
+    //if (type >= STR_) {
+    //  if (value) {
+    //    return o << "\nError: arrays may only be created from POD types.";
+    //  }
+    //  // Print out the max length of the .
+    //  ++i;
+    //  value = *params++;
+    //  o << value;
+    //} else if (value > 31) {
+    //  if (value > 127) {  //< It's a multi-dimensional array.
+    //    o << "Multi-dimensional Array:" << value << ", ";
+    //  }
+    //  // Then it's an array.
+    //  ++i;
+    //  switch (value) {  //< Print out the Array type.
+    //    case 0: {
+    //      break;
+    //    }
+    //    case 1: {
+    //      value = *params++;
+    //      o << "IUA:" << value << ", ";
+    //      break;
+    //    }
+    //    case 2: {
+    //      value = *params++;
+    //      o << "IUB:" << value << ", ";
+    //      break;
+    //    }
+    //    case 3: {
+    //      value = *params++;
+    //      o << "IUC:" << value << ", ";
+    //      break;
+    //    }
+    //    case 4: {
+    //      value = *params++;
+    //      o << "IUD:" << value << ", ";
+    //      break;
+    //    }
+    //    case 5: {
+    //      value = *params++;
+    //      if (value == 0) {
+    //        o << "IUA:[0]";
+    //        break;
+    //      }
+    //      o << "IUA:[" << value << ": ";
+    //      for (ISN i = value; i != 0; --i) {
+    //        value = *params++;
+    //        o << value << ", ";
+    //      }
+    //      value = *params++;
+    //      o << value << "]";
+    //      break;
+    //    }
+    //    case 6: {
+    //      value = *params++;
+    //      if (value == 0) {
+    //        o << "IUB:[0]";
+    //        break;
+    //      }
+    //      o << "IUB:[" << value << ": ";
+    //      for (ISN i = value; i != 0; --i) {
+    //        value = *params++;
+    //        o << value << ", ";
+    //      }
+    //      value = *params++;
+    //      o << value << "]";
+    //      break;
+    //    }
+    //    case 7: {
+    //      value = *params++;
+    //      if (value == 0) {
+    //        o << "IUC:[0]";
+    //        break;
+    //      }
+    //      o << "IUC:[" << value << ": ";
+    //      for (ISN i = value; i != 0; --i) {
+    //        value = *params++;
+    //        o << value << ", ";
+    //      }
+    //      value = *params++;
+    //      o << value << "]";
+    //      break;
+    //    }
+    //  }
+    //}
   }
   // Do the last set without a comma.
   value = *params++;
-  o << ATypef(value) << ", ";
-  if (value == STR_) {
-    ++i;
-    value = *params++;
-    o << value;
-  } else if (value > 31) {
-    // Then it's an array.
-    type = value & 0x1f;  //< Mask off type.
-    value = value >> 5;   //< Shift over array type.
-    ++i;
-    switch (value) {
-      case 0: {
-        break;
-      }
-      case 1: {
-        value = *params++;
-        o << "IUA:" << value << ", ";
-        break;
-      }
-      case 2: {
-        value = *params++;
-        o << "IUB:" << value << ", ";
-        break;
-      }
-      case 3: {
-        value = *params++;
-        o << "IUC:" << value << ", ";
-        break;
-      }
-      case 4: {
-        value = *params++;
-        o << "IUE:" << value << ", ";
-        break;
-      }
-      case 5: {
-        value = *params++;
-        if (value == 0) {
-          o << "IUA:[0]";
-          break;
-        }
-        o << "IUA:[" << value << ": ";
-        for (ISN i = value; i != 0; --i) {
-          value = *params++;
-          o << value << ", ";
-        }
-        value = *params++;
-        o << value << "]";
-        break;
-      }
-      case 6: {
-        value = *params++;
-        if (value == 0) {
-          o << "IUB:[0]";
-          break;
-        }
-        o << "IUB:[" << value << ": ";
-        for (ISN i = value; i != 0; --i) {
-          value = *params++;
-          o << value << ", ";
-        }
-        value = *params++;
-        o << value << "]";
-        break;
-      }
-      case 7: {
-        value = *params++;
-        if (value == 0) {
-          o << "IUC:[0]";
-          break;
-        }
-        o << "IUC:[" << value << ": ";
-        for (ISN i = value; i != 0; --i) {
-          value = *params++;
-          o << value << ", ";
-        }
-        value = *params++;
-        o << value << "]";
-        break;
-      }
-    }
-  }
+  o << ATypef(value);
+  //if (value == STR_) {
+  //  ++i;
+  //  value = *params++;
+  //  o << value;
+  //} else if (value > 31) {
+  //  // Then it's an array.
+  //  type = value & 0x1f;  //< Mask off type.
+  //  value = value >> 5;   //< Shift over array type.
+  //  ++i;
+  //  switch (value) {
+  //    case 0: {
+  //      break;
+  //    }
+  //    case 1: {
+  //      value = *params++;
+  //      o << "IUA:" << value << ", ";
+  //      break;
+  //    }
+  //    case 2: {
+  //      value = *params++;
+  //      o << "IUB:" << value << ", ";
+  //      break;
+  //    }
+  //    case 3: {
+  //      value = *params++;
+  //      o << "IUC:" << value << ", ";
+  //      break;
+  //    }
+  //    case 4: {
+  //      value = *params++;
+  //      o << "IUE:" << value << ", ";
+  //      break;
+  //    }
+  //    case 5: {
+  //      value = *params++;
+  //      if (value == 0) {
+  //        o << "IUA:[0]";
+  //        break;
+  //      }
+  //      o << "IUA:[" << value << ": ";
+  //      for (ISN i = value; i != 0; --i) {
+  //        value = *params++;
+  //        o << value << ", ";
+  //      }
+  //      value = *params++;
+  //      o << value << "]";
+  //      break;
+  //    }
+  //    case 6: {
+  //      value = *params++;
+  //      if (value == 0) {
+  //        o << "IUB:[0]";
+  //        break;
+  //      }
+  //      o << "IUB:[" << value << ": ";
+  //      for (ISN i = value; i != 0; --i) {
+  //        value = *params++;
+  //        o << value << ", ";
+  //      }
+  //      value = *params++;
+  //      o << value << "]";
+  //      break;
+  //    }
+  //    case 7: {
+  //      value = *params++;
+  //      if (value == 0) {
+  //        o << "IUC:[0]";
+  //        break;
+  //      }
+  //      o << "IUC:[" << value << ": ";
+  //      for (ISN i = value; i != 0; --i) {
+  //        value = *params++;
+  //        o << value << ", ";
+  //      }
+  //      value = *params++;
+  //      o << value << "]";
+  //      break;
+  //    }
+  //  }
+  //}
   o << '>';
   return o;
 }

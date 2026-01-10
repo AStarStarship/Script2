@@ -23,7 +23,7 @@ Data Types can be represented using 1-byte, or two 2-byte such that 1-byte Data 
 | 12 | FPD  |    double    |   8   | 8-byte floating-point number. |
 | 13 | IUD  |   uint64_t   |   8   | 8-byte unsigned integer. |
 | 14 | ISD  |    int64_t   |   8   | 8-byte signed integer. |
-| 15 | TMD  |    int64_t   |   8   | 8-byte timestamp with ISC second and IUC sub-second tick. |
+| 15 | TMD  |    int64_t   |   8   | 8-byte Subsecond Id timestamp, subsecond . |
 | 16 | FPE  |  float128_t  |  16   | 16-byte floating-point number. |
 | 17 | IUE  |   uint128_t  |  16   | 16-byte unsigned integer. |
 | 18 | ISE  |   int128_t   |  16   | 16-byte signed integer. |
@@ -183,4 +183,4 @@ To delete all 128-bit Plain Context Types set CT4_STOP to BOL (19). To delete al
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net).

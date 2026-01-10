@@ -1,4 +1,4 @@
-// Copyright AStarship <https://astarship.net>; all rights reserved.
+// Copyright AStarship <https://astarship.net>.
 #pragma once
 #ifndef SCRIPT2_VARINT_HPP
 #define SCRIPT2_VARINT_HPP
@@ -7,7 +7,7 @@
 namespace _ {
 
 #if CPU_SIZE == CPU_2_BYTE
-inline ISB UnpackSVI(ISB value) {
+inline ISB UnpackISV(ISB value) {
   if (value < 0) {
     IUB result = 0x8000 return result | ~(value - 1);
   }

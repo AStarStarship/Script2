@@ -234,10 +234,6 @@ COut& COut::Print(Charsf& item) {
   return ::_::TPrint<COut>(*this, item);
 }
 
-//COut& COut::Print(TypeWordValue item) {
-//  return ::_::TPrintAType<COut>(*this, item);
-//}
-
 COut& COut::NL() { return Print('\n'); }
 COut& COut::NL(CHA item) {
   NL();
@@ -365,7 +361,7 @@ ISN COut::PrintAndCount(const CHC* string) {
 }
 #endif
 
-COut& StdOut() { return COut().Star(); }
+inline COut& StdOut() { return COut().Star(); }
 
 COut CPrint(CHA item) { return COut(item); }
 COut CPrint(const CHA* item) { return COut(item); }

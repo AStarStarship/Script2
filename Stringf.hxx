@@ -96,7 +96,7 @@ CHA* SPrint(CHA* string, CHA* stop, CHC item) {
   // | 1110aaaa | 10bbbbbb | 10cccccc |          | 00000aaaabbbbbbcccccc |
   // | 11110aaa | 10bbbbbb | 10cccccc | 10dddddd | aaabbbbbbccccccdddddd |
 
-  if (!string) return NILP;
+  if (IsError(string) || IsError(stop)) return NILP;
 
   D_COUT("\n\n" << IUC(item) << ".) Printed:0x");
   if (!(item >> 7)) { // 1 ASCII CHA.
@@ -137,7 +137,7 @@ CHA* SPrint(CHA* string, CHA* stop, CHC item) {
 }
 
 const CHA* SScan(const CHA* string, CHC& item) {
-  if (!string) return NILP;
+  if (IsError(string)) return NILP;
   CHA c = CHC(*string++);
   CHC lsb_mask = 0x3f, msb = 0x80, result = 0;
   D_COUT("SScan:" << Hexf(c));
@@ -191,7 +191,7 @@ CHA* SPrint(CHA* start, CHA* stop, CHB item) {
   return SPrint(start, stop, CHC(item));
 #else
   enum { c2ByteMSbMask = 0xC0, c3ByteMSbMask = 0xE0, c4ByteMSbMask = 0xF0 };
-  if (!start || start >= stop) return NILP;
+  if (IsError(start) || start >= stop) return NILP;
   if (!(item >> 7)) {  // 1 byte.
     if (start + 1 > stop) return NILP;
     *start++ = CHA(item);
@@ -221,7 +221,7 @@ CHB* SPrint(CHB* start, CHB* stop, CHC item) {
   // | 000000aaaaaaaaaa  |                       | 0000000000aaaaaaaaaa |
   // | 110110yyyyyyyyyy  |   110111xxxxxxxxxx    | yyyyyyyyyyxxxxxxxxxx |
   // |      0xD800       |         0xDC00        |                      |
-  if (!start || start + 1 >= stop) return NILP;
+  if (IsError(start) || start + 1 >= stop) return NILP;
   CHC lsb_mask = 0x3f, lsb = item & lsb_mask, msb = item >> 10;
   if (!msb) {
     if (start + 1 > stop) return NILP;
@@ -1027,7 +1027,7 @@ Sizef::Sizef(ISD size) : size(size) {}
 namespace _ {
 
 CHA* SPrint(CHA* string, CHA* stop, FPC value) {
-  if (!string || string >= stop) return NILP;
+  if (IsError(string) || string >= stop) return NILP;
   ISW size = stop - string;
   D_COUT("\nString:" << Hexf(string) << " end:" << Hexf(stop) << 
          " size:" << size << "\nExpecting:" << value);
@@ -1038,7 +1038,7 @@ CHA* SPrint(CHA* string, CHA* stop, FPC value) {
 
 #if USING_FPD == YES_0
 CHA* SPrint(CHA* start, CHA* stop, FPD value) {
-  if (!start || start >= stop) return NILP;
+  if (IsError(start) || start >= stop) return NILP;
   ISW size = stop - start;
   ISC count = sprintf_s(start, size, "%lf", value);
   if (count <= 0) return NILP;

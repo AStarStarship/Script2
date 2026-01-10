@@ -35,4 +35,4 @@ Mission
 
 ## License
 
-Copyright [Kabuki Starship](https://kabukistarship.com); all rights reserved.
+Copyright [AStarship™](https://astarship.net).

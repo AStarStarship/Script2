@@ -14,4 +14,4 @@ Keys are promoted through the *Internet Guilds*. Each registered entity gets a f
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

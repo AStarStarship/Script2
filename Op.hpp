@@ -4,13 +4,13 @@
 #define SCRIPT2_OP_HPP 1
 #include "Op.h"
 #include "BSeq.hpp"
-#if SEAM >= SCRIPT2_CRABS
+#if SEAM >= SCRIPT2_CRABS_BSQ
 #include "String.hpp"
 namespace _ {
 
 template<typename Printer>
 Printer& TOpPrint(Printer& o, const Op* op) {
-  if (!op) {
+  if (IsError(op)) {
     return o << "\nOp: nil";
   }
   return o << "\nOp      :" << op->name 

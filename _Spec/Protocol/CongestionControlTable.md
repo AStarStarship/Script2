@@ -29,4 +29,4 @@ Three years of data must be stored in order to detect annual cycles such as holi
 
 ## License
 
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+Copyright [AStarship™](https://astarship.net)..

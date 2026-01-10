@@ -66,7 +66,7 @@ BOL TCInUnsigned(IU& result) {
 
 template<typename CHT>
 inline BOL TCInString(CHT* result, ISW boofer_size) {
-  if (!result) return false;
+  if (IsError(result)) return false;
   ISN c = -1;
   while (c < 0) {
     if (--boofer_size <= 0) return false;

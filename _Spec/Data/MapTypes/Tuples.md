@@ -1,6 +1,6 @@
-# [SCRIPT Specification](../)
+# Tuples
 
-## [ASCII Data Specification](./)
+***[Spec](../../) > [Data](../) > [Map Types](./)***
 
 ### Value
 
@@ -43,6 +43,4 @@ A TST may store a pointer to another string type or object using the second elem
 
 [1] ./
 
-## License
-
-Copyright Kabuki Starship <<https://github.com/KabukiStarship/Script2>>.
+**[<< Previous Section:Platform-specific Types](PlatformSpecificPODTypes) | [Next Section:Map Types >>](./MapTypes/)**
