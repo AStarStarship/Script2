@@ -105,7 +105,7 @@ inline const CHA* ItoS(const CHA* args) {
   D_COUT("\nTesting ScanUnsigned<IU, CHT> (const CHT*, const CHA*, I);");
 
   for (ISN i = 0; i < 1 << 6; ++i) {
-    expected_ui8 = RandomUI8();
+    expected_ui8 = IUDRandom();
     sprintf_s(socket, Size, "%llu", expected_ui8);
     const CHA* test = TScanUnsigned<IUD, CHA>(socket, result_ui8);
     A_ASSERT(test);

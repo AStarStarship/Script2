@@ -361,10 +361,10 @@ inline ISB AlignUpB(void* origin) {
   return (-ISW(origin)) & (sizeof(ISB) - 1);
 }
 inline ISC AlignUpC(void* origin) {
-  return (-ISC(origin)) & (sizeof(ISC) - 1);
+  return ISC((-ISW(origin)) & (sizeof(ISW) - 1));
 }
 inline ISD AlignUpD(void* origin) {
-  return (-ISD(origin)) & (sizeof(ISD) - 1);
+  return ISD((-ISW(origin)) & (sizeof(ISW) - 1));
 }
 
 inline void* PtrUp(void* pointer, ISW mask = ACPUMask) {
@@ -697,43 +697,43 @@ inline IU CUnsignedNaN() {
 }
 
 /* Returns the minimum signed value.
-@param one Parameter allows the compiler to detect which SignedMin function to
-call, else we would need to use a IU template parameter for TSignedMin<IS,IU>().
+@param one Parameter allows the compiler to detect which ISMin function to
+call, else we would need to use a IU template parameter for TISMin<IS,IU>().
 ***Example***
 @code
-ISA signed_min_si1 = SignedMin(ISA(1));
-ISD signed_min_si8 = CSignedMin(ISD(1));
+ISA signed_min_si1 = ISMin(ISA(1));
+ISD signed_min_si8 = CISMin(ISD(1));
 @endcode
 */
-inline ISA SignedMin(ISA one) { return ISA(IUA(one) << (sizeof(ISA) * 8 - 1)); }
-inline ISB SignedMin(ISB one) { return ISB(IUB(one) << (sizeof(ISB) * 8 - 1)); }
-inline ISC SignedMin(ISC one) { return ISC(IUC(one) << (sizeof(ISC) * 8 - 1)); }
-inline ISD SignedMin(ISD one) { return ISD(IUD(one) << (sizeof(ISD) * 8 - 1)); }
-constexpr ISA CSignedMin(ISA one) {
+inline ISA ISMin(ISA one) { return ISA(IUA(one) << (sizeof(ISA) * 8 - 1)); }
+inline ISB ISMin(ISB one) { return ISB(IUB(one) << (sizeof(ISB) * 8 - 1)); }
+inline ISC ISMin(ISC one) { return ISC(IUC(one) << (sizeof(ISC) * 8 - 1)); }
+inline ISD ISMin(ISD one) { return ISD(IUD(one) << (sizeof(ISD) * 8 - 1)); }
+constexpr ISA CISMin(ISA one) {
   return ISA(IUA(one) << (sizeof(ISA) * 8 - 1));
 }
-constexpr ISB CSignedMin(ISB one) {
+constexpr ISB CISMin(ISB one) {
   return ISB(IUB(one) << (sizeof(ISB) * 8 - 1));
 }
-constexpr ISC CSignedMin(ISC one) {
+constexpr ISC CISMin(ISC one) {
   return ISC(IUC(one) << (sizeof(ISC) * 8 - 1));
 }
-constexpr ISD CSignedMin(ISD one) {
+constexpr ISD CISMin(ISD one) {
   return ISD(IUD(one) << (sizeof(ISD) * 8 - 1));
 }
 template<typename IS>
-inline IS TSignedMin() {
-  return SignedMin(IS(1));
+inline IS TISMin() {
+  return ISMin(IS(1));
 }
 template<typename IS>
-constexpr IS CSignedMin() {
-  return CSignedMin(IS(1));
+constexpr IS CISMin() {
+  return CISMin(IS(1));
 }
 
 /* ASCII Signed Not-a-Number is the lowest possible signed integer value. */
 template<typename IS>
 inline IS TSignedNaN() {
-  return TSignedMin<IS>() - 1;
+  return TISMin<IS>() - 1;
 }
 template<typename IS>
 constexpr IS CSignedNaN() {
@@ -741,57 +741,66 @@ constexpr IS CSignedNaN() {
 }
 
 /* Returns the maximum unsigned value.
-@param zero Parameter used for the SignedMax, TSignedMax, and CSignedMax
-functions to avoid TSignedMax<IS,IU> syntax.
+@param zero Parameter used for the ISMax, TISMax, and CISMax
+functions to avoid TISMax<IS,IU> syntax.
 ***Example***
 @code
-IUA max_ui1 = UnsignedMax(IU1(0));
+IUA max_ui1 = IUMax(IU1(0));
 IUC max_ui4 = CUnignedMax(IUC(0));
-IUD max_ui8 = TUnsignedMax<IUD>();
+IUD max_ui8 = TIUMax<IUD>();
 @endcode */
-inline IUA UnsignedMax(ISA zero) { return ~IUA(zero); }
-inline IUB UnsignedMax(ISB zero) { return ~IUB(zero); }
-inline IUC UnsignedMax(ISC zero) { return ~IUC(zero); }
-inline IUD UnsignedMax(ISD zero) { return ~IUD(zero); }
+inline IUA IUMax(ISA zero) { return ~IUA(zero); }
+inline IUB IUMax(ISB zero) { return ~IUB(zero); }
+inline IUC IUMax(ISC zero) { return ~IUC(zero); }
+inline IUD IUMax(ISD zero) { return ~IUD(zero); }
 template<typename IU>
-inline IU TUnsignedMax() {
-  return UnsignedMax(IU(0));
+inline IU TIUMax() {
+  return IUMax(IU(0));
 }
-constexpr IUA CUnsignedMax(ISA zero) { return ~IUA(zero); }
-constexpr IUB CUnsignedMax(ISB zero) { return ~IUB(zero); }
-constexpr IUC CUnsignedMax(ISC zero) { return ~IUC(zero); }
-constexpr IUD CUnsignedMax(ISD zero) { return ~IUD(zero); }
+constexpr IUA CIUMax(ISA zero) { return ~IUA(zero); }
+constexpr IUB CIUMax(ISB zero) { return ~IUB(zero); }
+constexpr IUC CIUMax(ISC zero) { return ~IUC(zero); }
+constexpr IUD CIUMax(ISD zero) { return ~IUD(zero); }
 template<typename IS>
-constexpr IS CUnsignedMax() {
-  return CUnsignedMax(IS(0));
+constexpr IS CIUMax() {
+  return CIUMax(IS(0));
 }
 
 /* Returns the minimum signed value.
-@param zero Parameter allows the compiler to detect which SignedMax function to
-call, else we would need to use a IU template parameter for TSignedMax<IS,IU>().
+@param zero Parameter allows the compiler to detect which ISMax function to
+call, else we would need to use a IU template parameter for TISMax<IS,IU>().
 ***Example***
 @code
-ISA signed_max_si1 = SignedMax(ISA(0));
-ISD signed_max_si8 = CSignedMax(ISD(0));
+ISA signed_max_si1 = ISMax(ISA(0));
+ISD signed_max_si8 = CISMax(ISD(0));
 @endcode
 */
-inline ISA SignedMax(ISA zero) { return ISA(UnsignedMax(zero) >> 1); }
-inline ISB SignedMax(ISB zero) { return ISB(UnsignedMax(zero) >> 1); }
-inline ISC SignedMax(ISC zero) { return ISC(UnsignedMax(zero) >> 1); }
-inline ISD SignedMax(ISD zero) { return ISD(UnsignedMax(zero) >> 1); }
+inline ISA ISMax(ISA zero) { return ISA(IUMax(zero) >> 1); }
+inline ISB ISMax(ISB zero) { return ISB(IUMax(zero) >> 1); }
+inline ISC ISMax(ISC zero) { return ISC(IUMax(zero) >> 1); }
+inline ISD ISMax(ISD zero) { return ISD(IUMax(zero) >> 1); }
 template<typename IS>
-inline IS TSignedMax() {
-  return SignedMax(IS(0));
+inline IS TISMax() {
+  return ISMax(IS(0));
 }
-constexpr ISA CSignedMax(ISA zero) { return ISA(CUnsignedMax(zero) >> 1); }
-constexpr ISB CSignedMax(ISB zero) { return ISB(CUnsignedMax(zero) >> 1); }
-constexpr ISC CSignedMax(ISC zero) { return ISC(CUnsignedMax(zero) >> 1); }
-constexpr ISD CSignedMax(ISD zero) { return ISD(CUnsignedMax(zero) >> 1); }
+constexpr ISA CISMax(ISA zero) { return ISA(CIUMax(zero) >> 1); }
+constexpr ISB CISMax(ISB zero) { return ISB(CIUMax(zero) >> 1); }
+constexpr ISC CISMax(ISC zero) { return ISC(CIUMax(zero) >> 1); }
+constexpr ISD CISMax(ISD zero) { return ISD(CIUMax(zero) >> 1); }
 
 template<typename IS>
-constexpr IS CSignedMax() {
-  return CSignedMax(IS(0));
+constexpr IS CISMax() {
+  return CISMax(IS(0));
 }
+
+//inline IUA IMax(IUA zero) { return IUMax(zero); }
+//inline IUB IMax(IUB zero) { return IUMax(zero); }
+//inline IUC IMax(IUC zero) { return IUMax(zero); }
+//inline IUD IMax(IUD zero) { return IUMax(zero); }
+//inline ISA IMax(ISA zero) { return ISMax(zero); }
+//inline ISB IMax(ISB zero) { return ISMax(zero); }
+//inline ISC IMax(ISC zero) { return ISMax(zero); }
+//inline ISD IMax(ISD zero) { return ISMax(zero); }
 
 /* Checsk if the value is Not-a-Number. */
 inline BOL IsNaN(ISA value) { return value == TSignedNaN<ISA>(); }

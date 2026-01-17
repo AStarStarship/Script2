@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_ARGS
 #define SCRIPT2_ARGS 1
 #include "BSeq.h"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 /* Sets the params to the given pointers corresponding to the index 1-26 of the

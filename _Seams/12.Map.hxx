@@ -68,26 +68,26 @@ const CHA* Map(const CHA* args) {
 #if SEAM >= SCRIPT2_MAP
   A_TEST_BEGIN;
 
-  TestMap<ISB, CSignedMin<ISB>(), CSignedMax<ISB>(), ISB, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
-  TestMap<ISB, CSignedMin<ISB>(), CSignedMax<ISB>(), ISC, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
-  TestMap<ISB, CSignedMin<ISB>(), CSignedMax<ISB>(), ISD, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
+  TestMap<ISB, CISMin<ISB>(), CISMax<ISB>(), ISB, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
+  TestMap<ISB, CISMin<ISB>(), CISMax<ISB>(), ISC, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
+  TestMap<ISB, CISMin<ISB>(), CISMax<ISB>(), ISD, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
 
-  TestMap<ISC, CSignedMin<ISB>(), CSignedMax<ISB>(), ISB, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
-  TestMap<ISC, CSignedMin<ISB>(), CSignedMax<ISB>(), ISC, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
-  TestMap<ISC, CSignedMin<ISB>(), CSignedMax<ISB>(), ISD, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
+  TestMap<ISC, CISMin<ISB>(), CISMax<ISB>(), ISB, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
+  TestMap<ISC, CISMin<ISB>(), CISMax<ISB>(), ISC, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
+  TestMap<ISC, CISMin<ISB>(), CISMax<ISB>(), ISD, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
 
-  TestMap<ISD, CSignedMin<ISB>(), CSignedMax<ISB>(), ISB, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
-  TestMap<ISD, CSignedMin<ISB>(), CSignedMax<ISB>(), ISC, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
-  TestMap<ISD, CSignedMin<ISB>(), CSignedMax<ISB>(), ISD, CSignedMin<ISB>(),
-          CSignedMax<ISB>(), 8>();
+  TestMap<ISD, CISMin<ISB>(), CISMax<ISB>(), ISB, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
+  TestMap<ISD, CISMin<ISB>(), CISMax<ISB>(), ISC, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
+  TestMap<ISD, CISMin<ISB>(), CISMax<ISB>(), ISD, CISMin<ISB>(),
+          CISMax<ISB>(), 8>();
 
 #endif
   return NILP;

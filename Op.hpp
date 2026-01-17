@@ -4,7 +4,7 @@
 #define SCRIPT2_OP_HPP 1
 #include "Op.h"
 #include "BSeq.hpp"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 #include "String.hpp"
 namespace _ {
 

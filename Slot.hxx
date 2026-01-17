@@ -1,9 +1,9 @@
 // Copyright AStarship <https://astarship.net>.
 #include "Slot.hpp"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 //#include "String.hpp"
 //#include "AType.h"
-#if SEAM == SCRIPT2_CRABS_BSQ
+#if SEAM == SCRIPT2_CRABS_OP
 #include "_Debug.h"
 #else
 #include "_Release.h"

@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_SLOT_HPP
 #define SCRIPT2_SLOT_HPP
 #include "Slot.h"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 /* Calculates the used ring socket space.

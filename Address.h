@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_ADDRESS
 #define SCRIPT2_ADDRESS 1
 #include <_Config.h>
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 /* Returns a pointer to static variable for writing the address { a, \0 } to.

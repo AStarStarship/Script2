@@ -1,16 +1,17 @@
 // Copyright AStarship <https://astarship.net>.
-#if SEAM >= SCRIPT2_ROOM
 #include "../Door.hpp"
-#if SEAM == SCRIPT2_DOOR
+#if SEAM >= SCRIPT2_SCRIPT2
+#if SEAM == SCRIPT2_SCRIPT2
 #include "../_Debug.h"
 #else
 #include "../_Release.h"
 #endif
+#endif
 using namespace ::_;
 namespace Script2 {
 
-static const CHA* Door(const CHA* args) {
-#if SEAM == SCRIPT2_DOOR
+static const CHA* Script2Core(const CHA* args) {
+#if SEAM == SCRIPT2_SCRIPT2
   A_TEST_BEGIN;
   ADoor door;
   Slot slot
@@ -18,5 +19,3 @@ static const CHA* Door(const CHA* args) {
   return NILP;
 }
 }  //< namespace Script2
-
-#endif

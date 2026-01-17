@@ -4,7 +4,7 @@
 #define SCRIPT2_CRABS_DECL
 #include "Op.h"
 #include "Operand.h"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 /* A full-duplex Crabs EXP (Expression) interpreter.

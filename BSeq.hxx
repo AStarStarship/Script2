@@ -1,6 +1,6 @@
 // Copyright AStarship <https://astarship.net>.
 #include "BSeq.h"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 ISC BSeqParamNumber(const DTB* params, ISN param_number) {

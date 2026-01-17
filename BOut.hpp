@@ -3,8 +3,8 @@
 #ifndef SCRIPT2_BOUT_HPP
 #define SCRIPT2_BOUT_HPP
 #include "BOut.h"
-#if SEAM >= SCRIPT2_CRABS_BSQ
-#if SEAM == SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
+#if SEAM == SCRIPT2_CRABS_OP
 #include "_Debug.h"
 #else
 #include "_Release.h"

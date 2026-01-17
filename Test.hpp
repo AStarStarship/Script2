@@ -37,8 +37,7 @@ BOL TTestEq(T a, T b) {
 }
 
 template<typename T>
-BOL TTestGTEQ
-(T a, T b) {
+BOL TTestGTEQ(T a, T b) {
   if (a <= b) return true;
 
 #if SEAM >= SCRIPT2_COUT && USING_CONSOLE == YES_0

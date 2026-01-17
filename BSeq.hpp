@@ -44,37 +44,6 @@ inline ISB PackISV(ISB value) {
 #elseif CPU_SIZE == CPU_8_BYTE
 #endif
 
-constexpr DTB CBSeqSize(const DTB* params) {
-  if (CIsError(params)) {
-    return 0;
-  }
-  DTB bytes = sizeof(DTB), 
-      count = *params++;
-
-  if (count > BSQMax) {
-    return 0;
-  }
-
-  for (; count > 0; --count) {
-    DTB param = *params++;
-
-    if (param == _NIL) {  // This is illegal.
-      return 0;
-    }
-    if (param == _ISE) {
-      bytes += sizeof(DTB);
-      ++params;
-    }
-    if (param == _IUE) {
-      bytes += sizeof(DTB);
-      ++params;
-    }
-    
-    bytes += sizeof(DTB);
-  }
-  return bytes;
-}
-
 /* Creates a immutable Type Sequence (TSQ).
 C++11 variadic template to ensure only one copy in ROM and to eliminate some 
 redundant typing. */
@@ -276,12 +245,12 @@ Printer& TBSeqPrint(Printer& o, const DTB* params) {
       i     = 0;
   DTB type  = 0,
       value = 0;
-  o << "Param<";
   if (param_count == 0) {
-    return o << "NIL>";
+    return o << "Param<NIL>";
   }
+  o << "Param<";
   if (param_count > BSQMax) {
-    o << "\nInvalid num_params: " << param_count;
+    o << "\nInvalid param_count: " << param_count << '>';
     return o;
   }
   o << param_count << ": ";
@@ -290,177 +259,10 @@ Printer& TBSeqPrint(Printer& o, const DTB* params) {
     //type = value & 0x1f;  //< Mask off type.
     //value = value >> 5;   //< Shift over array type.
     o << ATypef(value) << ", ";
-    //if (type >= STR_) {
-    //  if (value) {
-    //    return o << "\nError: arrays may only be created from POD types.";
-    //  }
-    //  // Print out the max length of the .
-    //  ++i;
-    //  value = *params++;
-    //  o << value;
-    //} else if (value > 31) {
-    //  if (value > 127) {  //< It's a multi-dimensional array.
-    //    o << "Multi-dimensional Array:" << value << ", ";
-    //  }
-    //  // Then it's an array.
-    //  ++i;
-    //  switch (value) {  //< Print out the Array type.
-    //    case 0: {
-    //      break;
-    //    }
-    //    case 1: {
-    //      value = *params++;
-    //      o << "IUA:" << value << ", ";
-    //      break;
-    //    }
-    //    case 2: {
-    //      value = *params++;
-    //      o << "IUB:" << value << ", ";
-    //      break;
-    //    }
-    //    case 3: {
-    //      value = *params++;
-    //      o << "IUC:" << value << ", ";
-    //      break;
-    //    }
-    //    case 4: {
-    //      value = *params++;
-    //      o << "IUD:" << value << ", ";
-    //      break;
-    //    }
-    //    case 5: {
-    //      value = *params++;
-    //      if (value == 0) {
-    //        o << "IUA:[0]";
-    //        break;
-    //      }
-    //      o << "IUA:[" << value << ": ";
-    //      for (ISN i = value; i != 0; --i) {
-    //        value = *params++;
-    //        o << value << ", ";
-    //      }
-    //      value = *params++;
-    //      o << value << "]";
-    //      break;
-    //    }
-    //    case 6: {
-    //      value = *params++;
-    //      if (value == 0) {
-    //        o << "IUB:[0]";
-    //        break;
-    //      }
-    //      o << "IUB:[" << value << ": ";
-    //      for (ISN i = value; i != 0; --i) {
-    //        value = *params++;
-    //        o << value << ", ";
-    //      }
-    //      value = *params++;
-    //      o << value << "]";
-    //      break;
-    //    }
-    //    case 7: {
-    //      value = *params++;
-    //      if (value == 0) {
-    //        o << "IUC:[0]";
-    //        break;
-    //      }
-    //      o << "IUC:[" << value << ": ";
-    //      for (ISN i = value; i != 0; --i) {
-    //        value = *params++;
-    //        o << value << ", ";
-    //      }
-    //      value = *params++;
-    //      o << value << "]";
-    //      break;
-    //    }
-    //  }
-    //}
   }
   // Do the last set without a comma.
   value = *params++;
-  o << ATypef(value);
-  //if (value == STR_) {
-  //  ++i;
-  //  value = *params++;
-  //  o << value;
-  //} else if (value > 31) {
-  //  // Then it's an array.
-  //  type = value & 0x1f;  //< Mask off type.
-  //  value = value >> 5;   //< Shift over array type.
-  //  ++i;
-  //  switch (value) {
-  //    case 0: {
-  //      break;
-  //    }
-  //    case 1: {
-  //      value = *params++;
-  //      o << "IUA:" << value << ", ";
-  //      break;
-  //    }
-  //    case 2: {
-  //      value = *params++;
-  //      o << "IUB:" << value << ", ";
-  //      break;
-  //    }
-  //    case 3: {
-  //      value = *params++;
-  //      o << "IUC:" << value << ", ";
-  //      break;
-  //    }
-  //    case 4: {
-  //      value = *params++;
-  //      o << "IUE:" << value << ", ";
-  //      break;
-  //    }
-  //    case 5: {
-  //      value = *params++;
-  //      if (value == 0) {
-  //        o << "IUA:[0]";
-  //        break;
-  //      }
-  //      o << "IUA:[" << value << ": ";
-  //      for (ISN i = value; i != 0; --i) {
-  //        value = *params++;
-  //        o << value << ", ";
-  //      }
-  //      value = *params++;
-  //      o << value << "]";
-  //      break;
-  //    }
-  //    case 6: {
-  //      value = *params++;
-  //      if (value == 0) {
-  //        o << "IUB:[0]";
-  //        break;
-  //      }
-  //      o << "IUB:[" << value << ": ";
-  //      for (ISN i = value; i != 0; --i) {
-  //        value = *params++;
-  //        o << value << ", ";
-  //      }
-  //      value = *params++;
-  //      o << value << "]";
-  //      break;
-  //    }
-  //    case 7: {
-  //      value = *params++;
-  //      if (value == 0) {
-  //        o << "IUC:[0]";
-  //        break;
-  //      }
-  //      o << "IUC:[" << value << ": ";
-  //      for (ISN i = value; i != 0; --i) {
-  //        value = *params++;
-  //        o << value << ", ";
-  //      }
-  //      value = *params++;
-  //      o << value << "]";
-  //      break;
-  //    }
-  //  }
-  //}
-  o << '>';
-  return o;
+  return o << ATypef(value) << '>';
 }
 
 }  //< namespace _
