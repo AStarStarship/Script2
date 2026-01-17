@@ -13,7 +13,7 @@
 
 [![GitHub version](https://badge.fury.io/gh/AStarStarship%2Fscript2.svg)](https://badge.fury.io/gh/AStarStarship%2Fscript2)
 
-The Serial Chinese Room, Interprocess, and Telemetry Specification (SCRIPT Specification), defines the ASCII Data Types, the Chinese Room Abstract Stack Machine (Crabs), SCRIPT Protocol, and Script2� (Script2). Script2 is an implementation of the SCRIPT Specification that provides:
+The Serial Chinese Room, Interprocess, and Telemetry Specification (SCRIPT Specification), defines the ASCII Data Types, the Chinese Room Abstract Stack Machine (Crabs), SCRIPT Protocol, and Script Script (Script2). Script2 is an implementation of the SCRIPT Specification that provides:
 
 * Cross-platform Modern Embedded-C++ replacement for C++ std library featuring optional dynamic memory and simplified Kabuki Module format.
 * Interprocess communication and data serialization engine modeled after AI philosophy of the Chinese Room Thought Experiment and ASCII C0 Control Codes.
@@ -26,7 +26,6 @@ The Serial Chinese Room, Interprocess, and Telemetry Specification (SCRIPT Speci
 
 * [SCRIPT Specification](./Spec/) - *Release for Comment for Serial Chinese Room, Interprocess, and Telemetry (SCRIPT) Specification.*
 * [KabukiPress Cookbook Chapter on Script2](https://github.com/AStarCale/KabukiPressCookbook/tree/master/Script2) - *The official documentation for Script2.*
-
 
 ### Quickstart
 
