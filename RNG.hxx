@@ -1,6 +1,7 @@
 // Copyright AStarship <https://astarship.net>.
 #include "RNG.h"
-//
+// 
+#if SEAM < SCRIPT2_RNG
 #include <random>
 namespace _ {
 
@@ -8,54 +9,84 @@ namespace _ {
 // static std::default_random_engine rng(rd);
 static std::default_random_engine rng;
 
-IUC RandomUI4() { return rng(); }
-
-IUC RandomSeed() { return std::random_device()(); }
-
-void RandomizeSeed() { return rng.seed(RandomSeed()); }
-
-BOL RandomBOL() { return (BOL)RandomUI4(); }
-
-IUA RandomUIA() { return (IUA)RandomUI4(); }
-
-ISA RandomSIA() { return (ISA)RandomUIA(); }
-
-IUB RandomUI2() { return (IUB)RandomUI4(); }
-
-ISB RandomSIB() { return (ISB)RandomUI2(); }
-
-ISC Randomint() { return (ISC)RandomUI4(); }
-
-IUD RandomUI8() {
-  IUD a = RandomUI4(), b = RandomUI4();
-  return (ISD)(a | (b << 32));
-}
-
-ISD RandomSID() { return (ISD)RandomUI8(); }
-
-void RandomNumber(BOL& result) { result = BOL(RandomUI4() & 1); }
-
-void RandomNumber(IUA& result) { result = RandomUIA(); }
-
-void RandomNumber(ISA& result) { result = RandomSIA(); }
-
-void RandomNumber(IUB& result) { result = RandomUI2(); }
-
-void RandomNumber(ISB& result) { result = RandomSIB(); }
-
-void RandomNumber(IUC& result) { result = RandomUI4(); }
-
-void RandomNumber(ISC& result) { result = Randomint(); }
-
-void RandomNumber(IUD& result) { result = RandomUI8(); }
-
-void RandomNumber(ISD& result) { result = RandomSID(); }
+IUC RandomSeed() { /*return std::random_device();*/ return 0; }
 
 template<typename IS>
 IS TRandom(IS min, IS max) {
-  std::uniform_int_distribution<IS> dist(min, max);
+  static std::uniform_int_distribution<IS> dist(min, max);
   return dist(rng);
 }
+
+IUA IUARandom() { return IUA(IUBRandom()); }
+
+IUB IUBRandom() { return TRandom<IUB>(0, ~IUB(0)); }
+
+IUC IUCRandom() { return TRandom<IUC>(0, ~IUC(0)); }
+
+IUD IUDRandom() { return TRandom<IUD>(0, ~IUD(0)); }
+
+void RandomizeSeed() { return rng.seed(RandomSeed()); }
+
+}  // namespace _
+#else
+//#include <random>
+//namespace _ {
+//// static std::random_device rd;
+//// static std::default_random_engine rng(rd);
+//static std::default_random_engine rng;
+//
+//IUC RandomSeed() { /*return std::random_device();*/ return 0; }
+//
+//IUA IUARandom() { return TRandom<IUA>(0, ~IUA(0)); }
+//
+//IUB IUBRandom() { return TRandom<IUB>(0, ~IUB(0)); }
+//
+//IUC IUCRandom() { return TRandom<IUC>(0, ~IUC(0)); }
+//
+//IUD IUDRandom() {
+//  IUD a = IUCRandom(),
+//      b = IUCRandom();
+//  return (ISD)(a | (b << 32));
+//}
+//
+//template<typename IS>
+//IS TRandom(IS min = 0, IS max = IMax(IS(0))) {
+//  std::uniform_int_distribution<IS> dist(min, max);
+//  return dist(rng);
+//}
+//}
+//void RandomizeSeed() { return rng.seed(RandomSeed()); }
+#endif
+
+namespace _ {
+
+BOL BOLRandom() { return BOL(IUCRandom()); }
+
+ISA ISARandom() { return ISA(IUARandom()); }
+
+ISB ISBRandom() { return ISB(IUBRandom()); }
+
+ISC ISCRandom() { return ISC(IUCRandom()); }
+
+ISD ISDRandom() { return (ISD)IUDRandom(); }
+
+void RandomNumber(BOL& result) { result = BOL(IUCRandom() & 1); }
+
+void RandomNumber(IUA& result) { result = IUARandom(); }
+
+void RandomNumber(ISA& result) { result = ISARandom(); }
+
+void RandomNumber(IUB& result) { result = IUBRandom(); }
+
+void RandomNumber(ISB& result) { result = ISBRandom(); }
+
+void RandomNumber(IUC& result) { result = IUCRandom(); }
+
+void RandomNumber(ISC& result) { result = ISCRandom(); }
+
+void RandomNumber(IUD& result) { result = IUDRandom(); }
+
+void RandomNumber(ISD& result) { result = ISDRandom(); }
 
 IUA Random(IUA min, IUA max) { return IUA(TRandom<IUB>(min, max)); }
 

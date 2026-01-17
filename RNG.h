@@ -36,28 +36,28 @@ LIB_MEMBER IUD Random(IUD min, IUD max);
 LIB_MEMBER ISD Random(ISD min, ISD max);
 
 /* Gets a random 8-bit/1-IUA unsigned integer. */
-LIB_MEMBER IUA RandomUIA();
+LIB_MEMBER IUA IUARandom();
 
 /* Gets a random 8-bit/1-IUA signed integer. */
-LIB_MEMBER ISA RandomSIA();
+LIB_MEMBER ISA ISARandom();
 
 /* Gets a random 16-bit/2-IUA unsigned integer. */
-LIB_MEMBER IUB RandomUI2();
+LIB_MEMBER IUB IUBRandom();
 
 /* Gets a random 16-bit/2-IUA signed integer. */
-LIB_MEMBER ISB RandomSIB();
+LIB_MEMBER ISB ISBRandom();
 
 /* Gets a random 32-bit/4-IUA unsigned integer. */
-LIB_MEMBER IUC RandomUI4();
+LIB_MEMBER IUC IUCRandom();
 
 /* Gets a random 32-bit/4-IUA signed integer. */
-LIB_MEMBER ISC Randomint();
+LIB_MEMBER ISC ISCRandom();
 
 /* Gets a random 64-bit/8-IUA unsigned integer. */
-LIB_MEMBER IUD RandomUI8();
+LIB_MEMBER IUD IUDRandom();
 
 /* Gets a random 64-bit/8-IUA signed integer. */
-LIB_MEMBER ISD RandomSID();
+LIB_MEMBER ISD ISDRandom();
 
 /* Gets a random 8-bit/1-IUA unsigned integer. */
 LIB_MEMBER void RandomNumber(IUA& result);

@@ -23,15 +23,19 @@ void TestMatrixIntegers() {
   D_COUT_OBJ(matrix);
   ISC w = 0;
   ISC* array_base = matrix.Start();
-  for (ISC x = 0; x < 2; ++x)
-    for (ISC y = 0; y < 2; ++y)
-      for (ISC z = 0; z < 2; ++z) A_AVOW(w++, array_3d_exected[x][y][z]);
+  for (ISC x = 0; x < 2; ++x) {
+    for (ISC y = 0; y < 2; ++y) {
+      for (ISC z = 0; z < 2; ++z) {
+        A_AVOW(w++, array_3d_exected[x][y][z]);
+      }
+    }
+  }
 }
 }  //< namespace Script2
 #endif
 
 namespace Script2 {
-static const CHA* Matrix(const CHA* args) {
+static const CHA* MathCore(const CHA* args) {
 #if SEAM >= SCRIPT2_MATRIX
   A_TEST_BEGIN;
   TestMatrixIntegers<ISA, ISA>();

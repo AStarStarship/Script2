@@ -1,12 +1,12 @@
 // Copyright AStarship <https://astarship.net>.
 #include "BIn.hpp"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 #include "BSeq.hpp"
 #include "Hash.hpp"
 #include "Varint.hpp"
 #include "Slot.hpp"
 #include "Op.h"
-#if SEAM == SCRIPT2_CRABS_BSQ
+#if SEAM == SCRIPT2_CRABS_OP
 #include "_Debug.h"
 #else
 #include "_Release.h"
@@ -163,6 +163,12 @@ const Op* BInRead(BIn* bin, const DTB* params, void** args, IUD pc_ctx) {
     //D_COUT("\nparam:" << arg_index + 1 << " type:" << ATypef(type) <<
     //       " origin:" << TDelta<>(origin, origin) << " stop:" <<
     //       TDelta<>(origin, stop) << " length:" << length);
+    if (type < 0) type ^= 1 << sizeof(DTB) - 1;
+    DTB mod = type >> sizeof(DTB) - 3;
+    if (mod == 0) {
+
+    } else if (1) {
+    }
     switch (type) {
       case _NIL:
         return BInError(bin, ErrorInvalidType, params, index, origin);

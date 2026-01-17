@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_BSEQ_DECL
 #define SCRIPT2_BSEQ_DECL
 #include "AType.h"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 /*< Returns the requested parameter number_. */

@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_SLOT_DECL
 #define SCRIPT2_SLOT_DECL
 #include <_Config.h>
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 struct BIn;

@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_BIN_DECL
 #define SCRIPT2_BIN_DECL
 #include <_Config.h>
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 struct BIn;

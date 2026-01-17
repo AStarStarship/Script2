@@ -1,6 +1,6 @@
 // Copyright AStarship <https://astarship.net>.
 #include "BOut.hpp"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 #include "BSeq.hpp"
 #include "Hash.hpp"
 #include "Varint.hpp"
@@ -103,7 +103,7 @@ ISN BOutStreamByte(BOut* bout) {
 
 const Op* BOutWrite(BOut* bout, const DTB* params, void** args,
   IUD pc_ctx) {
-  D_COUT("\n\nWriting ");
+  //D_COUT("\n\nWriting ");
   //D_COUT_BSQ(params);
   enum {
     BOutBooferSize = 1024,

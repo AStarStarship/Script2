@@ -41,7 +41,7 @@ struct TMatrix {
 /* Max number of elements that can fit in the given ISZ. */
 template<typename T = ISW, typename ISZ = ISN>
 constexpr ISZ TMatrixElementTotal() {
-  return (TSignedMax<ISZ>() - sizeof(TStack<SCK_P>)) / sizeof(T);
+  return (TISMax<ISZ>() - sizeof(TStack<SCK_P>)) / sizeof(T);
 }
 
 /* Calculates the size of the Dimensions Stack with the TMatrix header. */

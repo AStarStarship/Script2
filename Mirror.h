@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_MIRROR_DECL
 #define SCRIPT2_MIRROR_DECL 1
 #include <_Config.h>
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 #include "BIn.h"
 #include "BOut.h"
 #include "Op.h"

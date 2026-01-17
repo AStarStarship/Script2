@@ -3,7 +3,7 @@
 #ifndef SCRIPT2_BIN_HPP
 #define SCRIPT2_BIN_HPP
 #include "BIn.h"
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 namespace _ {
 
 #if USING_SCRIPT2_TEXT == YES_0

@@ -76,6 +76,9 @@
     <ClInclude Include="List.hpp" />
     <ClInclude Include="Loom.hpp" />
     <ClInclude Include="Map.hpp" />
+    <ClInclude Include="Math.h" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Math.hxx" />
     <ClInclude Include="Matrix.hpp" />
     <ClInclude Include="Mirror.h" />
     <ClInclude Include="MorseCode.hxx" />
@@ -114,27 +117,27 @@
     <ClInclude Include="_Package.hxx" />
     <ClInclude Include="_Release.h" />
     <ClInclude Include="_Seams\01.COut.hxx" />
-    <ClInclude Include="_Seams\02.RNG.hxx" />
-    <ClInclude Include="_Seams\03.ItoS.hxx" />
-    <ClInclude Include="_Seams\04.FtoS.hxx" />
-    <ClInclude Include="_Seams\05.Uniprinter.hxx" />
-    <ClInclude Include="_Seams\06.Clock.hxx" />
-    <ClInclude Include="_Seams\07.Array.hxx" />
-    <ClInclude Include="_Seams\08.Stack.hxx" />
-    <ClInclude Include="_Seams\09.String.hxx" />
-    <ClInclude Include="_Seams\10.Loom.hxx" />
-    <ClInclude Include="_Seams\11.List.hxx" />
-    <ClInclude Include="_Seams\12.Book.hxx" />
-    <ClInclude Include="_Seams\13.Map.hxx" />
-    <ClInclude Include="_Seams\14.Table.hxx" />
-    <ClInclude Include="_Seams\15.Dic.hxx" />
-    <ClInclude Include="_Seams\16.CrabsBSQ.hxx" />
+    <ClInclude Include="_Seams\16.RNG.hxx" />
+    <ClInclude Include="_Seams\02.ItoS.hxx" />
+    <ClInclude Include="_Seams\03.FtoS.hxx" />
+    <ClInclude Include="_Seams\04.Uniprinter.hxx" />
+    <ClInclude Include="_Seams\05.Clock.hxx" />
+    <ClInclude Include="_Seams\06.Array.hxx" />
+    <ClInclude Include="_Seams\07.Stack.hxx" />
+    <ClInclude Include="_Seams\08.String.hxx" />
+    <ClInclude Include="_Seams\09.Loom.hxx" />
+    <ClInclude Include="_Seams\10.List.hxx" />
+    <ClInclude Include="_Seams\11.Book.hxx" />
+    <ClInclude Include="_Seams\12.Map.hxx" />
+    <ClInclude Include="_Seams\13.Table.hxx" />
+    <ClInclude Include="_Seams\14.Dic.hxx" />
+    <ClInclude Include="_Seams\19.CrabsOp.hxx" />
     <ClInclude Include="_Seams\16.CrabsCore.hxx" />
-    <ClInclude Include="_Seams\17.Room.hxx" />
-    <ClInclude Include="_Seams\18.Matrix.hxx" />
-    <ClInclude Include="_Seams\19.File.hxx" />
-    <ClInclude Include="_Seams\20.Autojects.hxx" />
-    <ClInclude Include="_Seams\21.Script2.hxx" />
+    <ClInclude Include="_Seams\20.Room.hxx" />
+    <ClInclude Include="_Seams\15.MathCore.hxx" />
+    <ClInclude Include="_Seams\17.File.hxx" />
+    <ClInclude Include="_Seams\18.SGraTe.hxx" />
+    <ClInclude Include="_Seams\21.Script2Core.hxx" />
     <ClInclude Include="_Seams\22.Release.hxx" />
     <ClInclude Include="_Seams\TestWords.h" />
     <ClInclude Include="_Seams\_Config.h" />
@@ -222,26 +225,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

@@ -1,5 +1,5 @@
 // Copyright AStarship <https://astarship.net>.
-#if SEAM >= SCRIPT2_CRABS_BSQ
+#if SEAM >= SCRIPT2_CRABS_OP
 #include "../Crabs.h"
 #include "../BIn.hpp"
 #include "../BOut.hpp"
@@ -7,7 +7,7 @@
 #include "../Args.h"
 #include "../Address.hpp"
 //#include "../Mirror.h"
-#if SEAM == SCRIPT2_CRABS_BSQ
+#if SEAM == SCRIPT2_CRABS_OP
 #include "../_Debug.h"
 #else
 #include "../_Release.h"
@@ -35,8 +35,8 @@ public:
 #endif
 
 namespace Script2 {
-static const CHA* CrabsBSQ(const CHA* args) {
-#if SEAM == SCRIPT2_CRABS_BSQ
+static const CHA* CrabsOp(const CHA* args) {
+  #if SEAM == SCRIPT2_CRABS_OP
   A_TEST_BEGIN;
 
   enum {

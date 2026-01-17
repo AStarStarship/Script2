@@ -1,6 +1,6 @@
 // Copyright AStarship <https://astarship.net>.
 #include "Interrupts.h"
-#if SEAM >= SCRIPT2_CRABS_BSQ && USING_SCRIPT2_INTERRUPTS
+#if SEAM >= SCRIPT2_CRABS_OP && USING_SCRIPT2_INTERRUPTS
 #include <cassert>
 namespace _ {
 
@@ -9,4 +9,4 @@ const CHA* RoomCrashException::what() const throw() { return "External crash"; }
 #endif
 
 }  //< namespace _
-#endif  ///< #if SEAM >= SCRIPT2_CRABS_BSQ
+#endif  ///< #if SEAM >= SCRIPT2_CRABS_OP

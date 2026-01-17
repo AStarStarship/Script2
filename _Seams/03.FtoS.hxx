@@ -31,7 +31,7 @@ const CHA* FtoS(const CHA* args) {
 
   for (ISC i = 0; i < TestCount; ++i) {
     do {
-      value = RandomUI8();
+      value = IUDRandom();
       dbl_expected = static_cast<FPD>(value);
     } while (!IsFinite(dbl_expected));
     dbl_found = ceil(dbl_expected);
@@ -45,7 +45,7 @@ const CHA* FtoS(const CHA* args) {
 
   for (ISC i = 0; i < TestCount; ++i) {
     do {
-      value = RandomUI8();
+      value = IUDRandom();
       dbl_expected = static_cast<FPD>(value);
     } while (!IsFinite(dbl_expected));
     sprintf_s(socket, Size, "%lf", dbl_expected);
@@ -57,7 +57,7 @@ const CHA* FtoS(const CHA* args) {
 
   for (ISC i = 0; i < TestCount; ++i) {
     do {
-      value = RandomUI8();
+      value = IUDRandom();
       dbl_expected = static_cast<FPD>(value);
     } while (!IsFinite(dbl_expected));
     Print(socket, socket + Size, dbl_expected);

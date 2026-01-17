@@ -21,7 +21,7 @@ static const CHA* RNG(const CHA* args) {
 #endif
 
   for (ISN i = 0; i < PrintCount; ++i)
-    D_COUT('\n' << i << ".) " << Random(TSignedMin<ISN>(), TSignedMax<ISN>()));
+    D_COUT('\n' << i << ".) " << Random(TISMin<ISN>(), TISMax<ISN>()));
 
 #endif
   return NILP;
