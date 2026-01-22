@@ -25,8 +25,8 @@ AClock* TClockInit(AClock& clock, IS t) {
   ISN value = (ISN)(t / SecondsPerYear);
   t -= IS(value) * SecondsPerYear;
   clock.year = value + ClockEpoch();
-  value = (ISN)(t / cSecondsPerDay);
-  t -= IS(value) * cSecondsPerDay;
+  value = (ISN)(t / SecondsPerDay);
+  t -= IS(value) * SecondsPerDay;
   clock.day = value;
   value = (ISN)(t / SecondsPerHour);
   t -= IS(value) * SecondsPerHour;
@@ -46,7 +46,7 @@ IS TClockTime(ISN year, ISN month, ISN day, ISN hour, ISN minute, ISN second) {
   if (month < 1 || month >= 12 || hour >= 23 || minute >= 60 || second >= 60)
     return 0;
   return (IS)((year - ClockEpoch()) * SecondsPerYear +
-              ClockDayOfYear(year, month, day) * cSecondsPerDay +
+              ClockDayOfYear(year, month, day) * SecondsPerDay +
               hour * SecondsPerHour + minute * SecondsPerMinute + second);
 }
 
@@ -103,14 +103,14 @@ CHT* TClockPrint(CHT* cursor, CHT* stop, IS t) {
 }
 
 template<typename CHT = CHR>
-CHT* TSPrint(CHT* cursor, CHT* stop, const TMD& t) {
+CHT* TSPrint(CHT* cursor, CHT* stop, const TMT& t) {
   // The way the utf functions are setup, we return a nil-term CHA so we
   // don't have to check to write a single CHA in this
   A_ASSERT(cursor);
   A_ASSERT(cursor < stop);
 
   AClock clock;
-  ClockInit(clock, t.seconds);
+  ClockInit(clock, ISD(t.seconds));
   cursor = TSPrint<CHT>(cursor, stop, clock);
   *cursor++ = ':';
   cursor = TSPrint<CHT>(cursor, stop, t.ticks);
@@ -119,7 +119,7 @@ CHT* TSPrint(CHT* cursor, CHT* stop, const TMD& t) {
 }
 
 template<typename Printer>
-Printer& TSPrint(Printer& o, TMD& t) {
+Printer& TSPrint(Printer& o, TMT& t) {
   AClock clock;
   ClockInit(clock, t.seconds);
   return TSPrint<Printer>(o, clock) << ':' << t.ticks;
@@ -303,8 +303,7 @@ const CHT* TSScan(const CHT* string, AClock& clock) {
   D_ASSERT(string);
   D_COUT("\n    Scanning AClock:\"" << string << "\n    Scanning: ");
   string = TStringSkipAll<CHT>(string, '0');
-  CHT c = *string,  //< The current CHT.
-      delimiter;     //< The delimiter.
+  CHT c = *string;  //< The current CHT.
   const CHT* stop;  //< Might not need
   ISC hour   = 0,
       minute = 0,
@@ -348,7 +347,7 @@ const CHT* TSScan(const CHT* string, AClock& clock) {
   }
   string = TStringDecimalEnd<CHT>(string);
   if (IsError(string)) return NILP;
-  delimiter = *string++;
+  CHT delimiter = *string++;
   D_COUT(value1);
   if (delimiter == '@') {
     D_COUT(" HH@ ");
@@ -515,6 +514,14 @@ const CHT* TSScan(const CHT* string, AClock& clock) {
 }
 
 template<typename CHT, typename IS>
+const CHT* TScanTime(const CHT* origin, IUC& result) {
+  AClock clock;
+  const CHT* stop = TSScan<CHT>(origin, clock);
+  result = IUC(ClockSeconds(clock));
+  return stop;
+}
+
+template<typename CHT, typename IS>
 const CHT* TScanTime(const CHT* origin, ISC& result) {
   AClock clock;
   const CHT* stop = TSScan<CHT>(origin, clock);
@@ -531,7 +538,7 @@ const CHT* TScanTime(const CHT* origin, ISD& result) {
 }
 
 template<typename CHT>
-const CHT* TSScan(const CHT* origin, TMD& result) {
+const CHT* TSScan(const CHT* origin, TMT& result) {
   origin = TScanTime<CHT, ISC>(origin, result.seconds);
   if (IsError(origin)) return NILP;
   if (*origin++ != ':') {
@@ -555,8 +562,8 @@ IS TClockSet(AClock* clock, IS t) {
   IS value = t / SecondsPerYear;
   t -= value * SecondsPerYear;
   clock->year = (ISC)(value + ClockEpoch());
-  value = t / cSecondsPerDay;
-  t -= value * cSecondsPerDay;
+  value = t / SecondsPerDay;
+  t -= value * SecondsPerDay;
   clock->day = (ISC)value;
   value = t / SecondsPerHour;
   t -= value * SecondsPerHour;

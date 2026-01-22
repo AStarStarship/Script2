@@ -12,38 +12,80 @@
 using namespace ::_;
 namespace _ {
 
-TMD::TMD(IUB v1, IUB v2, IUB v3, IUB v4) : 
-  seconds(ISC(v1) & ISC(v2 << 16)),                                      
-  ticks  (IUC(v2) & IUC(v3 << 16)) {}
+TMT::TMT(ISC seconds, IUC ticks) :
+    ticks(ticks), seconds(seconds) {}
 
-TMD::TMD(ISC seconds, IUC ticks) : seconds(seconds), ticks(ticks) {}
+TMT::TMT(ISD value) {
+  *this = value;
+}
 
-TMD::TMD(IUD value) : seconds(ISC(value)), ticks(IUC(value >> 32)) {}
+TMT::TMT(IUD value) {
+  *this = value;
+}
 
-TME::TME(IUB v1, IUB v2, IUB v3, IUB v4, IUB v5, IUB v6, IUB v7, IUB v8) :
-  lsb(IUD(v1) & IUD(v2) << 16 & IUD(v2) << 32 & IUD(v2) << 48),
-  msb(IUD(v5) & IUD(v6) << 16 & IUD(v7) << 32 & IUD(v8) << 48) {}
+TMD::TMD(ISC seconds, ISC ticks, ISC id) :
+  value(ISD(seconds) << TMDSecondsBit0 | ISD(ticks) << TMDTicksBit0 | ISD(id))
+{}
 
-TME::TME(IUC v1, IUC v2, IUC v3, IUC v4) :
-  lsb(IUD(v1) & IUD(v2) << 32),
-  msb(IUD(v2) & IUD(v3) << 32) {}
+TMD::TMD(IUD value) {
+  *this = value;
+}
 
-TME::TME(ISD lsb, IUD msb) : lsb(lsb), msb(msb) {}
+TMD::TMD(ISD value) {
+  *this = value;
+}
 
-TME::TME(IUE value) : lsb(value.lsb), msb(value.msb) {}
+ISC TMD::Seconds() { return this->value >> TMDSecondsBit0; }
 
-TME::TME(ISE value) : lsb(value.lsb), msb(value.msb) {}
+//ISC TMD::SetSeconds(ISC value) {
+//  if (value >> TMDSecondsBitCount) {
+//    value = value & (TMDSecondsBitCount - 1);
+//  }
+//  ISD value = this->value;
+//  ISC seconds = value ^ (value >> TMDSecondsBit0);
+//  value ^= ISD(seconds << TMDSecondsBit0);
+//  return value;
+//}
+
+ISC TMD::Ticks() { return (this->value >> TMDTicksBit0) & (TMDTicksBitCount - 1); }
+
+//ISC TMD::SetTicks(ISC value) {
+//  if (value >> TMDSecondsBitCount) {
+//    value = value & (TMDSecondsBitCount - 1);
+//  }
+//  ISD value = this->value;
+//  ISC seconds = value ^ (value >> TMDSecondsBit0);
+//  value ^= ISD(seconds << TMDSecondsBit0);
+//  return value;
+//}
+
+ISC TMD::Id() { return this->value & (TMDIdBitCount - 1); }
+
+TME::TME(ISD seconds, ISD ticks, ISD id_lsb, ISD id_msb) :
+  msb(seconds << TMESecondsMSBit0 | ticks << TMETicksMSBit0 | id_msb),
+  lsb(id_lsb)
+{}
+
+ISC TME::Seconds() { return ISC(this->msb >> TMESecondsMSBit0); }
+
+ISC TME::Ticks() { 
+  return ISC((this->msb >> TMETicksMSBit0) & (TMETicksBitCount - 1));
+}
+
+ISC TME::IdMSB() { return ISC(this->msb & (TMEIdBitCount - 1)); }
+
+ISD TME::IdLSB() { return this->lsb; }
 
 const ISB* ClockLastDayOfMonth() {
-  static const ISB kMonthDayOfYear[12] = {31,  59,  90,  120, 151, 181,
-                                          212, 243, 273, 304, 334, 365};
-  return kMonthDayOfYear;
+  static const ISB MonthDayOfYear[12] = {31,  59,  90,  120, 151, 181,
+                                         212, 243, 273, 304, 334, 365};
+  return MonthDayOfYear;
 }
 
 const ISB* ClockLastDayOfMonthLeapYear() {
-  static const ISB kMonthDayOfYearLeapYear[12] = {31,  60,  91,  121, 152, 182,
-                                                  213, 244, 274, 305, 335, 366};
-  return kMonthDayOfYearLeapYear;
+  static const ISB MonthDayOfYearLeapYear[12] = {31,  60,  91,  121, 152, 182,
+                                                 213, 244, 274, 305, 335, 366};
+  return MonthDayOfYearLeapYear;
 }
 
 ISN MonthByDay(ISN day, ISN year) {
@@ -60,15 +102,14 @@ ISN MonthByDay(ISN day, ISN year) {
   return 0;
 }
 
-ISB ClockEpoch() { return AClockEpochInit; }
+ISC ClockEpoch() { return AClockEpochYearInit; }
 
 AClock* ClockInit(AClock& clock, ISC t) { return TClockInit<ISC>(clock, t); }
 
 AClock* ClockInit(AClock& clock, ISD t) { return TClockInit<ISD>(clock, t); }
 
-TMD& StopwatchInit(TMD& tss, ISC t, IUC ticks) {
+TMT& StopwatchInit(TMT& tss, ISC t, IUC ticks) {
   tss.seconds = t;
-  tss.ticks = ticks;
   return tss;
 }
 
@@ -92,8 +133,8 @@ ISD ClockNow() {
 }
 
 ISC ClockSeconds(AClock& clock) {
-  return (clock.year - AClockEpochInit) * SecondsPerYear +
-         (clock.day - 1) * cSecondsPerDay + clock.hour * SecondsPerHour +
+  return (clock.year - AClockEpochYearInit) * SecondsPerYear +
+         (clock.day - 1) * SecondsPerDay + clock.hour * SecondsPerHour +
          clock.minute * SecondsPerMinute + clock.second;
 }
 
@@ -276,7 +317,7 @@ CHA* SPrint(CHA* origin, CHA* stop, const AClock& clock) {
   return TSPrint<CHA>(origin, stop, clock);
 }
 
-CHA* SPrint(CHA* origin, CHA* stop, const TMD& t) {
+CHA* SPrint(CHA* origin, CHA* stop, const TMT& t) {
   return TSPrint<CHA>(origin, stop, t);
 }
 
@@ -300,7 +341,7 @@ const CHA* SScan(const CHA* string, AClock& clock) {
   return TSScan<CHA>(string, clock);
 }
 
-const CHA* SScan(const CHA* string, TMD& t) { return TSScan<CHA>(string, t); }
+const CHA* SScan(const CHA* string, TMT& t) { return TSScan<CHA>(string, t); }
 
 const CHA* ScanTime(const CHA* string, ISC& t) {
   return TScanTime<CHA, ISC>(string, t);
@@ -317,7 +358,7 @@ CHB* SPrint(CHB* origin, CHB* stop, const AClock& clock) {
   return TSPrint<CHB>(origin, stop, clock);
 }
 
-CHB* SPrint(CHB* origin, CHB* stop, const TMD& t) {
+CHB* SPrint(CHB* origin, CHB* stop, const TMT& t) {
   return TSPrint<CHB>(origin, stop, t);
 }
 
@@ -333,7 +374,7 @@ CHC* SPrint(CHC* origin, CHC* stop, const AClock& clock) {
   return TSPrint<CHC>(origin, stop, clock);
 }
 
-CHC* SPrint(CHC* origin, CHC* stop, const TMD& t) {
+CHC* SPrint(CHC* origin, CHC* stop, const TMT& t) {
   return TSPrint<CHC>(origin, stop, t);
 }
 
@@ -349,7 +390,7 @@ const CHB* SScan(const CHB* string, AClock& clock) {
   return TSScan<CHB>(string, clock);
 }
 
-const CHB* SScan(const CHB* string, TMD& result) {
+const CHB* SScan(const CHB* string, TMT& result) {
   return TSScan<CHB>(string, result);
 }
 
@@ -384,7 +425,7 @@ const CHC* SScan(const CHC* string, AClock& time) {
   return TSScan<CHC>(string, time);
 }
 
-const CHC* SScan(const CHC* string, TMD& result) {
+const CHC* SScan(const CHC* string, TMT& result) {
   return TSScan<CHC>(string, result);
 }
 

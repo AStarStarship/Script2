@@ -1,6 +1,6 @@
-# [Script2](github.com/AStarStarship/Script2)._Seams
+# Seams
 
-This folder contains the software seams for Script2. For more information on how to use Seam trees, please read the [Script2 chapter of the KP Cookbook](https://github.com/AStarStarship/KabukiToolkit.cookbook/tree/master/Script2).
+This folder contains the software seams for Script2. You can change the seam index in `_Config.h`.
 
 ## License
 

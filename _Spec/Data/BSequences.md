@@ -48,12 +48,12 @@ B-Sequences (BSQ), as in the B in `A*B`, is a data structure that describes byte
    Bar = <<DIC, IUD>:<NIL>, <DIC, IUD>:<NIL>>
 ```
 
-**[<< Previous Section: Strings](Strings.md) | [Next Section: Homo-tuples >>](HomoTuples.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
+[SCRIPT Specification](../) **>** [ASCII Data Specification](./)
+
+**[<< Previous Section: Strings](Strings.md) | [Next Section: Homo-tuples >>](HomoTuples.md)**
 
 Copyright [AStarship™](https://astarship.net).

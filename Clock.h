@@ -19,66 +19,113 @@ struct LIB_MEMBER AClock {
       year;    //< Number of years since epoch [-1902, 1970] U [1970, 2038].
 };
 
-/* A sub-second timestamp composed of a kTMC and a _IUC tick.
-Operation of the TME is intended for two scenarios:
-1. Processor has a real microsecond timer stored as a 24-bit value.
-2. Processor is an x86 and timer gets updated with a tread or OS.
-In the real microsecond timer scenario the processor will just
-take the unsigned in value and copy it to the _IUC member. In the
-case of the OS having a variable Update tick period, the ticker will
-work best if the value gets incremented using the ++operator and you will
-need to use modulo updates_per_second unless the timer is set to 64 updates
-per second or some other power of 2 in which case bit masking is the
-tool of choice. For desktop operating systems other threads may hijack the
-OS scheduler. */
-struct LIB_MEMBER TMD {
-  ISC seconds;  //< Seconds since epoch.
-  IUC ticks;    //< Ticks since epoch.
-
-  TMD(IUB v1, IUB v2, IUB v3, IUB v4);
-
-  TMD(ISC seconds, IUC ticks = 0);
-
-  TMD(IUD value);
+enum {
+  TMDSecondsBitCount = 28,    //< Number of bits in the TMD seconds timestamp.
+  TMDTicksBitCount   = 8,     //< Number of bits in the TMD subsecond ticker.
+  TMDIdBitCount      = 28,    //< Number of bits in the TMD source id.
+  // Bit 0 of the TMD seconds timestamp.
+  TMDSecondsBit0     = TMDTicksBitCount + TMDIdBitCount,
+  // Bit 0 of the TMD ticks timestamp.
+  TMDTicksBit0       = TMDIdBitCount,
 };
 
+/* A 64-bit Subsecond Id ASCII TMD.
+@see ~/_Spec/Data/Types/Timestamps.md */
+struct LIB_MEMBER TMT {
+  IUC ticks,    //< Subsecond spin ticker.
+      seconds;  //< 64-bit Subsecond ID ASCII TMD Seconds, Ticker, and Id.
+
+  // Creates a TMD from the given seconds, ticks, and id
+  TMT(ISC seconds, IUC tick = 0);
+
+  // Creates a TMD from the given word.
+  TMT(IUD value);
+
+  // Creates a TMD from the given word.
+  TMT(ISD value);
+};
+
+/* A 64-bit Subsecond Id ASCII TMD.
+@see ~/_Spec/Data/Types/Timestamps.md */
+struct LIB_MEMBER TMD {
+  ISD value;  //< 64-bit Subsecond ID ASCII TMD Seconds, Ticker, and Id.
+
+  // Creates a TMD from the given seconds, ticks, and id
+  TMD(ISC seconds, ISC tick = 0, ISC id = 0);
+
+  // Creates a TMD from the given word.
+  TMD(IUD value);
+
+  // Creates a TMD from the given word.
+  TMD(ISD value);
+
+  // Gets the seconds bits of the TMD.
+  ISC Seconds();
+
+  // Gets the ticks bits of the TMD.
+  ISC Ticks();
+
+  // Gets the id portion of the TMD.
+  ISC Id();
+};
+
+enum {
+  TMESecondsBitCount = 34,  //< Number of bits in the TME seconds timestamp.
+  TMETicksBitCount = 16,    //< Number of bits in the TME subsecond ticker.
+  TMEIdBitCount = 78,    //< Number of bits in the TME source id.
+  // Bit 0 of the TMD seconds timestamp.
+  TMESecondsBit0 = TMETicksBitCount + TMEIdBitCount,
+  // Bit 0 of the MSB of the TMD seconds timestamp.
+  TMESecondsMSBit0 = TMEIdBitCount - 64,
+  // Bit 0 of the TME ticks timestamp.
+  TMETicksBit0 = TMEIdBitCount,
+  TMETicksMSBit0 = TMETicksBit0 - 64,
+};
+
+/* A 128-bit Subsecond Id ASCII TMD.
+@see ~/_Spec/Data/Timestamps.md */
 struct LIB_MEMBER TME {
-  ISD lsb;    //< Seconds since epoch.
-  IUD msb;    //< Ticks since epoch.
+  ISD lsb,    //< Seconds since epoch.
+      msb;    //< Ticks since epoch.
 
-  TME(IUB v1, IUB v2, IUB v3, IUB v4, IUB v5, IUB v6, IUB v7, IUB v8);
+  /* Creates a TME from the given seconds, ticks, and id */
+  TME(ISD seconds, ISD tick = 0, ISD id_msb = 0, ISD id_lsb = 0);
 
-  TME(IUC v1, IUC v2, IUC v3, IUC v4);
+  // Gets the seconds bits of the TME.
+  ISC Seconds();
 
-  TME(ISD v1, IUD v2 = 0);
+  // Gets the ticks bits of the TME.
+  ISC Ticks();
 
-  TME(IUE value);
+  // Gets the id LSB portion of the TME.
+  ISD IdLSB();
 
-  TME(ISE value);
+  // Gets the id MSB portion of the TME.
+  ISC IdMSB();
 };
 
 enum ClockConstants {
   SecondsPerMinute = 60,                    //< Number of seconds in an minute.
-  SecondsPerHour = 60 * SecondsPerMinute,  //< Number of seconds in an hour.
-  cSecondsPerDay = 24 * SecondsPerHour,     //< Number of seconds in an day.
-  SecondsPerYear = cSecondsPerDay * 365,    //< Number of seconds in an year.
-  SecondsPerEpoch = 10 * SecondsPerYear,   //< Number of seconds in an year.
-  cDaysInJanuary = 31,                       //< Number of days in January.
-  cDaysInFebruary = 28,                      //< Number of days in February.
-  cDaysInMarch = 31,                         //< Number of days in March.
-  cDaysInApril = 30,                         //< Number of days in April.
-  cDaysInMay = 31,                           //< Number of days in May.
-  cDaysInJune = 30,                          //< Number of days in June.
-  cDaysInJuly = 31,                          //< Number of days in July.
-  cDaysInAugust = 31,                        //< Number of days in August.
-  cDaysInSeptember = 30,                     //< Number of days in September.
-  cDaysInOctober = 31,                       //< Number of days in October.
-  cDaysInNovember = 30,                      //< Number of days in November.
-  cDaysInDecember = 31,                      //< Number of days in December.
+  SecondsPerHour = 60 * SecondsPerMinute,   //< Number of seconds in an hour.
+  SecondsPerDay = 24 * SecondsPerHour,      //< Number of seconds in an day.
+  SecondsPerYear = SecondsPerDay * 365,     //< Number of seconds in an year.
+  SecondsPerEpoch = 10 * SecondsPerYear,    //< Number of seconds in an year.
+  DaysInJanuary = 31,                       //< Number of days in January.
+  DaysInFebruary = 28,                      //< Number of days in February.
+  DaysInMarch = 31,                         //< Number of days in March.
+  DaysInApril = 30,                         //< Number of days in April.
+  DaysInMay = 31,                           //< Number of days in May.
+  DaysInJune = 30,                          //< Number of days in June.
+  DaysInJuly = 31,                          //< Number of days in July.
+  DaysInAugust = 31,                        //< Number of days in August.
+  DaysInSeptember = 30,                     //< Number of days in September.
+  DaysInOctober = 31,                       //< Number of days in October.
+  DaysInNovember = 30,                      //< Number of days in November.
+  DaysInDecember = 31,                      //< Number of days in December.
 };
 
 /* Gets the 32-bit ISC clock epoch. */
-ISB ClockEpoch();
+ISC ClockEpoch();
 
 /* Lookup table for converting from day-of-year to month. */
 const ISB* ClockLastDayOfMonth();
@@ -226,7 +273,7 @@ timestamp upon success.
 LIB_MEMBER const CHA* SScan(const CHA*, AClock& clock);
 
 /* Converts a keyboard input to a TME. */
-LIB_MEMBER const CHA* SScan(const CHA*, TMD& result);
+LIB_MEMBER const CHA* SScan(const CHA*, TMT& result);
 
 /* Converts a keyboard input to a ISC. */
 LIB_MEMBER const CHA* ScanTime(const CHA*, ISC& result);

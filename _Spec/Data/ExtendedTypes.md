@@ -187,6 +187,7 @@ The CNS, MD, and EB (Extended Block) bits take up 6 control bits, leaving 10 LSb
 
 | ID  |  Type   |    Name    | Description                                  |
 |:---:|:-------:|:----------:|:---------------------------------------------|
+| --  |   ---   |     ---    | Variable length types.                       |
 | 00  |   ___   |  Reserved  | Reserved.                                    |
 | 01  |   ___   |  Reserved  | Reserved.                                    |
 | 02  |   ___   |  Reserved  | Reserved.                                    |
@@ -203,13 +204,29 @@ The CNS, MD, and EB (Extended Block) bits take up 6 control bits, leaving 10 LSb
 | 13  |   ___   |  Reserved  | Reserved.                                    |
 | 14  |   ___   |  Reserved  | Reserved.                                    |
 | 15  |   ___   |  Reserved  | Reserved.                                    |
+| --  |   ---   |     ---    | Extended Standard POD Types.                 |
 | 16  |   ERA   |   Error    | 1-byte Error integer type.                   |
-| 17  |   ERB   |   Error    | 2-byte Error integer type.                   |
-| 18  |   ERC   |   Error    | 4-byte Error integer type.                   |
-| 19  |   ERD   |   Error    | 8-byte Error integer type.                   |
-| 20  |   EOA   | Err Object | 1-byte size-width Error type.                |
-| 21  |   EOB   | Err Object | 2-byte size-width Error type.                |
-| 22  |   EOC   | Err Object | 4-byte size-width Error type.                |
+| 17  |   ___   |  Reserved  | Reserved.                                    |
+| 18  |   ___   |  Reserved  | Reserved.                                    |
+| 19  |   ___   |  Reserved  | Reserved.                                    |
+| 20  |   ERB   |   Error    | 2-byte Error integer type.                   |
+| 21  |   ___   |  Reserved  | Reserved.                                    |
+| 22  |   ___   |  Reserved  | Reserved.                                    |
+| 23  |   ___   |  Reserved  | Reserved.                                    |
+| 24  |   ERC   |   Error    | 4-byte Error integer type.                   |
+| 25  |   ___   |  Reserved  | Reserved.                                    |
+| 26  |   ___   |  Reserved  | Reserved.                                    |
+| 27  |   ___   |  Reserved  | Reserved.                                    |
+| 28  |   ERD   |   Error    | 8-byte Error integer type.                   |
+| 29  |   ___   |  Reserved  | Reserved.                                    |
+| 30  |   ___   |  Reserved  | Reserved.                                    |
+| 31  |   ___   |  Reserved  | Reserved.                                    |
+| 32  |   ERD   |   Error    | 16-byte Error integer type.                  |
+| 33  |   ___   |  Reserved  | Reserved.                                    |
+| --  |   ---   |     ---    | Extended Standard Object Types.              |
+| 34  |   EOA   | Err Object | 1-byte size-width Error type.                |
+| 35  |   EOB   | Err Object | 2-byte size-width Error type.                |
+| 36  |   EOC   | Err Object | 4-byte size-width Error type.                |
 | ..  |   ...   |     ...    | ....                                         |
 | 255 |   Any   |  Wildcard  | Wildcard; can be any type.                   |
 
@@ -225,8 +242,10 @@ When an ASCII Object's bytes is positive the type is a contiguous number of byte
 
 At the very origin of the Crabs machine is a word aligned block of memory, which does not apply to 16-bit address space CPUs, that is 256 bytes plus the width of the CPU's cache line plus size of variables, which is typically 64 bytes on all CPUs with DDR RAM. 8-bit Crabs pointers are mapped to this 256-byte Crabs origin.
 
+## Requirements
+
 **[<< Previous Section: Types](Types.md) | [Next Section: Numbers >>](Numbers.md)**
 
-## License
+[SCRIPT Specification](../) **>** [ASCII Data Specification](./)
 
-Copyright [AStarship™](https://astarship.net)..
+Copyright [AStarship™](https://astarship.net).

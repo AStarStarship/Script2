@@ -19,4 +19,8 @@ STC "Hello world!"        //< This is a _::TStrand<> that is up to 4GB long.
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section:Timestamps](Timestamps.md) | [Next Section: B-Sequences >>](BSequences.md)**
+
+Copyright [AStarship™](https://astarship.net).

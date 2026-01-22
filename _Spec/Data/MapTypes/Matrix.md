@@ -1,8 +1,4 @@
-# [SCRIPT Specification](../../)
-
-## [ASCII Data Specification](../)
-
-### [Vector Types](./)
+# Matrix
 
 ***C++ Header***
 
@@ -27,7 +23,7 @@ struct TMatrix {
 0xN +-----------------+
 ```
 
-#### Examples
+## Examples
 
 ```Script2
 /*             +---------------------- Operand Push "[IUA#2" with signature
@@ -62,4 +58,8 @@ Matlab style Multi-dimensional matrix separator ---+   */
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Stack](Stack.md) | [Next Section: Map >>](Map.md)**
+
+Copyright [AStarship™](https://astarship.net).

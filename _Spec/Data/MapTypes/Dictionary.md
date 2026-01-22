@@ -51,4 +51,8 @@ Dictionaries have slower insert times than ASCII Books but faster lookup.
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Table](./Table.md) | [Next Section: SCRIPT Specification >>](../../)**
+
+Copyright [AStarship™](https://astarship.net).

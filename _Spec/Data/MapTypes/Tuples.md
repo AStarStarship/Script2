@@ -43,4 +43,8 @@ A TST may store a pointer to another string type or object using the second elem
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section:Platform-specific Types](PlatformSpecificPODTypes) | [Next Section:Map Types >>](./MapTypes/)**
+
+Copyright [AStarship™](https://astarship.net).

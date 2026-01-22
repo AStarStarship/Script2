@@ -30,4 +30,8 @@ struct TStack {
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Array](Array.md) | [Next Section: Matrix >>](Matrix.md)**
+
+Copyright [AStarship™](https://astarship.net).

@@ -25,4 +25,8 @@ struct TArray {
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Socket](./Socket) | [Vector Types](./) | [Next Section: Stack >>](./Stack)**
+
+Copyright [AStarship™](https://astarship.net).

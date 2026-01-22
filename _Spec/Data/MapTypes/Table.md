@@ -113,4 +113,8 @@ hash64_t Hash64 (const char* s, hash64_t hash) {
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Map](Map.md) | [Next Section: Dictionary >>](Dictionary.md)**
+
+Copyright [AStarship™](https://astarship.net).

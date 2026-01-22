@@ -31,4 +31,12 @@ need a 16-bit object. It is easy to imagine a complex AI software using
 more than 4GB RAM, or the need to attach a DVD ISO image as a key-value
 pair, so we need a 64-bit dictionary.
 
+## Requirements
+
+[1] ./
+
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Homo-tuples](../HomoTuples.md) | [Next Section: Array >>](Array.md)**
+
+Copyright [AStarship™](https://astarship.net).
