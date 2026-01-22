@@ -6,10 +6,10 @@ Automaton Standard Code for Information Interchange (ASCII) Data Types are mimic
 
 The Automaton Standard Code for Information Interchange (ASCII) Data Specification provides:
 
-* All of the C++ POD types and year 2038-safe sub-second timestamps.
-* Convenient and easy-to-read-and-type 3-letter all-caps abbreviations that POP out around lower_snake_case.
+* Convenient and easy-to-read-and-type 3-letter all-caps ASCII C0 code mimicry abbreviations that POP out around lower_snake_case.
+* Clock generates 64-bit and 128-bit Subsecond Id for hot-to-archive UUIDs optimized for SQL, distribued systems, and AI agents.
 * Data types can be represented as 8-bits/256-types for microcontrollers that are forward compatible with 16-bit/64K-types for more powerful processors.
-* UTF-8, UTF-16, and UTF-32 Strings.
+* UTF-8, UTF-16, UTF-32, and MSb Varint encoded Strings.
 * B-Sequence that describes the order and maximum sizes of a Byte-Sequence of ASCII Data.
 * Map types:
   * Vector types:
@@ -17,17 +17,19 @@ The Automaton Standard Code for Information Interchange (ASCII) Data Specificati
     * Array - An array with the first word being the element count.
     * Stack - A stack of POD types stored as an array where the second word is the stack count.
     * Matrix - A homogeneous multi-dimensional array with a Stack of dimensions.
-  * Loom - A homogeneous array of UTF-8, UTF-16, or UTF-32 strings using a Stack of singned integer offsets.
+  * Loom - A homogeneous array of UTF-8, UTF-16, or UTF-32 strings using a Stack of signed integer offsets.
   * Map - A sparse array of one 1, 2, 4, or 8-byte data type to another data type.
   * Table - A Prime Multiple Hash (PMH) associative array that maps unique strings to contiguous integers.
   * Dictionary - A dictionary of heterogeneous types with a Table.
   * Book - A key-value dictionary of heterogeneous types with a Loom rather than a Table for fastest push-back performance and later conversion to a Table.
 
-**[<< Previous Section: SCRIPT Specification](../)  |  [Next Section: Data Types >>](./DataTypes.md)**
-
 ## Requirements
 
 [1] ./
+
+[SCRIPT Specification](../) **>** [ASCII Data Specification](./)
+
+**[<< Previous Section: SCRIPT Specification](../)  |  [Next Section: Data Types >>](./DataTypes.md)**
 
 ## License
 

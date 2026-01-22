@@ -32,4 +32,8 @@ Lists are stacks of type-value tuples similar in memory layout to Books but they
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Map](Map.md) | [Next Section: Table >>](Table.md)**
+
+Copyright [AStarship™](https://astarship.net).

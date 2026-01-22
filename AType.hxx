@@ -847,7 +847,7 @@ DTW ACTXHandlerDefault(void* begin, void* end, DTW type, IUW value, IUW vmsb) {
 
 ACTXFrame::ACTXFrame() :
   handler(ACTX_HANDLER_INIT),
-  epoch(AClockEpochInit)
+  epoch(AClockEpochYearInit)
 {
 }
 

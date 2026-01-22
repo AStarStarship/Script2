@@ -104,12 +104,12 @@ FPD - 0.1;  // Wastes a whole lot of space!
 FPE 1.0     // Wastes a TRUCK TON of space but best for repeated addition.
 ```
 
-**[<< Previous Section: Extended Types](ExtendedTypes.md) | [Next Section: Timestamps >>](Timestamps.md)**
-
 ## Requirements
 
 [1] ./
 
-## License
+[SCRIPT Specification](../) **>** [ASCII Data Specification](./)
 
-Copyright [AStarship™](https://astarship.net)..
+**[<< Previous Section: Extended Types](ExtendedTypes.md) | [Next Section: Clock >>](Clock.md)**
+
+Copyright [AStarship™](https://astarship.net).

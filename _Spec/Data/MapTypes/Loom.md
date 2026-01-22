@@ -32,4 +32,8 @@ ASCII Loom (LOM) is an array of UTF-8, UTF-16, or UTF-32 strings without a hash 
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Matrix](Matrix.md) | [Next Section: Map >>](Map.md)**
+
+Copyright [AStarship™](https://astarship.net).

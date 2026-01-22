@@ -6,40 +6,40 @@ Data Types can be represented using 1-byte, or two 2-byte such that 1-byte Data 
 
 ## POD Types Table
 
-| ID | Type | C++/Alt Name | Width | Description |
-|:--:|:----:|:------------:|:-----:|:------------|
-|  0 | NIL  |     void     |   0   | Null/zilch/nada/nothing. |
-|  1 | IUA  |    uint8_t   |   1   | 1-byte unsigned integer. |
-|  2 | ISA  |     int8_t   |   1   | 1-byte signed integer. |
+| ID | Type | C++/Alt Name | Width | Description                     |
+|:--:|:----:|:------------:|:-----:|:--------------------------------|
+|  0 | NIL  |     void     |   0   | Null/zilch/nada/nothing.        |
+|  1 | IUA  |    uint8_t   |   1   | 1-byte unsigned integer.        |
+|  2 | ISA  |     int8_t   |   1   | 1-byte signed integer.          |
 |  3 | CHA  |     char     |   1   | 1-byte Unicode/ASCII character. |
-|  4 | FPB  |     half     |   2   | 2-byte floating-point number. |
-|  5 | IUB  |   uint16_t   |   2   | 2-byte unsigned integer. |
-|  6 | ISB  |    int16_t   |   2   | 2-byte signed integer. |
-|  7 | CHB  |   char16_t   |   2   | 2-byte Unicode character. |
-|  8 | FPC  |    float     |   4   | 4-byte floating-point number. |
-|  9 | IUC  |   uint32_t   |   4   | 4-byte unsigned integer. |
-| 10 | ISC  |    int32_t   |   4   | 4-byte signed integer. |
-| 11 | CHC  |   char32_t   |   4   | 4-byte Unicode character. |
-| 12 | FPD  |    double    |   8   | 8-byte floating-point number. |
-| 13 | IUD  |   uint64_t   |   8   | 8-byte unsigned integer. |
-| 14 | ISD  |    int64_t   |   8   | 8-byte signed integer. |
-| 15 | TMD  |    int64_t   |   8   | 8-byte Subsecond Id timestamp, subsecond . |
-| 16 | FPE  |  float128_t  |  16   | 16-byte floating-point number. |
-| 17 | IUE  |   uint128_t  |  16   | 16-byte unsigned integer. |
-| 18 | ISE  |   int128_t   |  16   | 16-byte signed integer. |
-| 19 | TME  |   uint128_t  |  16   | 16-byte Linear ID Universally Unique Identifier. |
-| 20 | PCa  |      ?       |   ?   | Plain Context Type a. |
-| 21 | PCb  |      ?       |   ?   | Plain Context Type b. |
-| 22 | PCc  |      ?       |   ?   | Plain Context Type c. |
-| 23 | PCd  |      ?       |   ?   | Plain Context Type d. |
-| 24 | PCe  |      ?       |   ?   | Plain Context Type e. |
-| 25 | PCf  |      ?       |   ?   | Plain Context Type f. |
-| 26 | PCg  |      ?       |   ?   | Plain Context Type g. |
-| 27 | PCh  |      ?       |   ?   | Plain Context Type h. |
-| 28 | PCi  |      ?       |   ?   | Plain Context Type i. |
-| 29 | PCj  |      ?       |   ?   | Plain Context Type j. |
-| 30 | PCk  |      ?       |   ?   | Plain Context Type k. |
-| 31 | PCl  |      ?       |   ?   | Plain Context Type l. |
+|  4 | FPB  |     half     |   2   | 2-byte floating-point number.   |
+|  5 | IUB  |   uint16_t   |   2   | 2-byte unsigned integer.        |
+|  6 | ISB  |    int16_t   |   2   | 2-byte signed integer.          |
+|  7 | CHB  |   char16_t   |   2   | 2-byte Unicode character.       |
+|  8 | FPC  |    float     |   4   | 4-byte floating-point number.   |
+|  9 | IUC  |   uint32_t   |   4   | 4-byte unsigned integer.        |
+| 10 | ISC  |    int32_t   |   4   | 4-byte signed integer.          |
+| 11 | CHC  |   char32_t   |   4   | 4-byte Unicode character.       |
+| 12 | FPD  |    double    |   8   | 8-byte floating-point number.   |
+| 13 | IUD  |   uint64_t   |   8   | 8-byte unsigned integer.        |
+| 14 | ISD  |    int64_t   |   8   | 8-byte signed integer.          |
+| 15 | TMD  |    int64_t   |   8   | 8-byte Subsecond Id timestamp.  |
+| 16 | FPE  |  float128_t  |  16   | 16-byte floating-point number.  |
+| 17 | IUE  |   uint128_t  |  16   | 16-byte unsigned integer.       |
+| 18 | ISE  |   int128_t   |  16   | 16-byte signed integer.         |
+| 19 | TME  |   uint128_t  |  16   | 16-byte Subsecond Id timestamp. |
+| 20 | PCa  |      ?       |   ?   | Plain Context Type a.           |
+| 21 | PCb  |      ?       |   ?   | Plain Context Type b.           |
+| 22 | PCc  |      ?       |   ?   | Plain Context Type c.           |
+| 23 | PCd  |      ?       |   ?   | Plain Context Type d.           |
+| 24 | PCe  |      ?       |   ?   | Plain Context Type e.           |
+| 25 | PCf  |      ?       |   ?   | Plain Context Type f.           |
+| 26 | PCg  |      ?       |   ?   | Plain Context Type g.           |
+| 27 | PCh  |      ?       |   ?   | Plain Context Type h.           |
+| 28 | PCi  |      ?       |   ?   | Plain Context Type i.           |
+| 29 | PCj  |      ?       |   ?   | Plain Context Type j.           |
+| 30 | PCk  |      ?       |   ?   | Plain Context Type k.           |
+| 31 | PCl  |      ?       |   ?   | Plain Context Type l.           |
 
 ### List of Types Key
 
@@ -175,12 +175,12 @@ Plain Context Types are set by defining the last Plain Type index of that size s
 
 To delete all 128-bit Plain Context Types set CT4_STOP to BOL (19). To delete all 64-bit Plain Context Types set CT3_STOP to CT4_STOP. To delete all 32-bit Plain Context Types set CT2_STOP to CT3_STOP. To delete all 16-bit Plain Context Types set CT1_STOP to CT2_STOP. All unspecified Plain Context Types are then 8-bit types that cannot be deleted.
 
-**[<< Previous Section: ASCII Data Specification Overview](./)  |  [Next Section: Extended Types >>](ExtendedTypes.md)**
-
 ## Requirements
 
 [1]: ../Requirements#Optimal-Transceiving
 
-## License
+[SCRIPT Specification](../) **>** [ASCII Data Specification](./)
+
+**[<< Previous Section: ASCII Data Specification Overview](./)  |  [Next Section: Extended Types >>](ExtendedTypes.md)**
 
 Copyright [AStarship™](https://astarship.net).

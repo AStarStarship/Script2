@@ -13,29 +13,51 @@
 
 [![GitHub version](https://badge.fury.io/gh/AStarStarship%2Fscript2.svg)](https://badge.fury.io/gh/AStarStarship%2Fscript2)
 
-The Serial Chinese Room, Interprocess, and Telemetry Specification (SCRIPT Specification), defines the ASCII Data Types, the Chinese Room Abstract Stack Machine (Crabs), SCRIPT Protocol, and Script Script (Script2). Script2 is an implementation of the SCRIPT Specification that provides:
+> **🚀 We are calling all pioneers!** We are building a new foundation for software, and we need your help to build the next generation of **Games, Apps, and AI**. [Join the Mission](#join-the-mission) below.
 
-* Cross-platform Modern Embedded-C++ replacement for C++ std library featuring optional dynamic memory and simplified Kabuki Module format.
-* Interprocess communication and data serialization engine modeled after AI philosophy of the Chinese Room Thought Experiment and ASCII C0 Control Codes.
-* Ultra-fast Unicode string processing with the Uniprinter (Universal Printer), featuring the [Puff Algorithm](https://github.com/AStarStarship/Script2/wiki/Fastest-Method-to-Print-Integers-and-Floating-point-Numbers) and template-friendly Stringf formatting utilities to replace printf, sprintf, and sscanf.
-* Unit test framework with low-cost in-order Seam tree tests for Agile, Test, and Issue Driven Development featuring debug information customized for each tree node.
-* The [Automaton Standard Code for Information Interchange (ASCII) Data Specification](./_Spec/data/) is an Abstract Data Type Specification that defines a contiguous memory layout and test suite optimized for CPU cache performance, Data Driven Design and Development.
-* The [ASCII C++ Style Guide](./_StyleGuide/) is a divergent fork of the Google C++ Style Guide that uses ASCII Data Types and intelligent rules to dramatically reduced clutter and improved readability.
+## What is Script2?
+
+Script2 is a high-performance, cross-platform implementation of the **SCRIPT Specification** (Serial Chinese Room, Interprocess, and Telemetry).
+
+We are remaining the C++ ecosystem by replacing the standard library with a modern, embedded-friendly alternative. Script2 is designed for **Webapps**, **Games**, **Artificial Intelligence**, and **Distributed Systems** where performance, determinism, and precise memory control are paramount.
+
+### Why Script2?
+
+*   **⚡ Ultra-Fast Performance:** Our **Uniprinter** and custom **ASCII Data Types** are optimized for CPU cache performance, replacing slow standard library components like `printf` and `std::string` with blazing fast alternatives.
+*   **🧠 Built for AI & Logic:** Modeled after the *Chinese Room Thought Experiment*, our architecture treats data processing as a conversation of symbols (the Chinese Room Abstract Stack Machine or "Crabs"), making it uniquely suited for AI agents and complex telemetry.
+*   **🎮 Game Engine Ready:** With optional dynamic memory and no garbage collection pauses, Script2 provides the low-level control required for high-performance game engines.
+*   **🛠️ Modern Embedded-C++:** A clean slate. We use a simplified **Kabuki Module** format and custom containers (`Array`, `List`, `Stack`) to create a robust, dependency-free environment.
+
+## Join the Mission
+
+We are an ambitious open-source project looking for volunteers who want to learn deep C++ and help shape a new ecosystem. Whether you are a veteran systems engineer or a student looking to learn, there is a place for you here.
+
+We need help with:
+*   **Webapp Development:** Building cross-platform app libraries with async IO and that easily map to any programming language and operate across assembly line boundaries.
+*   **Game Development:** Building demos, physics integrations, and rendering loops using Script2.
+*   **AI Integration:** Implementing the Chinese Room logic and linear ID systems.
+*   **Core Systems:** optimizing our custom memory allocators and data structures.
+*   **Community & Docs:** Helping others understand the ASCII Chinese Room philosophy.
+
+**"I've been working on this specification for a long time, and I am looking for a community to help bring this vision to life. I worked for many years to make the ASCII Data Specification make sense for creating a Chinese Room, and it would be a lot of fun to make some modern AI, games, and apps with it."** — *AStarCale, Founder/Code Monkey*
+
+👉 **Ready to help?** Check out our [Good First Issues](https://github.com/AStarStarship/Script2/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) or introduce yourself in the Discussions!
+
+## Key Features
+
+*   **ASCII Data Specification:** An Abstract Data Type Specification defining a contiguous memory layout optimized for Data Driven Design and Development.
+*   **Uniprinter:** Ultra-fast Unicode string processing featuring the [Puff Algorithm](https://github.com/AStarStarship/Script2/wiki/Fastest-Method-to-Print-Integers-and-Floating-point-Numbers), the world's fastest integer-to-string algorithm that uses discrete math to eliminate over half the division instructions of the industry-standard mod 100 div 100 loop.
+*   **Seam Testing:** A low-cost, in-order tree-based unit test framework for Agile and Issue Driven Development.
 
 ## Documentation
 
-* [SCRIPT Specification](./Spec/) - *Release for Comment for Serial Chinese Room, Interprocess, and Telemetry (SCRIPT) Specification.*
-* [KabukiPress Cookbook Chapter on Script2](https://github.com/AStarCale/KabukiPressCookbook/tree/master/Script2) - *The official documentation for Script2.*
+*   [SCRIPT Specification](./Spec/) - *Release for Comment for Serial Chinese Room, Interprocess, and Telemetry (SCRIPT) Specification.*
 
 ### Quickstart
 
-**1.** Set breakpoint in `Test.hpp` file in the first function where the comment says to. This break point allows us to capture the stack frame programatically.
-
-**2.** Copy the `_Seams` directory to your workspace and rename the folder to your liking.
-
-**3.** Delete the unneeded seams and modify the COut seam test to suit your project.
-
-####
+1.  **Set Breakpoints:** Open `Test.hpp` and set a breakpoint in the first function where the comment instructs. This allows us to capture the stack frame programmatically.
+2.  **Setup Workspace:** Copy the `_Seams` directory to your workspace and rename the folder to your liking.
+3.  **Run Tests:** Delete unneeded seams and modify the `COut` seam test to suit your project.
 
 ## License
 

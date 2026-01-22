@@ -45,4 +45,8 @@ ASCII Books are dense ordered maps of key-value tuples. Books differ from ASCII 
 
 [1] ./
 
+[SCRIPT Specification](../../) **>** [ASCII Data Specification](../) **>** [Map Types](./)
+
 **[<< Previous Section: Table](./Table.md) | [Next Section: Dictionary >>](./Dictionary.md)**
+
+Copyright [AStarship™](https://astarship.net).

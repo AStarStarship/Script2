@@ -141,7 +141,7 @@
     <ClInclude Include="_Seams\22.Release.hxx" />
     <ClInclude Include="_Seams\TestWords.h" />
     <ClInclude Include="_Seams\_Config.h" />
-    <ClInclude Include="_Seams\_Seams.hxx" />
+    <ClInclude Include="_Seams\_Seams.h" />
     <ClInclude Include="_Seams\_Tests.hxx" />
     <ClInclude Include="_Undef.h" />
   </ItemGroup>
