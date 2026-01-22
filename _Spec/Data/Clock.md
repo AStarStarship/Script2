@@ -1,4 +1,4 @@
-# Timestamp UUIDs
+# Clock
 
 The ASCII Clock tells time five different ways: TMC (32-bit Time) are traditional 32-bit unsigned Unix timestamps, TMS are 64-bit Unix signed seconds timestamp, TMT (Time Ticker) uses a 32-bit unsigned Seconds timestamp and 32-bit unsigned subsecond spin ticker, and TMD are 64-bit Subsecond Id, and TME are 128-bit Subsecond Id UUIDs. The POD types 0 through 31 only includes 64-bit TMD and 128-bit TME Subsecond Id, but users can map TMC to the Plain Context Types 20 through 31.
 
